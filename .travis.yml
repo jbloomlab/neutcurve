@@ -1,0 +1,21 @@
+language: python
+
+python:
+  - "3.6"
+
+cache: pip
+
+install:
+  - pip install flake8
+  - pip install -e .
+
+script: 
+  - flake8
+  - pytest
+
+branches:
+  only:
+    - master
+
+notifications:
+  slack: jbloomlab:JRB6s9Rw88c7YPaL2VGmVJaq
