@@ -45,13 +45,14 @@ setup(
     url=metadata['url'],
     download_url='https://github.com/jbloomlab/neutcurve/tarball/' +
                  metadata['version'],  # tagged version on GitHub
-    description='Logo plots of deep mutational scanning (DMS) data',
+    description='Plot and fit neutralization curves.',
     long_description=readme,
     license='GPLv3',
     install_requires=[
         'numpy>=1.13',
         'pandas>=0.23',
         'matplotlib>=3.0.0',
+        'plotnine>=0.5.1',
         ],
     platforms='Linux and Mac OS X.',
     packages=['neutcurve'],
