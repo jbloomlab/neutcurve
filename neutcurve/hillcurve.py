@@ -13,8 +13,6 @@ import pandas as pd
 import scipy
 import scipy.optimize
 
-import plotnine as p9
-
 
 class HillCurve:
     """A fitted Hill curve, optionally with free baselines.
@@ -46,26 +44,36 @@ class HillCurve:
 
     Attributes:
         `cs` (numpy array)
-            Concentrations provided at initialization.
+            Concentrations, sorted from low to high.
         `fs` (numpy array)
-            Fraction infectivity provided at initialization.
+            Fraction infectivity, ordered to match sorted concentrations.
         `bottom` (float)
             Bottom of curve, :math:`b` in equation above.
         `top` (float)
             Top of curve, :math:`t` in equation above.
         `midpoint` (float)
             Midpoint of curve, :math:`m` in equation above. Note
-            that the midpoint may **not** be the same as the `ic50`
+            that the midpoint may **not** be the same as the :meth:`ic50`
             if :math:`t \\ne 1` or :math:`b \\ne 0`.
         `slope` (float)
             Hill slope of curve, :math:`s` in equation above.
 
     Use the :meth:`ic50` method to get the fitted IC50.
 
-    As an example, first simulate some data:
+    Here are some examples. First, we import the modules we use, including
+    `plotnine <https://plotnine.readthedocs.io>`_ for plotting:
 
     .. nbplot::
-    
+
+        >>> import scipy
+        >>> import plotnine as p9
+        >>> from neutcurve import HillCurve
+        >>> from neutcurve.colorschemes import CBPALETTE
+
+    Now simulate some data:
+
+    .. nbplot::
+
         >>> m = 0.03
         >>> s = 1.9
         >>> b = 0.1
@@ -77,7 +85,7 @@ class HillCurve:
     are close to the ones used for the simulation:
 
     .. nbplot::
-    
+
         >>> neut = HillCurve(cs, fs)
         >>> scipy.allclose(neut.midpoint, m)
         True
@@ -135,6 +143,60 @@ class HillCurve:
         True
         >>> scipy.allclose(neut3.ic50(method='bound'), cs3[-1])
         True
+
+    We can use the :meth:`dataframe` method to get the measured
+    data and fit data at selected points. First, we do this
+    just at measured points:
+
+    .. nbplot::
+
+        >>> neut.dataframe('measured').round(3)
+           concentration  measurement    fit
+        0          0.002        0.995  0.995
+        1          0.004        0.981  0.981
+        2          0.008        0.932  0.932
+        3          0.016        0.791  0.791
+        4          0.032        0.522  0.522
+        5          0.064        0.272  0.272
+        6          0.128        0.154  0.154
+        7          0.256        0.115  0.115
+        8          0.512        0.104  0.104
+
+    Then we add in one more point:
+
+    .. nbplot::
+
+        >>> neut.dataframe([0.6]).round(3)
+           concentration  measurement    fit
+        0          0.002        0.995  0.995
+        1          0.004        0.981  0.981
+        2          0.008        0.932  0.932
+        3          0.016        0.791  0.791
+        4          0.032        0.522  0.522
+        5          0.064        0.272  0.272
+        6          0.128        0.154  0.154
+        7          0.256        0.115  0.115
+        8          0.512        0.104  0.104
+        9          0.600          NaN  0.103
+
+    In reality, you'd typically just call :meth:`dataframe` with
+    the default argument of 'auto' to get a good range to plot:
+
+    .. nbplot::
+
+        >>> df = neut.dataframe()
+        >>> p = (p9.ggplot(df, p9.aes(x='concentration')) +
+        ...      p9.geom_line(p9.aes(y='fit'), color=CBPALETTE[2]) +
+        ...      p9.geom_point(p9.aes(y='measurement'), na_rm=True,
+        ...                    color=CBPALETTE[1], size=3) +
+        ...      p9.scale_x_log10(name="concentration") +
+        ...      p9.scale_y_continuous(name="infectivity remaining",
+        ...                            limits=(0, 1)) +
+        ...      p9.theme_bw(base_size=12) +
+        ...      p9.theme(figure_size=(3.5, 2.5))
+        ...      )
+        >>> _ = p.draw()
+
     """
 
     def __init__(self, cs, fs, *, fixbottom=False, fixtop=1):
@@ -284,16 +346,32 @@ class HillCurve:
         """Returns :math:`f(c) = b + \\frac{t - b}{1 + (c/m)^s}`."""
         return b + (t - b) / (1 + (c / m)**s)
 
-    def _neutdata(self, samplename, ic50_in_name,
-                  nfitpoints, cextend):
-        """Gets data frame for plotting neutralization curve."""
-        concentrations = scipy.concatenate(
-                [self.cs,
-                 scipy.logspace(math.log10(self.cs.min() / cextend),
-                                math.log10(self.cs.max() * cextend),
-                                num=nfitpoints)
-                 ]
-                )
+    def dataframe(self, concentrations='auto'):
+        """Data frame with curve data for plotting.
+
+        Useful if you want to get both the points and the fit
+        curve to plot.
+
+        Args:
+            `concentrations` (array-like or 'auto' or 'measured')
+                Concentrations for which we compute the fit values.
+                If 'auto' the automatically computed from data
+                range using :func:`concentrationRange`. If
+                'measured' then only include measured values.
+
+        Returns:
+            A pandas DataFrame with the following columns:
+
+              - 'concentration': concentration
+              - 'fit': curve fit value at this point
+              - 'measurement': value of measurement at this point,
+                or numpy.nan if no measurement here.
+        """
+        if concentrations == 'auto':
+            concentrations = concentrationRange(self.cs[0], self.cs[-1])
+        elif concentrations == 'measured':
+            concentrations = []
+        concentrations = scipy.concatenate([self.cs, concentrations])
         n = len(concentrations)
 
         points = scipy.concatenate(
@@ -302,15 +380,64 @@ class HillCurve:
 
         fit = scipy.array([self.fracinfectivity(c) for c in concentrations])
 
-        if ic50_in_name:
-            samplename += ' (IC50 = {0})'.format(self.ic50_str())
+        return (pd.DataFrame.from_dict(
+                    collections.OrderedDict(
+                        [('concentration', concentrations),
+                         ('measurement', points),
+                         ('fit', fit),
+                         ])
+                    )
+                .sort_values('concentration')
+                .reset_index(drop=True)
+                )
 
-        return pd.DataFrame.from_dict(collections.OrderedDict([
-                ('concentration', concentrations),
-                ('sample', [samplename] * n),
-                ('points', points),
-                ('fit', fit),
-                ]))
+
+def concentrationRange(bottom, top, npoints=200, extend=0.1):
+    """Gets range of logarithmically spaced concentrations for plotting.
+
+    Useful if you want to plot a curve by fitting values to densely
+    sampled points and need the concentrations at which to compute
+    these points.
+
+    Args:
+        `bottom` (float)
+            Lowest concentration.
+        `top` (float)
+            Highest concentration.
+        `npoints` (int)
+            Number of points.
+        `extend` (float)
+            After transforming to log space, extend range of points
+            by this much below and above `bottom` and `top`.
+
+    Returns:
+        A numpy array of `npoints` concentrations.
+
+    >>> scipy.allclose(concentrationRange(0.1, 100, 10, extend=0),
+    ...                [0.1, 0.22, 0.46, 1, 2.15, 4.64, 10, 21.54, 46.42, 100],
+    ...                atol=1e-2)
+    True
+    >>> scipy.allclose(concentrationRange(0.1, 100, 10),
+    ...                [0.05, 0.13, 0.32, 0.79, 2.00, 5.01,
+    ...                 12.59, 31.62, 79.43, 199.53],
+    ...                atol=1e-2)
+    True
+    """
+    if top <= bottom:
+        raise ValueError('`bottom` must be less than `top`')
+    if bottom <= 0:
+        raise ValueError('`bottom` must be greater than zero')
+    if extend < 0:
+        raise ValueError('`extend` must be >= 0')
+
+    logbottom = math.log10(bottom)
+    logtop = math.log10(top)
+    logrange = logtop - logbottom
+    assert logrange > 0
+    bottom = logbottom - logrange * extend
+    top = logtop + logrange * extend
+
+    return scipy.logspace(bottom, top, npoints)
 
 
 if __name__ == '__main__':
