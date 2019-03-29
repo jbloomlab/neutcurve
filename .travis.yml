@@ -18,4 +18,4 @@ branches:
     - master
 
 notifications:
-  slack: jbloomlab:JRB6s9Rw88c7YPaL2VGmVJaq
+  slack: jbloomlab:M5Ap209HwoU6g0ECE137npd5
