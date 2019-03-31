@@ -2,9 +2,9 @@
 ==================
 hillcurve
 ==================
+
 Defines :class:`HillCurve` for fitting neutralization curves.
 """
-
 
 import math
 import collections
@@ -15,9 +15,9 @@ import scipy.optimize
 
 
 class HillCurve:
-    """A fitted Hill curve, optionally with free baselines.
+    r"""A fitted Hill curve, optionally with free baselines.
 
-    Fits :math:`f(c) = b + \\frac{t - b}{1 + (c/m)^s}`
+    Fits :math:`f(c) = b + \frac{t - b}{1 + (c/m)^s}`
     where :math:`f(c)` is the fraction infectivity remaining
     at concentration :math:`c`, :math:`m` is the midpoint
     of the neutralization curve, :math:`t` is the top
@@ -54,7 +54,7 @@ class HillCurve:
         `midpoint` (float)
             Midpoint of curve, :math:`m` in equation above. Note
             that the midpoint may **not** be the same as the :meth:`ic50`
-            if :math:`t \\ne 1` or :math:`b \\ne 0`.
+            if :math:`t \ne 1` or :math:`b \ne 0`.
         `slope` (float)
             Hill slope of curve, :math:`s` in equation above.
 
@@ -290,12 +290,12 @@ class HillCurve:
             (self.midpoint, self.slope) = popt
 
     def ic50(self, method='interpolate'):
-        """IC50 value.
+        r"""IC50 value.
 
         Concentration where infectivity remaining is 0.5. Equals
         `midpoint` if and only if `top = 1` and `bottom = 0`. Calculated
-        from :math:`0.5 = b + \\frac{t - b}{1 + (ic50/m)^s}`, which solves to
-        :math:`ic50 = m \\times \\left(\\frac{t - 0.5}{0.5 - b}\\right)^{1/s}`
+        from :math:`0.5 = b + \frac{t - b}{1 + (ic50/m)^s}`, which solves to
+        :math:`ic50 = m \times \left(\frac{t - 0.5}{0.5 - b}\right)^{1/s}`
 
         Args:
             `method` (str)
@@ -311,6 +311,7 @@ class HillCurve:
 
         Returns:
             Number giving IC50 or `None` (depending on value of `method`).
+
         """
         if self.top < 0.5 and self.bottom < 0.5:
             bound = 'bottom'
@@ -343,11 +344,11 @@ class HillCurve:
 
     @staticmethod
     def evaluate(c, m, s, b, t):
-        """Returns :math:`f(c) = b + \\frac{t - b}{1 + (c/m)^s}`."""
+        r"""Get :math:`f(c) = b + \frac{t - b}{1 + (c/m)^s}`."""
         return b + (t - b) / (1 + (c / m)**s)
 
     def dataframe(self, concentrations='auto'):
-        """Data frame with curve data for plotting.
+        """Get data frame with curve data for plotting.
 
         Useful if you want to get both the points and the fit
         curve to plot.
@@ -366,6 +367,7 @@ class HillCurve:
               - 'fit': curve fit value at this point
               - 'measurement': value of measurement at this point,
                 or numpy.nan if no measurement here.
+
         """
         if concentrations == 'auto':
             concentrations = concentrationRange(self.cs[0], self.cs[-1])
@@ -393,7 +395,7 @@ class HillCurve:
 
 
 def concentrationRange(bottom, top, npoints=200, extend=0.1):
-    """Gets range of logarithmically spaced concentrations for plotting.
+    """Logarithmically spaced concentrations for plotting.
 
     Useful if you want to plot a curve by fitting values to densely
     sampled points and need the concentrations at which to compute
@@ -422,6 +424,7 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     ...                 12.59, 31.62, 79.43, 199.53],
     ...                atol=1e-2)
     True
+
     """
     if top <= bottom:
         raise ValueError('`bottom` must be less than `top`')
