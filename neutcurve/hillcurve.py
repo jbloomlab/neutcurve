@@ -6,10 +6,11 @@ hillcurve
 Defines :class:`HillCurve` for fitting neutralization curves.
 """
 
-import math
 import collections
+import math
 
 import pandas as pd
+
 import scipy
 import scipy.optimize
 

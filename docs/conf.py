@@ -16,10 +16,11 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 """Configuration file for sphinx."""
 
-import os
-import sys
-import re
 import datetime
+import os
+import re
+import sys
+
 sys.path.insert(0, '{0}/../neutcurve'.format(os.path.abspath('.')))
 
 
