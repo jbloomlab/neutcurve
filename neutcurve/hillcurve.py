@@ -9,6 +9,8 @@ Defines :class:`HillCurve` for fitting neutralization curves.
 import collections
 import math
 
+import matplotlib.pyplot as plt
+
 import pandas as pd
 
 import scipy
@@ -61,13 +63,11 @@ class HillCurve:
 
     Use the :meth:`ic50` method to get the fitted IC50.
 
-    Here are some examples. First, we import the modules we use, including
-    `plotnine <https://plotnine.readthedocs.io>`_ for plotting:
+    Here are some examples. First, we import the necessary modules:
 
     .. nbplot::
 
         >>> import scipy
-        >>> import plotnine as p9
         >>> from neutcurve import HillCurve
         >>> from neutcurve.colorschemes import CBPALETTE
 
@@ -181,22 +181,7 @@ class HillCurve:
         9          0.600          NaN  0.103
 
     In reality, you'd typically just call :meth:`dataframe` with
-    the default argument of 'auto' to get a good range to plot:
-
-    .. nbplot::
-
-        >>> df = neut.dataframe()
-        >>> p = (p9.ggplot(df, p9.aes(x='concentration')) +
-        ...      p9.geom_line(p9.aes(y='fit'), color=CBPALETTE[2]) +
-        ...      p9.geom_point(p9.aes(y='measurement'), na_rm=True,
-        ...                    color=CBPALETTE[1], size=3) +
-        ...      p9.scale_x_log10(name="concentration") +
-        ...      p9.scale_y_continuous(name="infectivity remaining",
-        ...                            limits=(0, 1)) +
-        ...      p9.theme_bw(base_size=12) +
-        ...      p9.theme(figure_size=(3.5, 2.5))
-        ...      )
-        >>> _ = p.draw()
+    the default argument of 'auto' to get a good range to plot.
 
     """
 
@@ -347,6 +332,72 @@ class HillCurve:
     def evaluate(c, m, s, b, t):
         r"""Get :math:`f(c) = b + \frac{t - b}{1 + (c/m)^s}`."""
         return b + (t - b) / (1 + (c / m)**s)
+
+    def plot(self,
+             *,
+             concentrations='auto',
+             ax=None,
+             xlabel='concentration',
+             ylabel='fraction infectivity',
+             color='black',
+             ):
+        """Plot the neutralization curve.
+
+        Args:
+            `concentrations`
+                Concentrations to plot, same meaning as for
+                :meth:`HillCurve.dataframe`.
+            `ax` (`None` or matplotlib axes.Axes object)
+                Use to plot on an existing axis. If using an existing
+                axis, do **not** re-scale the axis limits to the data.
+            `xlabel` (str)
+                Label for x-axis.
+            `ylabel` (str)
+                Label for y-axis.
+
+        Returns:
+            The 2-tuple `(fig, ax)` giving the matplotlib figure and axis.
+
+        """
+        data = self.dataframe(concentrations)
+
+        if ax is None:
+            fig, ax = plt.subplots()
+            fig.set_size_inches((4, 3))
+            check_ybounds = True
+            ylowerbound = -0.05
+            yupperbound = 1.05
+            ax.autoscale(True, 'both')
+        else:
+            fig = ax.get_figure()
+            ax.autoscale(False, 'both')
+            check_ybounds = False
+
+        ax.plot('concentration',
+                'fit',
+                data=data,
+                linestyle='-',
+                color=color,
+                )
+
+        ax.scatter('concentration',
+                   'measurement',
+                   data=data,
+                   marker='o',
+                   color=color,
+                   s=50,
+                   )
+
+        ax.set_xscale('log')
+        ax.set_xlabel(xlabel, fontsize=15)
+        ax.set_ylabel(ylabel, fontsize=15)
+        ax.tick_params('both', labelsize=12)
+
+        if check_ybounds:
+            ymin, ymax = ax.get_ylim()
+            ax.set_ylim(min(ymin, ylowerbound), max(ymax, yupperbound))
+
+        return fig, ax
 
     def dataframe(self, concentrations='auto'):
         """Get data frame with curve data for plotting.

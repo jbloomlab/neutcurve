@@ -52,7 +52,6 @@ setup(
         'scipy>=1.1.0',
         'pandas>=0.23',
         'matplotlib>=3.0.0',
-        'plotnine>=0.5.1',
         ],
     platforms='Linux and Mac OS X.',
     packages=['neutcurve'],
