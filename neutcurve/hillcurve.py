@@ -40,6 +40,8 @@ class HillCurve:
             Concentrations of antibody / serum.
         `fs` (array-like)
             Fraction infectivity remaining at each concentration.
+        `fs_stderr` (`None` or array-like)
+            If not `None`, standard errors on `fs`.
         `fixbottom` (bool or a float)
             If `True`, fix bottom of curve to to this value; otherwise fit.
         `fixtop` (`False` or a float)
@@ -50,6 +52,8 @@ class HillCurve:
             Concentrations, sorted from low to high.
         `fs` (numpy array)
             Fraction infectivity, ordered to match sorted concentrations.
+        `fs_stderr` (numpy array)
+            Standard errors on `fs`.
         `bottom` (float)
             Bottom of curve, :math:`b` in equation above.
         `top` (float)
@@ -152,44 +156,49 @@ class HillCurve:
     .. nbplot::
 
         >>> neut.dataframe('measured').round(3)
-           concentration  measurement    fit
-        0          0.002        0.995  0.995
-        1          0.004        0.981  0.981
-        2          0.008        0.932  0.932
-        3          0.016        0.791  0.791
-        4          0.032        0.522  0.522
-        5          0.064        0.272  0.272
-        6          0.128        0.154  0.154
-        7          0.256        0.115  0.115
-        8          0.512        0.104  0.104
+           concentration  measurement    fit  stderr
+        0          0.002        0.995  0.995     NaN
+        1          0.004        0.981  0.981     NaN
+        2          0.008        0.932  0.932     NaN
+        3          0.016        0.791  0.791     NaN
+        4          0.032        0.522  0.522     NaN
+        5          0.064        0.272  0.272     NaN
+        6          0.128        0.154  0.154     NaN
+        7          0.256        0.115  0.115     NaN
+        8          0.512        0.104  0.104     NaN
 
     Then we add in one more point:
 
     .. nbplot::
 
         >>> neut.dataframe([0.6]).round(3)
-           concentration  measurement    fit
-        0          0.002        0.995  0.995
-        1          0.004        0.981  0.981
-        2          0.008        0.932  0.932
-        3          0.016        0.791  0.791
-        4          0.032        0.522  0.522
-        5          0.064        0.272  0.272
-        6          0.128        0.154  0.154
-        7          0.256        0.115  0.115
-        8          0.512        0.104  0.104
-        9          0.600          NaN  0.103
+           concentration  measurement    fit  stderr
+        0          0.002        0.995  0.995     NaN
+        1          0.004        0.981  0.981     NaN
+        2          0.008        0.932  0.932     NaN
+        3          0.016        0.791  0.791     NaN
+        4          0.032        0.522  0.522     NaN
+        5          0.064        0.272  0.272     NaN
+        6          0.128        0.154  0.154     NaN
+        7          0.256        0.115  0.115     NaN
+        8          0.512        0.104  0.104     NaN
+        9          0.600          NaN  0.103     NaN
 
     In reality, you'd typically just call :meth:`dataframe` with
     the default argument of 'auto' to get a good range to plot.
 
     """
 
-    def __init__(self, cs, fs, *, fixbottom=False, fixtop=1):
+    def __init__(self, cs, fs, *, fs_stderr=None, fixbottom=False, fixtop=1):
         """See main class docstring."""
         # get data into arrays sorted by concentration
         self.cs = scipy.array(cs)
         self.fs = scipy.array(fs)
+        if fs_stderr is not None:
+            self.fs_stderr = scipy.array(fs_stderr)
+            self.fs_stderr = self.fs_stderr[self.cs.argsort()]
+        else:
+            self.fs_stderr = None
         self.fs = self.fs[self.cs.argsort()]
         self.cs = self.cs[self.cs.argsort()]
 
@@ -260,10 +269,11 @@ class HillCurve:
                 return self.evaluate(c, m, s, self.bottom, self.top)
 
         (popt, pcov) = scipy.optimize.curve_fit(
-                func,
-                self.cs,
-                self.fs,
-                initguess
+                f=func,
+                xdata=self.cs,
+                ydata=self.fs,
+                p0=initguess,
+                sigma=self.fs_stderr,
                 )
 
         if fixtop is False and fixbottom is False:
@@ -380,13 +390,16 @@ class HillCurve:
                 color=color,
                 )
 
-        ax.scatter('concentration',
-                   'measurement',
-                   data=data,
-                   marker='o',
-                   color=color,
-                   s=50,
-                   )
+        markersize = 7
+        ax.errorbar(x='concentration',
+                    y='measurement',
+                    yerr='stderr',
+                    data=data,
+                    fmt='o',
+                    color=color,
+                    markersize=markersize,
+                    capsize=markersize / 1.5,
+                    )
 
         ax.set_xscale('log')
         ax.set_xlabel(xlabel, fontsize=15)
@@ -419,6 +432,7 @@ class HillCurve:
               - 'fit': curve fit value at this point
               - 'measurement': value of measurement at this point,
                 or numpy.nan if no measurement here.
+              - 'stderr': standard error of measurement if provided.
 
         """
         if concentrations == 'auto':
@@ -428,9 +442,16 @@ class HillCurve:
         concentrations = scipy.concatenate([self.cs, concentrations])
         n = len(concentrations)
 
-        points = scipy.concatenate(
-                [self.fs,
-                 scipy.full(n - len(self.fs), scipy.nan)])
+        points = scipy.concatenate([self.fs,
+                                    scipy.full(n - len(self.fs), scipy.nan)
+                                    ])
+
+        if self.fs_stderr is None:
+            stderr = scipy.full(n, scipy.nan)
+        else:
+            stderr = scipy.concatenate([self.fs_stderr,
+                                        scipy.full(n - len(self.fs), scipy.nan)
+                                        ])
 
         fit = scipy.array([self.fracinfectivity(c) for c in concentrations])
 
@@ -439,6 +460,7 @@ class HillCurve:
                         [('concentration', concentrations),
                          ('measurement', points),
                          ('fit', fit),
+                         ('stderr', stderr),
                          ])
                     )
                 .sort_values('concentration')

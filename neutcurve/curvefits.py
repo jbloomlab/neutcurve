@@ -6,6 +6,8 @@ Defines :class:`CurveFits` to fit curves and display / plot results.
 """
 
 
+import pandas as pd
+
 import neutcurve
 
 
@@ -29,17 +31,17 @@ class CurveFits:
             serum / virus combination. Replicates can **not** be named
             'average' as we compute the average from the replicates.
         `fixbottom` (`False` or float)
-            Same meaning as for :mod:`hillcurve.HillCurve`.
+            Same meaning as for :mod:class:`hillcurve.HillCurve`.
         `fixtop` (`False` or float)
-            Same meaning as for :mod:`hillcurve.HillCurve`.
+            Same meaning as for :mod:class:`hillcurve.HillCurve`.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
             Copy of `data` that only has relevant columns, has additional rows
             with `replicate_col` of 'average' that hold replicate averages, and
-            an additional column 'stdev' holding the standard deviation of
-            fraction infectivity for 'average' if there multiple replicates,
-            and `nan` for all other replicates.
+            added columns 'stderr' (standard error of fraction infectivity
+            for 'average' if multiple replicates, otherwise `nan`) and
+            'nreplicates' (number replicates for 'average', otherwise 'nan').
         `sera` (list)
             List of all serum names in `serum_col` of `data`, in order
             they occur in `data`.
@@ -73,15 +75,20 @@ class CurveFits:
         self.fixtop = fixtop
 
         # check for required columns
-        cols = [self.conc_col, self.fracinf_col, self.serum_col,
-                self.virus_col, self.replicate_col]
+        cols = [self.serum_col, self.virus_col, self.replicate_col,
+                self.conc_col, self.fracinf_col]
         if len(cols) != len(set(cols)):
             raise ValueError('duplicate column names:\n\t' + '\n\t'.join(cols))
         if not (set(cols) <= set(data.columns)):
             raise ValueError('`data` lacks required columns, which are:\n\t' +
                              '\n\t'.join(cols))
 
-        self.df = data[cols]
+        # create `self.df`, ensure that replicates are str rather than number
+        self.df = (data[cols]
+                   .assign(**{replicate_col: lambda x: (x[replicate_col]
+                                                        .astype(str))
+                              })
+                   )
 
         # create sera / viruses / replicates attributes, error check them
         self.sera = self.df[self.serum_col].unique().tolist()
@@ -98,7 +105,7 @@ class CurveFits:
                     raise ValueError('A replicate is named "average". This is '
                                      'not allowed as that name is used for '
                                      'replicate averages.')
-                self.replicates[(serum, virus)] = virus_reps
+                self.replicates[(serum, virus)] = virus_reps + ['average']
                 for i, rep1 in enumerate(virus_reps):
                     conc1 = (virus_data
                              .query(f"{self.replicate_col} == @rep1")
@@ -120,6 +127,26 @@ class CurveFits:
                             raise ValueError(f"replicates {rep1} and {rep2} "
                                              'have different concentrations '
                                              f"for {serum}, {virus}")
+
+        # compute replicate average and add 'stderr' and 'nreplicates' columns
+        if {'nreplicates', 'stderr'}.intersection(set(self.df.columns)):
+            raise ValueError('`data` has columns "nreplicates" or "stderr"')
+        avg_df = (self.df
+                  .groupby([self.serum_col, self.virus_col, self.conc_col])
+                  [self.fracinf_col]
+                  # sem is sample stderr, evaluates to NaN when just 1 rep
+                  .aggregate(['mean', 'sem', 'count'])
+                  .rename(columns={'mean': self.fracinf_col,
+                                   'sem': 'stderr',
+                                   'count': 'nreplicates'
+                                   })
+                  .reset_index()
+                  .assign(**{replicate_col: 'average'})
+                  )
+        self.df = pd.concat([self.df, avg_df],
+                            ignore_index=True,
+                            sort=False,
+                            )
 
         self._hillcurves = {}  # curves computed by `getHillCurve` go here
 
@@ -155,8 +182,16 @@ class CurveFits:
                                   f"({self.virus_col} == @virus) & "
                                   f"({self.replicate_col} == @replicate)")
 
+            if idata['stderr'].isna().all():
+                fs_stderr = None
+            elif idata['stderr'].isna().any():
+                raise RuntimeError('`stderr` has some but not all entries NaN')
+            else:
+                fs_stderr = idata['stderr']
+
             curve = neutcurve.HillCurve(cs=idata[self.conc_col],
                                         fs=idata[self.fracinf_col],
+                                        fs_stderr=fs_stderr,
                                         fixbottom=self.fixbottom,
                                         fixtop=self.fixtop,
                                         )
