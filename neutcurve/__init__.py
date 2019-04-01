@@ -8,10 +8,10 @@ Fit and draw neutralization curves.
 Importing this package imports the following main functions
 and classes into the package namespace:
 
- - :mod:`neutcurve.fitcurve.CurveFits`: class to fit curves to
+ - :mod:`neutcurve.curvefits.CurveFits`: class to fit curves to
    data, then access and plot results.
 
- - :mod:`neutcurve.hillcurve.HillCurve`: class to fit a single Hill curve.
+ - :class:`neutcurve.hillcurve.HillCurve`: class to fit a single Hill curve.
 """
 
 __author__ = 'Jesse Bloom'
