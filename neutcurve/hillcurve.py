@@ -20,14 +20,14 @@ import scipy.optimize
 class HillCurve:
     r"""A fitted Hill curve, optionally with free baselines.
 
-    Fits :math:`f(c) = b + \frac{t - b}{1 + (c/m)^s}`
-    where :math:`f(c)` is the fraction infectivity remaining
+    Fits :math:`f\left(c\right) = b + \frac{t - b}{1 + \left(c/m\right)^s}`
+    where :math:`f\left(c\right)` is the fraction infectivity remaining
     at concentration :math:`c`, :math:`m` is the midpoint
     of the neutralization curve, :math:`t` is the top
     value (e.g., 1), :math:`b` is the bottom value (e.g., 0),
     and :math:`s` is the slope of the curve. Because
-    :math:`f(c)` is the fraction infectivity remaining, we expect
-    :math:`f(c)` to get smaller as :math:`c` gets larger.
+    :math:`f\left(c\right)` is the fraction infectivity remaining, we expect
+    :math:`f\left(c\right)` to get smaller as :math:`c` gets larger.
     This should lead us to fit :math:`s > 0`.
 
     When :math:`t = 1` and :math:`b = 0`, this equation is identical to the
@@ -46,13 +46,17 @@ class HillCurve:
             If `True`, fix bottom of curve to to this value; otherwise fit.
         `fixtop` (`False` or a float)
             If `True`, fix top of curve to this value; otherwise fit.
+        `fitlogc` (bool)
+            Do we do the actual fitting on the concentrations or log
+            concentrations? Gives equivalent results in principle, but
+            fitting to log concentrations may be more efficient in pratice.
 
     Attributes:
         `cs` (numpy array)
             Concentrations, sorted from low to high.
         `fs` (numpy array)
             Fraction infectivity, ordered to match sorted concentrations.
-        `fs_stderr` (numpy array)
+        `fs_stderr` (numpy array or `None`)
             Standard errors on `fs`.
         `bottom` (float)
             Bottom of curve, :math:`b` in equation above.
@@ -72,6 +76,7 @@ class HillCurve:
     .. nbplot::
 
         >>> import scipy
+        >>>
         >>> from neutcurve import HillCurve
         >>> from neutcurve.colorschemes import CBPALETTE
 
@@ -186,10 +191,34 @@ class HillCurve:
 
     In reality, you'd typically just call :meth:`dataframe` with
     the default argument of 'auto' to get a good range to plot.
+    This is done if we call the :meth:`HillCurve.plot` method:
+
+    .. nbplot::
+
+        >>> fig, ax = neut.plot()
+
+    Finally, we confirm that we get the same result regardless
+    of whether we fit using the concentrations in linear or
+    log space:
+
+    .. nbplot::
+
+        >>> neut_linear = HillCurve(cs, fs, fitlogc=False)
+        >>> all(scipy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
+        ...     for attr in ['top', 'bottom', 'slope', 'midpoint'])
+        True
 
     """
 
-    def __init__(self, cs, fs, *, fs_stderr=None, fixbottom=False, fixtop=1):
+    def __init__(self,
+                 cs,
+                 fs,
+                 *,
+                 fs_stderr=None,
+                 fixbottom=False,
+                 fixtop=1,
+                 fitlogc=True,
+                 ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
         self.cs = scipy.array(cs)
@@ -201,6 +230,9 @@ class HillCurve:
             self.fs_stderr = None
         self.fs = self.fs[self.cs.argsort()]
         self.cs = self.cs[self.cs.argsort()]
+
+        if any(self.cs <= 0):
+            raise ValueError('concentrations in `cs` must all be > 0')
 
         # make initial guess for slope to have the right sign
         if self.fs[0] >= self.fs[-1]:
@@ -248,42 +280,44 @@ class HillCurve:
             self.midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
 
         # set up function and initial guesses
+        if fitlogc:
+            evalfunc = self.evaluate_log
+            xdata = scipy.log(self.cs)
+        else:
+            evalfunc = self.evaluate
+            xdata = self.cs
         if fixtop is False and fixbottom is False:
-            initguess = [self.midpoint, self.slope, self.bottom, self.top]
-            func = self.evaluate
+            func_vars = ['midpoint', 'slope', 'bottom', 'top']
+            func = evalfunc
         elif fixtop is False:
-            initguess = [self.midpoint, self.slope, self.top]
+            func_vars = ['midpoint', 'slope', 'top']
 
             def func(c, m, s, t):
-                return self.evaluate(c, m, s, self.bottom, t)
+                return evalfunc(c, m, s, self.bottom, t)
 
         elif fixbottom is False:
-            initguess = [self.midpoint, self.slope, self.bottom]
+            func_vars = ['midpoint', 'slope', 'bottom']
 
             def func(c, m, s, b):
-                return self.evaluate(c, m, s, b, self.top)
+                return evalfunc(c, m, s, b, self.top)
         else:
-            initguess = [self.midpoint, self.slope]
+            func_vars = ['midpoint', 'slope']
 
             def func(c, m, s):
-                return self.evaluate(c, m, s, self.bottom, self.top)
+                return evalfunc(c, m, s, self.bottom, self.top)
+
+        initguess = [getattr(self, varname) for varname in func_vars]
 
         (popt, pcov) = scipy.optimize.curve_fit(
                 f=func,
-                xdata=self.cs,
+                xdata=xdata,
                 ydata=self.fs,
                 p0=initguess,
                 sigma=self.fs_stderr,
                 )
 
-        if fixtop is False and fixbottom is False:
-            (self.midpoint, self.slope, self.top, self.bottom) = popt
-        elif fixtop is False:
-            (self.midpoint, self.slope, self.top) = popt
-        elif fixbottom is False:
-            (self.midpoint, self.slope, self.bottom) = popt
-        else:
-            (self.midpoint, self.slope) = popt
+        for i, varname in enumerate(func_vars):
+            setattr(self, varname, popt[i])
 
     def ic50(self, method='interpolate'):
         r"""IC50 value.
@@ -340,8 +374,13 @@ class HillCurve:
 
     @staticmethod
     def evaluate(c, m, s, b, t):
-        r"""Get :math:`f(c) = b + \frac{t - b}{1 + (c/m)^s}`."""
+        r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`."""
         return b + (t - b) / (1 + (c / m)**s)
+
+    @staticmethod
+    def evaluate_log(logc, m, s, b, t):
+        """Like :class:`HillCurve.evaluate` but takes natural log :math:`c`."""
+        return b + (t - b) / (1 + (scipy.exp(logc) / m)**s)
 
     def plot(self,
              *,
