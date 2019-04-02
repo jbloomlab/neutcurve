@@ -5,6 +5,12 @@ curvefits
 Defines :class:`CurveFits` to fit curves and display / plot results.
 """
 
+import collections
+import itertools
+import math
+
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 
 import pandas as pd
 
@@ -12,7 +18,7 @@ import neutcurve
 
 
 class CurveFits:
-    """Fit and display :mod:`hillcurve.HillCurve` curves.
+    """Fit and display :class:`neutcurve.hillcurve.HillCurve` curves.
 
     Args:
         `data` (pandas DataFrame)
@@ -31,9 +37,9 @@ class CurveFits:
             serum / virus combination. Replicates can **not** be named
             'average' as we compute the average from the replicates.
         `fixbottom` (`False` or float)
-            Same meaning as for :mod:class:`hillcurve.HillCurve`.
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `fixtop` (`False` or float)
-            Same meaning as for :mod:class:`hillcurve.HillCurve`.
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
@@ -163,7 +169,7 @@ class CurveFits:
                 'average' for the average of all replicates.
 
         Returns:
-            A :mod:class:`HillCurve`.
+            A :class:`neutcurve.hillcurve.HillCurve`.
 
         """
         key = (serum, virus, replicate)
@@ -199,6 +205,231 @@ class CurveFits:
             self._hillcurves[key] = curve
 
         return self._hillcurves[key]
+
+    def plotGrid(self,
+                 plots,
+                 *,
+                 xlabel=None,
+                 ylabel=None,
+                 widthscale=1,
+                 heightscale=1,
+                 attempt_shared_legend=True,
+                 fix_lims=None,
+                 bound_ymin=0,
+                 bound_ymax=1,
+                 extend_lim=0.07,
+                 markersize=6,
+                 linewidth=1,
+                 linestyle='-',
+                 ):
+        """Plot arbitrary grid of curves.
+
+        Args:
+            `plots` (dict)
+                Plots to draw on grid. Keyed by 2-tuples `(irow, icol)`, which
+                give row and column (0, 1, ... numbering) where plot should be
+                drawn. Values are the 2-tuples `(title, curvelist)` where
+                `title` is title for this plot (or `None`) and `curvelist`
+                is a list of dicts keyed by:
+
+                  - 'serum'
+                  - 'virus'
+                  - 'replicate'
+                  - 'label': label for this curve in legend
+                  - 'color'
+                  - 'marker': https://matplotlib.org/api/markers_api.html
+
+            `xlabel`, `ylabel` (`None` or str)
+                Labels for x- and y-axes. If `None`, use `conc_col`
+                and `fracinf_col`, respectively.
+            `widthscale`, `heightscale` (float)
+                Scale width or height of figure by this much.
+            `attempt_shared_legend` (bool)
+                Share a single legend among plots if they all share
+                in common the same label assigned to the same color / marker.
+            `fix_lims` (dict or `None`)
+                To fix axis limits, specify any of 'xmin', 'xmax', 'ymin',
+                or 'ymax' with specified limit.
+            `bound_ymin`, `bound_ymax` (float or `None`)
+                Make y-axis min and max at least this small / large.
+                Ignored if using `fix_lims` for that axis limit.
+            `extend_lim` (float)
+                For all axis limits not in `fix_lims`, extend this fraction
+                of range above and below bounds / data limits.
+            `markersize` (float)
+                Size of point marker.
+            `linewidth` (float)
+                Width of line.
+            `linestyle` (str)
+                Line style.
+
+        Returns:
+            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
+
+        """
+        if not plots:
+            raise ValueError('empty `plots`')
+
+        # get number of rows / cols, curves, and data limits
+        nrows = ncols = None
+        if fix_lims is None:
+            fix_lims = {}
+        lims = fix_lims.copy()
+        if bound_ymin is not None:
+            lims['ymin'] = bound_ymin
+        if bound_ymax is not None:
+            lims['ymax'] = bound_ymax
+        for (irow, icol), (_title, curvelist) in plots.items():
+            if irow < 0:
+                raise ValueError('invalid row index `irow` < 0')
+            if icol < 0:
+                raise ValueError('invalid row index `icol` < 0')
+            if nrows is None:
+                nrows = irow + 1
+            else:
+                nrows = max(nrows, irow + 1)
+            if ncols is None:
+                ncols = icol + 1
+            else:
+                ncols = max(ncols, icol + 1)
+            for curvedict in curvelist:
+                curve = self.getHillCurve(serum=curvedict['serum'],
+                                          virus=curvedict['virus'],
+                                          replicate=curvedict['replicate']
+                                          )
+                curvedict['curve'] = curve
+                for lim, attr, limfunc, in [('xmin', 'cs', min),
+                                            ('xmax', 'cs', max),
+                                            ('ymin', 'fs', min),
+                                            ('ymax', 'fs', max)
+                                            ]:
+                    val = limfunc(getattr(curve, attr))
+                    if lim in fix_lims:
+                        pass
+                    elif lim not in lims:
+                        lims[lim] = val
+                    else:
+                        lims[lim] = limfunc(lims[lim], val)
+
+        # check and then extend limits
+        if lims['xmin'] <= 0:
+            raise ValueError(f"xmin {lims['xmin']} <= 0, which is not allowed")
+        yextent = lims['ymax'] - lims['ymin']
+        if yextent <= 0:
+            raise ValueError('no positive extent for y-axis')
+        if 'ymin' not in fix_lims:
+            lims['ymin'] -= yextent * extend_lim
+        if 'ymax' not in fix_lims:
+            lims['ymax'] += yextent * extend_lim
+        xextent = math.log(lims['xmax']) - math.log(lims['xmin'])
+        if xextent <= 0:
+            raise ValueError('no positive extent for x-axis')
+        if 'xmin' not in fix_lims:
+            lims['xmin'] = math.exp(math.log(lims['xmin']) -
+                                    xextent * extend_lim)
+        if 'xmax' not in fix_lims:
+            lims['xmax'] = math.exp(math.log(lims['xmax']) +
+                                    xextent * extend_lim)
+
+        fig, axes = plt.subplots(nrows=nrows,
+                                 ncols=ncols,
+                                 sharex=True,
+                                 sharey=True,
+                                 squeeze=False,
+                                 figsize=((1 + 3 * ncols) * widthscale,
+                                          (1 + 2.25 * nrows) * heightscale),
+                                 )
+
+        # set limits on shared axis
+        axes[0, 0].set_xlim(lims['xmin'], lims['xmax'])
+        axes[0, 0].set_ylim(lims['ymin'], lims['ymax'])
+
+        # make plots
+        shared_legend = attempt_shared_legend
+        kwargs_tup_to_label = {}  # used to determine if shared legend
+        legend_handles = collections.defaultdict(list)
+        shared_legend_handles = []  # handles if using shared legend
+        for (irow, icol), (title, curvelist) in plots.items():
+            ax = axes[irow, icol]
+            ax.set_title(title, fontsize=15)
+            for curvedict in curvelist:
+                kwargs = {'color': curvedict['color'],
+                          'marker': curvedict['marker'],
+                          'linestyle': linestyle,
+                          'linewidth': linewidth,
+                          'markersize': markersize,
+                          }
+                curvedict['curve'].plot(ax=ax,
+                                        xlabel=None,
+                                        ylabel=None,
+                                        **kwargs,
+                                        )
+                label = curvedict['label']
+                handle = Line2D(xdata=[],
+                                ydata=[],
+                                label=label,
+                                **kwargs,
+                                )
+                legend_handles[(irow, icol)].append(handle)
+                if shared_legend:
+                    kwargs_tup = tuple(sorted(kwargs.items()))
+                    if kwargs_tup in kwargs_tup_to_label:
+                        if kwargs_tup_to_label[kwargs_tup] != label:
+                            shared_legend = False
+                    else:
+                        kwargs_tup_to_label[kwargs_tup] = label
+                        shared_legend_handles.append(handle)
+        # draw legend(s)
+        legend_kwargs = {'fontsize': 12,
+                         'numpoints': 1,
+                         'markerscale': 1,
+                         'handlelength': 1,
+                         'labelspacing': 0.1,
+                         'handletextpad': 0.4,
+                         'frameon': True,
+                         'borderaxespad': 0.1,
+                         'borderpad': 0.2,
+                         }
+        if shared_legend:
+            # shared legend as here: https://stackoverflow.com/a/17328230
+            fig.legend(handles=shared_legend_handles,
+                       labels=[h.get_label() for h in shared_legend_handles],
+                       loc='center left',
+                       bbox_to_anchor=(1, 0.5),
+                       bbox_transform=fig.transFigure,
+                       **legend_kwargs,
+                       )
+        else:
+            for (irow, icol), handles in legend_handles.items():
+                ax = axes[irow, icol]
+                ax.legend(handles=handles,
+                          labels=[h.get_label() for h in handles],
+                          loc='lower left',
+                          **legend_kwargs,
+                          )
+
+        # hide unused axes
+        for irow, icol in itertools.product(range(nrows), range(ncols)):
+            if (irow, icol) not in plots:
+                axes[irow, icol].set_axis_off()
+
+        # common axis labels as here: https://stackoverflow.com/a/53172335
+        bigax = fig.add_subplot(111, frameon=False)
+        bigax.grid(False)
+        bigax.tick_params(labelcolor='none', top=False, bottom=False,
+                          left=False, right=False, which='both')
+        if xlabel is None:
+            bigax.set_xlabel(self.conc_col, fontsize=15, labelpad=10)
+        else:
+            bigax.set_xlabel(xlabel, fontsize=15, labelpad=10)
+        if ylabel is None:
+            bigax.set_ylabel(self.fracinf_col, fontsize=15, labelpad=10)
+        else:
+            bigax.set_yabel(ylabel, fontsize=15, labelpad=10)
+
+        fig.tight_layout()
+
+        return fig, axes
 
 
 if __name__ == '__main__':

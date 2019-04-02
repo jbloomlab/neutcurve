@@ -389,6 +389,10 @@ class HillCurve:
              xlabel='concentration',
              ylabel='fraction infectivity',
              color='black',
+             marker='o',
+             markersize=6,
+             linewidth=1,
+             linestyle='-',
              ):
         """Plot the neutralization curve.
 
@@ -399,10 +403,20 @@ class HillCurve:
             `ax` (`None` or matplotlib axes.Axes object)
                 Use to plot on an existing axis. If using an existing
                 axis, do **not** re-scale the axis limits to the data.
-            `xlabel` (str)
+            `xlabel` (str or `None`)
                 Label for x-axis.
-            `ylabel` (str)
+            `ylabel` (str or `None`)
                 Label for y-axis.
+            `color` (str)
+                Color of line and point.
+            `marker` (str)
+                Marker shape: https://matplotlib.org/api/markers_api.html
+            `markersize` (float)
+                Size of point marker.
+            `linewidth` (float)
+                Width of line.
+            `linestyle` (str)
+                Line style.
 
         Returns:
             The 2-tuple `(fig, ax)` giving the matplotlib figure and axis.
@@ -425,16 +439,16 @@ class HillCurve:
         ax.plot('concentration',
                 'fit',
                 data=data,
-                linestyle='-',
+                linestyle=linestyle,
+                linewidth=linewidth,
                 color=color,
                 )
 
-        markersize = 7
         ax.errorbar(x='concentration',
                     y='measurement',
                     yerr='stderr',
                     data=data,
-                    fmt='o',
+                    fmt=marker,
                     color=color,
                     markersize=markersize,
                     capsize=markersize / 1.5,
