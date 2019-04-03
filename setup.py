@@ -50,7 +50,7 @@ setup(
     license='GPLv3',
     install_requires=[
         'scipy>=1.1.0',
-        'pandas>=0.23',
+        'pandas>=0.24',
         'matplotlib>=3.0.0',
         ],
     platforms='Linux and Mac OS X.',

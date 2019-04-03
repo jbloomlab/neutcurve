@@ -46,8 +46,7 @@ class CurveFits:
             Copy of `data` that only has relevant columns, has additional rows
             with `replicate_col` of 'average' that hold replicate averages, and
             added columns 'stderr' (standard error of fraction infectivity
-            for 'average' if multiple replicates, otherwise `nan`) and
-            'nreplicates' (number replicates for 'average', otherwise 'nan').
+            for 'average' if multiple replicates, otherwise `nan`).
         `sera` (list)
             List of all serum names in `serum_col` of `data`, in order
             they occur in `data`.
@@ -134,9 +133,9 @@ class CurveFits:
                                              'have different concentrations '
                                              f"for {serum}, {virus}")
 
-        # compute replicate average and add 'stderr' and 'nreplicates' columns
-        if {'nreplicates', 'stderr'}.intersection(set(self.df.columns)):
-            raise ValueError('`data` has columns "nreplicates" or "stderr"')
+        # compute replicate average and add 'stderr'
+        if 'stderr' in self.df.columns:
+            raise ValueError('`data` has column "stderr"')
         avg_df = (self.df
                   .groupby([self.serum_col, self.virus_col, self.conc_col])
                   [self.fracinf_col]
@@ -144,7 +143,6 @@ class CurveFits:
                   .aggregate(['mean', 'sem', 'count'])
                   .rename(columns={'mean': self.fracinf_col,
                                    'sem': 'stderr',
-                                   'count': 'nreplicates'
                                    })
                   .reset_index()
                   .assign(**{replicate_col: 'average'})
@@ -154,9 +152,10 @@ class CurveFits:
                             sort=False,
                             )
 
-        self._hillcurves = {}  # curves computed by `getHillCurve` go here
+        self._hillcurves = {}  # curves computed by `getCurve` cached here
+        self._fitparams = None  # cache data frame computed by `fitParams`
 
-    def getHillCurve(self, *, serum, virus, replicate):
+    def getCurve(self, *, serum, virus, replicate):
         """Get the fitted curve for this sample.
 
         Args:
@@ -205,6 +204,78 @@ class CurveFits:
             self._hillcurves[key] = curve
 
         return self._hillcurves[key]
+
+    def fitParams(self,
+                  *,
+                  average_only=True,
+                  ):
+        """Get data frame with curve fitting parameters.
+
+        Args:
+            `average_only` (bool)
+                If `True`, only get parameters for average across replicates.
+
+        Returns:
+            A pandas DataFrame with fit parameters for each serum / virus /
+            replicate as defined for a :mod:`neutcurve.hillcurve.HillCurve`.
+            Columns:
+
+              - 'serum'
+              - 'virus'
+              - 'replicate'
+              - 'nreplicates': number of replicates for average, NaN otherwise.
+              - 'ic50': IC50 or its bound as a number.
+              - 'ic50_bound': string indicating if IC50 interpolated from data,
+                or is an upper or lower bound.
+              - 'ic50_str': IC50 represented as string, with > or < indicating
+                if it is an upper or lower bound.
+              - 'midpoint': same as IC50 iff bottom and top are 0 and 1.
+              - 'slope': Hill slope of curve.
+              - 'top': top of curve.
+              - 'bottom': bottom of curve.
+
+        """
+        if self._fitparams is None:
+            d = collections.defaultdict(list)
+            params = ['midpoint', 'slope', 'top', 'bottom']
+            for serum in self.sera:
+                for virus in self.viruses[serum]:
+                    replicates = self.replicates[(serum, virus)]
+                    nreplicates = sum(r != 'average' for r in replicates)
+                    assert nreplicates == len(replicates) - 1
+                    for replicate in replicates:
+                        curve = self.getCurve(serum=serum,
+                                              virus=virus,
+                                              replicate=replicate
+                                              )
+                        d['serum'].append(serum)
+                        d['virus'].append(virus)
+                        d['replicate'].append(replicate)
+                        if replicate == 'average':
+                            d['nreplicates'].append(nreplicates)
+                        else:
+                            d['nreplicates'].append(float('nan'))
+                        d['ic50'].append(curve.ic50('bound'))
+                        d['ic50_bound'].append(curve.ic50_bound())
+                        d['ic50_str'].append(curve.ic50_str())
+                        for param in params:
+                            d[param].append(getattr(curve, param))
+
+            self._fitparams = (pd.DataFrame(d)
+                               [['serum', 'virus', 'replicate', 'nreplicates',
+                                 'ic50', 'ic50_bound', 'ic50_str'] + params]
+                               .assign(nreplicates=lambda x: (x['nreplicates']
+                                                              .astype('Int64'))
+                                       )
+                               )
+
+        if average_only:
+            return (self._fitparams
+                    .query('replicate == "average"')
+                    .reset_index(drop=True)
+                    )
+        else:
+            return self._fitparams
 
     def plotGrid(self,
                  plots,
@@ -293,10 +364,10 @@ class CurveFits:
             else:
                 ncols = max(ncols, icol + 1)
             for curvedict in curvelist:
-                curve = self.getHillCurve(serum=curvedict['serum'],
-                                          virus=curvedict['virus'],
-                                          replicate=curvedict['replicate']
-                                          )
+                curve = self.getCurve(serum=curvedict['serum'],
+                                      virus=curvedict['virus'],
+                                      replicate=curvedict['replicate']
+                                      )
                 curvedict['curve'] = curve
                 for lim, attr, limfunc, in [('xmin', 'cs', min),
                                             ('xmax', 'cs', max),
