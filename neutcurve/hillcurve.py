@@ -139,7 +139,7 @@ class HillCurve:
 
     Now let's fit to concentrations that are all **less**
     than the midpoint, so that we never get to complete neutralization.
-    The estimated IC50 is unreliable, and so will be as `None` unless
+    The estimated IC50 is unreliable, and so will be returned as `None` unless
     we call :meth:`ic50` with `method` set to 'bound':
 
     .. nbplot::
@@ -167,7 +167,7 @@ class HillCurve:
         >>> neut.ic50_str()
         '0.0337'
         >>> neut3.ic50_str()
-        '<0.00064'
+        '>0.00064'
 
     We can use the :meth:`dataframe` method to get the measured
     data and fit data at selected points. First, we do this
@@ -404,8 +404,8 @@ class HillCurve:
         """
         ic50 = f"{{:.{precision}g}}".format(self.ic50('bound'))
         prefix = {'interpolated': '',
-                  'lower': '>',
-                  'upper': '<'}[self.ic50_bound()]
+                  'lower': '<',
+                  'upper': '>'}[self.ic50_bound()]
         return f"{prefix}{ic50}"
 
     def fracinfectivity(self, c):
