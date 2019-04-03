@@ -235,7 +235,7 @@ class CurveFits:
                   - 'serum'
                   - 'virus'
                   - 'replicate'
-                  - 'label': label for this curve in legend
+                  - 'label': label for this curve in legend, or `None`
                   - 'color'
                   - 'marker': https://matplotlib.org/api/markers_api.html
 
@@ -365,20 +365,21 @@ class CurveFits:
                                         **kwargs,
                                         )
                 label = curvedict['label']
-                handle = Line2D(xdata=[],
-                                ydata=[],
-                                label=label,
-                                **kwargs,
-                                )
-                legend_handles[(irow, icol)].append(handle)
-                if shared_legend:
-                    kwargs_tup = tuple(sorted(kwargs.items()))
-                    if kwargs_tup in kwargs_tup_to_label:
-                        if kwargs_tup_to_label[kwargs_tup] != label:
-                            shared_legend = False
-                    else:
-                        kwargs_tup_to_label[kwargs_tup] = label
-                        shared_legend_handles.append(handle)
+                if label:
+                    handle = Line2D(xdata=[],
+                                    ydata=[],
+                                    label=label,
+                                    **kwargs,
+                                    )
+                    legend_handles[(irow, icol)].append(handle)
+                    if shared_legend:
+                        kwargs_tup = tuple(sorted(kwargs.items()))
+                        if kwargs_tup in kwargs_tup_to_label:
+                            if kwargs_tup_to_label[kwargs_tup] != label:
+                                shared_legend = False
+                        else:
+                            kwargs_tup_to_label[kwargs_tup] = label
+                            shared_legend_handles.append(handle)
         # draw legend(s)
         legend_kwargs = {'fontsize': 12,
                          'numpoints': 1,
@@ -390,7 +391,7 @@ class CurveFits:
                          'borderaxespad': 0.1,
                          'borderpad': 0.2,
                          }
-        if shared_legend:
+        if shared_legend and shared_legend_handles:
             # shared legend as here: https://stackoverflow.com/a/17328230
             fig.legend(handles=shared_legend_handles,
                        labels=[h.get_label() for h in shared_legend_handles],
@@ -399,7 +400,7 @@ class CurveFits:
                        bbox_transform=fig.transFigure,
                        **legend_kwargs,
                        )
-        else:
+        elif legend_handles:
             for (irow, icol), handles in legend_handles.items():
                 ax = axes[irow, icol]
                 ax.legend(handles=handles,
