@@ -154,6 +154,21 @@ class HillCurve:
         >>> scipy.allclose(neut3.ic50(method='bound'), cs3[-1])
         True
 
+    Note that we can determine if the IC50 is interpolated or an upper
+    or lower bound using :meth:`ic50_bound`, and get a nice string
+    using :meth:`ic50_str`:
+
+    .. nbplot::
+
+        >>> neut.ic50_bound()
+        'interpolated'
+        >>> neut3.ic50_bound()
+        'upper'
+        >>> neut.ic50_str()
+        '0.0337'
+        >>> neut3.ic50_str()
+        '<0.00064'
+
     We can use the :meth:`dataframe` method to get the measured
     data and fit data at selected points. First, we do this
     just at measured points:
@@ -335,9 +350,9 @@ class HillCurve:
                     is in range of concentrations, otherwise return `None`.
 
                   - 'bound': if IC50 is out of range of concentrations,
-                    return upper or lower depending on whether IC50 is
-                    above or below range of concentrations. Based on
-                    assumption infectivity decreases with concentration.
+                    return upper or lower measured concentration depending
+                    on if IC50 is above or below range of concentrations.
+                    Assumes infectivity decreases with concentration.
 
         Returns:
             Number giving IC50 or `None` (depending on value of `method`).
@@ -366,6 +381,32 @@ class HillCurve:
                 raise ValueError(f"invalid `bound` {bound}")
         elif method != 'interpolate':
             raise ValueError(f"invalid `method` of {method}")
+
+    def ic50_bound(self):
+        """Is IC50 'interpolated', or an 'upper' or 'lower' bound."""
+        if self.ic50(method='interpolate') is not None:
+            return 'interpolated'
+        else:
+            ic50 = self.ic50(method='bound')
+            if ic50 == self.cs[0]:
+                return 'lower'
+            elif ic50 == self.cs[-1]:
+                return 'upper'
+            else:
+                raise RuntimeError('ic50 is not upper or lower bound')
+
+    def ic50_str(self, precision=3):
+        """IC50 as string indicating upper / lower bounds with > or <.
+
+        Args:
+            Number of significant digits in returned string.
+
+        """
+        ic50 = f"{{:.{precision}g}}".format(self.ic50('bound'))
+        prefix = {'interpolated': '',
+                  'lower': '>',
+                  'upper': '<'}[self.ic50_bound()]
+        return f"{prefix}{ic50}"
 
     def fracinfectivity(self, c):
         """Fraction infectivity at `c` for fitted parameters."""
