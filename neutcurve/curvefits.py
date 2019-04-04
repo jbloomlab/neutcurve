@@ -15,6 +15,7 @@ from matplotlib.lines import Line2D
 import pandas as pd
 
 import neutcurve
+from neutcurve.colorschemes import CBMARKERS, CBPALETTE
 
 
 class CurveFits:
@@ -56,6 +57,10 @@ class CurveFits:
         `replicates` (dict)
             `replicates[(serum, virus)]` is list of all replicates for
             that serum and virus in the order they occur in `data`.
+        `allviruses` (list)
+            List of all viruses.
+        `allreplicates` (list)
+            List of all replicates.
     """
 
     def __init__(self,
@@ -277,6 +282,136 @@ class CurveFits:
         else:
             return self._fitparams
 
+    def plotReplicates(self,
+                       *,
+                       ncol=4,
+                       nrow=None,
+                       sera='all',
+                       viruses='all',
+                       colors=CBPALETTE,
+                       markers=CBMARKERS,
+                       subplot_titles='{serum} vs {virus}',
+                       show_average=False,
+                       **kwargs,
+                       ):
+        """Plot grid with replicates for each serum / virus on same plot.
+
+        Args:
+            `ncol`, `nrow` (int or `None`)
+                Specify exactly one to set number of columns or rows.
+            `sera` ('all' or list)
+                Sera to include on plot, in this order.
+            `viruses` ('all' or list)
+                Viruses to include on plot, in this order.
+            `colors` (iterable)
+                List of colors for different replicates.
+            `markers` (iterable)
+                List of markers for different replicates.
+            `subplot_titles` (str)
+                Format string to build subplot titles from *serum* and *virus*.
+            `show_average` (bool)
+                Include the replicate-average as a "replicate" in plots.
+            `**kwargs`
+                Other keyword arguments that can be passed to
+                :meth:`CurveFits.plotGrid`.
+
+        Returns:
+            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
+
+        """
+        try:
+            subplot_titles.format(virus='dummy', serum='dummy')
+        except KeyError:
+            raise ValueError(f"`subplot_titles` {subplot_titles} invalid. "
+                             'Should have format keys only for virus '
+                             'and serum')
+
+        sera, viruses = self._sera_viruses_lists(sera, viruses)
+
+        # get replicates and make sure there aren't too many
+        nplottable = max(len(colors), len(markers))
+        replicates = collections.OrderedDict()
+        if show_average:
+            replicates['average'] = True
+        for serum, virus in itertools.product(sera, viruses):
+            if virus in self.viruses[serum]:
+                for replicate in self.replicates[(serum, virus)]:
+                    if replicate != 'average':
+                        replicates[replicate] = True
+        replicates = list(collections.OrderedDict(replicates).keys())
+        if len(replicates) > nplottable:
+            raise ValueError('Too many unique replicates. There are'
+                             f"{len(replicates)} ({', '.join(replicates)}) "
+                             f"but only {nplottable} `colors` or `markers`.")
+
+        # build list of plots appropriate for `plotGrid`
+        plotlist = []
+        for serum, virus in itertools.product(sera, viruses):
+            if virus in self.viruses[serum]:
+                title = subplot_titles.format(serum=serum, virus=virus)
+                curvelist = []
+                for i, replicate in enumerate(replicates):
+                    if replicate in self.replicates[(serum, virus)]:
+                        curvelist.append({'serum': serum,
+                                          'virus': virus,
+                                          'replicate': replicate,
+                                          'label': replicate,
+                                          'color': colors[i],
+                                          'marker': markers[i],
+                                          })
+                if curvelist:
+                    plotlist.append((title, curvelist))
+        if not plotlist:
+            raise ValueError('no curves for these sera / viruses')
+
+        # get number of columns
+        if (nrow is not None) and (ncol is not None):
+            raise ValueError('either `ncol` or `nrow` must be `None`')
+        elif isinstance(nrow, int) and nrow > 0:
+            ncol = math.ceil(len(plotlist) / nrow)
+        elif not (isinstance(ncol, int) and ncol > 0):
+            raise ValueError('`nrow` or `ncol` must be integer > 0')
+
+        # convert plotlist to plots dict for `plotGrid`
+        plots = {}
+        for iplot, plot in enumerate(plotlist):
+            plots[(iplot // ncol, iplot % ncol)] = plot
+
+        return self.plotGrid(plots, legendtitle='replicate', **kwargs)
+
+    def _sera_viruses_lists(self, sera, viruses):
+        """Checks and gets lists of `sera` and their `viruses`.
+
+        Args:
+            `sera` ('all' or list)
+            `viruses` ('all' or list)
+
+        Returns:
+            The 2-tuple `(sera, viruses)` which are checked lists.
+
+        """
+        if sera == 'all':
+            sera = self.sera
+        else:
+            extra_sera = set(sera) - set(self.sera)
+            if extra_sera:
+                raise ValueError(f"unrecognized sera: {extra_sera}")
+
+        allviruses = collections.OrderedDict()
+        for serum in sera:
+            for virus in self.viruses[serum]:
+                allviruses[virus] = True
+        allviruses = list(allviruses.keys())
+        if viruses == 'all':
+            viruses = allviruses
+        else:
+            extra_viruses = set(viruses) - set(allviruses)
+            if extra_viruses:
+                raise ValueError('unrecognized viruses for specified '
+                                 f"sera: {extra_viruses}")
+
+        return sera, viruses
+
     def plotGrid(self,
                  plots,
                  *,
@@ -292,6 +427,7 @@ class CurveFits:
                  markersize=6,
                  linewidth=1,
                  linestyle='-',
+                 legendtitle=None,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -422,7 +558,7 @@ class CurveFits:
         shared_legend_handles = []  # handles if using shared legend
         for (irow, icol), (title, curvelist) in plots.items():
             ax = axes[irow, icol]
-            ax.set_title(title, fontsize=15)
+            ax.set_title(title, fontsize=14)
             for curvedict in curvelist:
                 kwargs = {'color': curvedict['color'],
                           'marker': curvedict['marker'],
@@ -461,6 +597,8 @@ class CurveFits:
                          'frameon': True,
                          'borderaxespad': 0.1,
                          'borderpad': 0.2,
+                         'title': legendtitle,
+                         'title_fontsize': 13,
                          }
         if shared_legend and shared_legend_handles:
             # shared legend as here: https://stackoverflow.com/a/17328230
