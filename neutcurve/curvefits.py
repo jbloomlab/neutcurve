@@ -380,7 +380,7 @@ class CurveFits:
         return self.plotGrid(plots, legendtitle='replicate', **kwargs)
 
     def _sera_viruses_lists(self, sera, viruses):
-        """Checks and gets lists of `sera` and their `viruses`.
+        """Check and build lists of `sera` and their `viruses`.
 
         Args:
             `sera` ('all' or list)
