@@ -282,6 +282,130 @@ class CurveFits:
         else:
             return self._fitparams
 
+    def plotSera(self,
+                 *,
+                 ncol=4,
+                 nrow=None,
+                 sera='all',
+                 viruses='all',
+                 colors=CBPALETTE,
+                 markers=CBMARKERS,
+                 max_viruses_per_subplot=5,
+                 multi_serum_subplots=True,
+                 all_subplots=('WT', 'wt', 'wildtype', 'Wildtype',
+                               'wild type', 'Wild type'),
+                 **kwargs,
+                 ):
+        """Plot grid with replicate-average of viruses for each serum.
+
+        Args:
+            `ncol`, `nrow` (int or `None`)
+                Specify one of these to set number of columns or rows.
+            `sera` ('all' or list)
+                Sera to include on plot, in this order.
+            `viruses` ('all' or list)
+                Viruses to include on plot.
+            `colors` (iterable)
+                List of colors for different replicates.
+            `markers` (iterable)
+                List of markers for different replicates.
+            `max_viruses_per_subplot` (int)
+                Maximum number of viruses to show on any subplot.
+            `multi_serum_subplots` (bool)
+                If a serum has more than `max_virus_per_subplot` viruses,
+                do we make multiple subplots for it or raise an error?
+            `all_subplots` (iterable)
+                If making multiple subplots for serum, which samples
+                do we show on all subplots? These are also shown first.
+            `**kwargs`
+                Other keyword arguments that can be passed to
+                :meth:`CurveFits.plotGrid`.
+
+        Returns:
+            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
+
+        """
+        sera, viruses = self._sera_viruses_lists(sera, viruses)
+        viruses = set(viruses)
+
+        nplottable = min(len(colors), len(markers))  # max curves per plot
+        if nplottable < max_viruses_per_subplot:
+            raise ValueError('`max_viruses_per_subplot` larger than '
+                             'number of colors or markers')
+        if max_viruses_per_subplot < 1:
+            raise ValueError('`max_viruses_per_subplot` must be at least 1')
+
+        # can we share color scheme for viruses among all subplots?
+        if len(viruses) <= min(len(colors), len(markers)):
+            virus_to_color_marker = {v: (c, m) for (v, c, m) in
+                                     zip(viruses, colors, markers)}
+        else:
+            virus_to_color_marker = None
+
+        # Build a list of plots appropriate for `plotGrid`.
+        # Code is complicated because we could have several curve
+        # per serum, and in that case need to share viruses in
+        # `all_subplots` among curves.
+        plotlist = []
+        for serum in sera:
+            curvelist = []
+            ivirus = 0
+            serum_shared_viruses = [v for v in self.viruses[serum] if
+                                    (v in viruses) and (v in all_subplots)]
+            serum_unshared_viruses = [v for v in self.viruses[serum] if
+                                      (v in viruses) and
+                                      (v not in all_subplots)]
+            if len(serum_shared_viruses) >= max_viruses_per_subplot:
+                raise ValueError(f"serum {serum} has too many subplot-shared "
+                                 'viruses (in `all_subplots`) relative to '
+                                 'value of `max_viruses_per_subplot`')
+            shared_curvelist = []
+            for virus in serum_shared_viruses + serum_unshared_viruses:
+                if ivirus >= max_viruses_per_subplot:
+                    if multi_serum_subplots:
+                        plotlist.append((serum, curvelist))
+                        curvelist = [curve for curve in shared_curvelist]
+                        ivirus = len(curvelist)
+                        assert ivirus < max_viruses_per_subplot
+                    else:
+                        raise ValueError(f"serum {serum} has more than "
+                                         '`max_viruses_per_subplot` viruses '
+                                         'and `multi_serum_subplots` is False')
+                if virus_to_color_marker:
+                    color, marker = virus_to_color_marker[virus]
+                else:
+                    color = colors[ivirus]
+                    marker = markers[ivirus]
+                curvelist.append({'serum': serum,
+                                  'virus': virus,
+                                  'replicate': 'average',
+                                  'label': virus,
+                                  'color': color,
+                                  'marker': marker,
+                                  })
+                if virus in serum_shared_viruses:
+                    shared_curvelist.append(curvelist[-1])
+                ivirus += 1
+            if curvelist:
+                plotlist.append((serum, curvelist))
+        if not plotlist:
+            raise ValueError('no curves for these sera / viruses')
+
+        # get number of columns
+        if (nrow is not None) and (ncol is not None):
+            raise ValueError('either `ncol` or `nrow` must be `None`')
+        elif isinstance(nrow, int) and nrow > 0:
+            ncol = math.ceil(len(plotlist) / nrow)
+        elif not (isinstance(ncol, int) and ncol > 0):
+            raise ValueError('`nrow` or `ncol` must be integer > 0')
+
+        # convert plotlist to plots dict for `plotGrid`
+        plots = {}
+        for iplot, plot in enumerate(plotlist):
+            plots[(iplot // ncol, iplot % ncol)] = plot
+
+        return self.plotGrid(plots, **kwargs)
+
     def plotReplicates(self,
                        *,
                        ncol=4,
@@ -298,7 +422,7 @@ class CurveFits:
 
         Args:
             `ncol`, `nrow` (int or `None`)
-                Specify exactly one to set number of columns or rows.
+                Specify one of these to set number of columns or rows.
             `sera` ('all' or list)
                 Sera to include on plot, in this order.
             `viruses` ('all' or list)
@@ -377,7 +501,7 @@ class CurveFits:
         for iplot, plot in enumerate(plotlist):
             plots[(iplot // ncol, iplot % ncol)] = plot
 
-        return self.plotGrid(plots, legendtitle='replicate', **kwargs)
+        return self.plotGrid(plots, **kwargs)
 
     def _sera_viruses_lists(self, sera, viruses):
         """Check and build lists of `sera` and their `viruses`.
@@ -469,6 +593,8 @@ class CurveFits:
                 Width of line.
             `linestyle` (str)
                 Line style.
+            `legendtitle` (str or `None`)
+                Title of legend.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -599,6 +725,7 @@ class CurveFits:
                          'borderpad': 0.2,
                          'title': legendtitle,
                          'title_fontsize': 13,
+                         'framealpha': 0.6,
                          }
         if shared_legend and shared_legend_handles:
             # shared legend as here: https://stackoverflow.com/a/17328230
