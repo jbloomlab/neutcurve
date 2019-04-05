@@ -416,6 +416,7 @@ class CurveFits:
                        markers=CBMARKERS,
                        subplot_titles='{serum} vs {virus}',
                        show_average=False,
+                       average_only=False,
                        **kwargs,
                        ):
         """Plot grid with replicates for each serum / virus on same plot.
@@ -435,6 +436,9 @@ class CurveFits:
                 Format string to build subplot titles from *serum* and *virus*.
             `show_average` (bool)
                 Include the replicate-average as a "replicate" in plots.
+            `average_only` (bool)
+                Show **only** the replicate-average on each plot. No
+                legend in this case.
             `**kwargs`
                 Other keyword arguments that can be passed to
                 :meth:`CurveFits.plotGrid`.
@@ -454,15 +458,18 @@ class CurveFits:
 
         # get replicates and make sure there aren't too many
         nplottable = max(len(colors), len(markers))
-        replicates = collections.OrderedDict()
-        if show_average:
-            replicates['average'] = True
-        for serum, virus in itertools.product(sera, viruses):
-            if virus in self.viruses[serum]:
-                for replicate in self.replicates[(serum, virus)]:
-                    if replicate != 'average':
-                        replicates[replicate] = True
-        replicates = list(collections.OrderedDict(replicates).keys())
+        if average_only:
+            replicates = ['average']
+        else:
+            replicates = collections.OrderedDict()
+            if show_average:
+                replicates['average'] = True
+            for serum, virus in itertools.product(sera, viruses):
+                if virus in self.viruses[serum]:
+                    for replicate in self.replicates[(serum, virus)]:
+                        if replicate != 'average':
+                            replicates[replicate] = True
+            replicates = list(collections.OrderedDict(replicates).keys())
         if len(replicates) > nplottable:
             raise ValueError('Too many unique replicates. There are'
                              f"{len(replicates)} ({', '.join(replicates)}) "
@@ -479,7 +486,8 @@ class CurveFits:
                         curvelist.append({'serum': serum,
                                           'virus': virus,
                                           'replicate': replicate,
-                                          'label': replicate,
+                                          'label': {False: replicate,
+                                                    True: None}[average_only],
                                           'color': colors[i],
                                           'marker': markers[i],
                                           })
