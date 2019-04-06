@@ -56,6 +56,17 @@ DataFrame:
 .. nbplot::
 
     >>> fi6v3_datafile = 'example_data/Doud_et_al_2018-neutdata.csv'
+
+.. Next cell sets right file path if running with pytest from top directory.
+.. nbplot::
+   :include-source: false
+
+   >>> import os
+   >>> if not os.path.isfile(fi6v3_datafile):
+   ...     fi6v3_datafile = os.path.join('docs', fi6v3_datafile)
+
+.. nbplot::
+
     >>> data = pd.read_csv(fi6v3_datafile)
 
 Here are the first few lines of the data frame:
