@@ -199,12 +199,20 @@ class CurveFits:
             else:
                 fs_stderr = idata['stderr']
 
-            curve = neutcurve.HillCurve(cs=idata[self.conc_col],
-                                        fs=idata[self.fracinf_col],
-                                        fs_stderr=fs_stderr,
-                                        fixbottom=self.fixbottom,
-                                        fixtop=self.fixtop,
-                                        )
+            try:
+                curve = neutcurve.HillCurve(cs=idata[self.conc_col],
+                                            fs=idata[self.fracinf_col],
+                                            fs_stderr=fs_stderr,
+                                            fixbottom=self.fixbottom,
+                                            fixtop=self.fixtop,
+                                            )
+            except RuntimeError as e:
+                idata.to_csv('temp.csv', index=False)
+                # following here: https://stackoverflow.com/a/46091127
+                raise RuntimeError('Error while fitting HillCurve for '
+                                   f"serum {serum}, virus {virus}, "
+                                   f"replicate {replicate}.\nData are:\n" +
+                                   str(idata)) from e
 
             self._hillcurves[key] = curve
 
