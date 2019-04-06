@@ -11,7 +11,7 @@ To build the documentation, you need to install:
 
     * `sphinx`_ 
     
-    * `nb2plots`_
+    * `nb2plots`_ is used to render plots from code and generate examples from Jupyter notebooks
 
 Then simply type::
 
@@ -30,9 +30,6 @@ Note that the configuration automatically created by ``sphinx-quickstart`` has b
 
     * ``Makefile`` has been modified to automatically run `sphinx-apidoc`_.
 
-Notes on nb2plots
--------------------
-`nb2plots`_ was used to generate the `examples <./examples>`_ from Jupyter notebooks.
 
 .. _`reStructuredText`: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _`sphinx`: http://sphinx-doc.org/

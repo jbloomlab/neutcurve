@@ -63,8 +63,6 @@ First, we import the requisite Python modules:
 
 .. nbplot::
 
-    >>> import urllib.request
-    >>>
     >>> import pandas as pd
     >>>
     >>> import neutcurve
@@ -79,23 +77,19 @@ Now we get example data to plot. We use as our example the
 neutralization of wildtype (WT) A/WSN/1933 (H1N1) influenza by the
 broadly neutralizing antibody FI6v3 as determined in `Fig 6a of Doud et
 al (2018) <https://www.nature.com/articles/s41467-018-03665-3#Fig6>`__.
-The numerical data in that figure in tidy form are `available
-here <https://github.com/jbloomlab/neutcurve/blob/master/docs/examples/data/Doud_et_al_2018-neutdata.csv>`__;
-we download the data and get just the measurements for replicate 1 of
+The numerical data in that figure in tidy form are available in the CSV file
+:download:`example_data/Doud_et_al_2018-neutdata.csv <example_data/Doud_et_al_2018-neutdata.csv>`.
+We read the data and get just the measurements for replicate 1 of
 the wildtype virus against FI6v3:
 
 .. nbplot::
 
-    >>> fi6v3_datafile = ('https://raw.githubusercontent.com/jbloomlab/neutcurve/'
-    ...                   'master/docs/examples/data/Doud_et_al_2018-neutdata.csv')
-    ...
-    >>> with urllib.request.urlopen(fi6v3_datafile) as f:
-    ...     data = (pd.read_csv(f)
-    ...             .query('(serum == "FI6v3") & (virus == "WT") & (replicate == "1")')
-    ...             [['concentration', 'fraction infectivity']]
-    ...             .reset_index(drop=True)
-    ...             )
-    ...
+    >>> fi6v3_datafile = 'example_data/Doud_et_al_2018-neutdata.csv'
+    >>> data = (pd.read_csv(fi6v3_datafile)
+    ...         .query('(serum == "FI6v3") & (virus == "WT") & (replicate == "1")')
+    ...         [['concentration', 'fraction infectivity']]
+    ...         .reset_index(drop=True)
+    ...         )
     >>> data.round(5)
         concentration  fraction infectivity
     0         0.00020               1.01373
@@ -179,8 +173,10 @@ the range of the provided concentrations and so cannot be interpolated
 particular dataset, however, since the IC50 falls within the range of
 the data. There are also two other options that deal with IC50s that
 cannot be interpolated and so are only determinable as upper / lower
-bounds: 
+bounds:
+
   - :meth:`neutcurve.hillcurve.HillCurve.ic50_bound`
+
   - :meth:`neutcurve.hillcurve.HillCurve.ic50_str`
 
 .. nbplot::

@@ -27,8 +27,6 @@ First, import the necessary Python modules. In addition to the
 
 .. nbplot::
 
-    >>> import urllib.request
-    >>>
     >>> import pandas as pd
     >>>
     >>> import neutcurve
@@ -50,18 +48,15 @@ of variants A/WSN/1933 (H1N1) influenza by the broadly neutralizing
 antibody FI6v3 and strain-specific antibody H17-L19 from `Fig 6a,b of
 Doud et al
 (2018) <https://www.nature.com/articles/s41467-018-03665-3#Fig6>`__.
-These data in numerical form in a CSV file are `available
-here <https://github.com/jbloomlab/neutcurve/blob/master/docs/examples/data/Doud_et_al_2018-neutdata.csv>`__.
+These data in numerical form in a CSV file are available in the CSV file
+:download:`example_data/Doud_et_al_2018-neutdata.csv <example_data/Doud_et_al_2018-neutdata.csv>`
 We start by downloading these data and reading them into a pandas
 DataFrame:
 
 .. nbplot::
 
-    >>> fi6v3_datafile = ('https://raw.githubusercontent.com/jbloomlab/neutcurve/'
-    ...                   'master/docs/examples/data/Doud_et_al_2018-neutdata.csv')
-    ...
-    >>> with urllib.request.urlopen(fi6v3_datafile) as f:
-    ...     data = pd.read_csv(f)
+    >>> fi6v3_datafile = 'example_data/Doud_et_al_2018-neutdata.csv'
+    >>> data = pd.read_csv(fi6v3_datafile)
 
 Here are the first few lines of the data frame:
 
@@ -89,17 +84,22 @@ And here are the last few lines:
 
 As can be seen above, the data are organized into five columns, all of
 which must be present. These columns are: 
+
   - *serum*: the name of the
     serum (or antibody). FI6v3 and H17-L19 are actually antibodies, not
     sera, but :class:`neutcurve.curvefits.CurveFits` is set up to refer to
     things as serum. 
+
   - *virus*: the name of the virus being neutralized by
     the serum. 
+
   - *replicate*: the replicate label for the measurement.
     Although you can have just one replicate, it’s good experimental
     practice to have several. All the replicates for a given virus / serum
     combination must have been measured at the same concentrations. 
+
   - *concentration*: the concentration of the serum. 
+
   - *fraction infectivity*: the fraction infectivity of the virus at this
     concentration of the serum measured in this replicate.
 

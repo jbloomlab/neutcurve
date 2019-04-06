@@ -9,8 +9,8 @@ Contents
    :maxdepth: 1
 
    installation
-   examples/hillcurve
-   examples/curvefits
+   hillcurve_example
+   curvefits_example
    neutcurve
    package_index
    acknowledgments
