@@ -21,7 +21,7 @@ import os
 import re
 import sys
 
-sys.path.insert(0, '{0}/../neutcurve'.format(os.path.abspath('.')))
+sys.path.insert(0, '{0}/..'.format(os.path.abspath('.')))
 
 
 # -- General configuration ------------------------------------------------
