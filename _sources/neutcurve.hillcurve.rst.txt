@@ -1,0 +1,4 @@
+.. automodule:: neutcurve.hillcurve
+    :members:
+    :undoc-members:
+    :show-inheritance:

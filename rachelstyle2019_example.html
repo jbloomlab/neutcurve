@@ -1,0 +1,446 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Bloom lab “Rachel-style 2019” flu neutralization assays &#8212; neutcurve 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="neutcurve package" href="neutcurve.html" />
+    <link rel="prev" title="Raw data from plate reader" href="raw_examples.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="bloom-lab-rachel-style-2019-flu-neutralization-assays">
+<span id="rachelstyle2019-example"></span><h1>Bloom lab “Rachel-style 2019” flu neutralization assays<a class="headerlink" href="#bloom-lab-rachel-style-2019-flu-neutralization-assays" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#experimental-setup" id="id1">Experimental setup</a></li>
+<li><a class="reference internal" href="#import-python-packages" id="id2">Import Python packages</a></li>
+<li><a class="reference internal" href="#specify-configuration-of-data" id="id3">Specify configuration of data</a></li>
+<li><a class="reference internal" href="#read-the-data-from-the-excel-files" id="id4">Read the data from the Excel files</a></li>
+<li><a class="reference internal" href="#fit-and-analyze-the-curves" id="id5">Fit and analyze the curves</a></li>
+<li><a class="reference internal" href="#processing-your-own-data" id="id6">Processing your own data</a></li>
+</ul>
+</div>
+<div class="section" id="experimental-setup">
+<h2><a class="toc-backref" href="#id1">Experimental setup</a><a class="headerlink" href="#experimental-setup" title="Permalink to this headline">¶</a></h2>
+<p>Here we describe how to parse data from influenza neutralization assays
+set up in the <strong>very specific</strong> way used by Rachel Eguia and Juhye Lee
+in the <a class="reference external" href="https://research.fhcrc.org/bloom/en.html">Bloom lab</a> as of
+2019. If you want to parse data using this approach, you must set up the
+assays exactly as described here.</p>
+<p>For general background on the Bloom lab GFP influenza neutralization
+assays, see:</p>
+<ul class="simple">
+<li>The <a class="reference external" href="https://jvi.asm.org/content/87/23/12531.full">Hooper et al
+(2013)</a> paper that
+originally described these assays.</li>
+<li>The <a class="reference external" href="https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006271">Doud et al
+(2017)</a>
+paper that gives a more detailed protocol.</li>
+<li>The extensive experimental details at
+<a class="reference external" href="https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay">https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay</a></li>
+</ul>
+<p>Here we describe how to parse data from the Excel files created by the
+Tecan Safire Infinite M1000 used by the <a class="reference external" href="https://research.fhcrc.org/bloom/en.html">Bloom
+lab</a> to read these assays.</p>
+<p>The assays are assumed to be in 96-well plates, with a different sample
+type in each of the 8 rows (A to H) and the serum diluted across the 12
+columns (1 to 12). The highest serum concentration is in column 12 and
+it is serially diluted down to the lowest concentration in column 1. The
+samples are as follows: - there are three replicates of the same virus
+and serum in rows D, E, and F - rows C and G have the no-serum control
+used to establish the maximal signal in the absence of neutralization -
+row B has the virus-only control used to establish the background signal
+expected at full neutralization - rows A and G have a media-only control
+that should have very low signal (these rows can also be empty)</p>
+<p>See
+<a class="reference download internal" download="" href="_downloads/31f7947cf0c14bf9af7f0c9acccbe66e/rachelstyle2019_22Feb19_setup.pdf"><code class="xref download docutils literal notranslate"><span class="pre">example_data/rachelstyle2019_22Feb19_setup.pdf</span></code></a>
+for Rachel’s lab notes on how exactly she set up the assays analyzed
+here.</p>
+</div>
+<div class="section" id="import-python-packages">
+<h2><a class="toc-backref" href="#id2">Import Python packages</a><a class="headerlink" href="#import-python-packages" title="Permalink to this headline">¶</a></h2>
+<p>First, import the necessary Python modules. In addition to the
+<code class="docutils literal notranslate"><span class="pre">neutcurve</span></code> package itself, we also use
+<a class="reference external" href="https://pandas.pydata.org">pandas</a> to hold the data and
+<a class="reference external" href="https://pyyaml.org/wiki/PyYAMLDocumentation">pyyaml</a> to parse the
+YAML configuration file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">neutcurve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">neutcurve.parse_excel</span>
+</pre></div>
+</div>
+<p>Set output format of pandas Data Frames:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:.3g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specify-configuration-of-data">
+<h2><a class="toc-backref" href="#id3">Specify configuration of data</a><a class="headerlink" href="#specify-configuration-of-data" title="Permalink to this headline">¶</a></h2>
+<p>In order to parse the raw experimental data in the Excel files, we need
+to describe how they are configured. The data can consist of one or more
+Excel files, each of which may have one or more sheets. Each sheet
+specifies three replicates of a virus against a serum as described
+above.</p>
+<p>In order to parse an Excel file, we need to supply the information taken
+by <a class="reference internal" href="neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019" title="neutcurve.parse_excel.parseRachelStyle2019"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.parse_excel.parseRachelStyle2019()</span></code></a>. As described in
+the docs for that function, for each Excel file we need:</p>
+<ul class="simple">
+<li><em>excelfile</em>: the name of the Excel file</li>
+<li><em>sheet_mapping</em>: a dictionary keyed be the name of each sheet in
+<em>excelfile</em> which in turn specifies:<ul>
+<li>‘serum’: name of serum</li>
+<li>‘virus’: name of virus</li>
+<li>‘initial_concentration’: highest concentration of serum</li>
+<li>‘dilution_factor’: dilution factor in serial dilutions of serum</li>
+</ul>
+</li>
+</ul>
+<p>You can specify this information in a <a class="reference external" href="https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html">YAML
+format</a>
+file. In this notebook, we parse the Excel data in the single Excel file
+<a class="reference download internal" download="" href="_downloads/99aa1a43828cd665473694a55af6146c/rachelstyle2019_22Feb19_neutdata.xlsx"><code class="xref download docutils literal notranslate"><span class="pre">example_data/rachelstyle2019_22Feb19_neutdata.xlsx</span></code></a>,
+which consists of eight sheets. So we have created a YAML file,
+<a class="reference download internal" download="" href="_downloads/408dbc56ad62e832336de2d7cbb9ec49/rachelstyle2019_config.yaml"><code class="xref download docutils literal notranslate"><span class="pre">example_data/rachelstyle2019_config.yaml</span></code></a>
+that specifies the information in that Excel file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config_file</span> <span class="o">=</span> <span class="s1">&#39;example_data/rachelstyle2019_config.yaml&#39;</span>
+</pre></div>
+</div>
+<p>Here are the contents of the YAML configuration file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+<span class="go">- 22Feb19:</span>
+<span class="go">    excelfile: example_data/rachelstyle2019_22Feb19_neutdata.xlsx</span>
+<span class="go">    sheet_mapping:</span>
+<span class="go">      16:</span>
+<span class="go">        serum: HC080048</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      17:</span>
+<span class="go">        serum: HC080043</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      18:</span>
+<span class="go">        serum: HC060106</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      19:</span>
+<span class="go">        serum: HC140010</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      20:</span>
+<span class="go">        serum: HC070072</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      21:</span>
+<span class="go">        serum: HC070041</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      22:</span>
+<span class="go">        serum: HC120043</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+<span class="go">      23:</span>
+<span class="go">        serum: HC150036</span>
+<span class="go">        virus: wt</span>
+<span class="go">        dilution_factor: 3</span>
+<span class="go">        initial_concentration: 0.037</span>
+</pre></div>
+</div>
+<p>Note how the YAML file lists the experiment for each Excel file (in this
+case, there is only one), and then gives the name of the Excel file
+(<em>excelfile</em>) and the specificiation for the sheets in that file
+(<em>sheet_mapping</em>). Therefore, the dictionary for each experiment can be
+directly passed to <a class="reference internal" href="neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019" title="neutcurve.parse_excel.parseRachelStyle2019"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.parse_excel.parseRachelStyle2019()</span></code></a>
+as <cite>**kwargs</cite>.</p>
+<p>We also need to specify the output directory where the results are
+written:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_example_analysis/rachelstyle2019/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="read-the-data-from-the-excel-files">
+<h2><a class="toc-backref" href="#id4">Read the data from the Excel files</a><a class="headerlink" href="#read-the-data-from-the-excel-files" title="Permalink to this headline">¶</a></h2>
+<p>Now we read in the configuration specified in our <em>config_file</em> into the
+variable <em>config</em>, which will be a list of dicts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, for each dict in <em>config</em>, we use
+<a class="reference internal" href="neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019" title="neutcurve.parse_excel.parseRachelStyle2019"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.parse_excel.parseRachelStyle2019()</span></code></a> to create a tidy
+data frame appropriate for passing to
+<a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> as described in <a class="reference internal" href="curvefits_example.html#curvefits-example"><span class="std std-ref">Fitting curves to real data</span></a>.
+We then concatenate all the
+tidy data frame to get our neutralization data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store all data frame, then concatenate at end</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">sampledict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampledict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">sampleset</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampledict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Parsing data for </span><span class="si">{sampleset}</span><span class="s2">...&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">neutdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neutcurve</span><span class="o">.</span><span class="n">parse_excel</span><span class="o">.</span><span class="n">parseRachelStyle2019</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+<span class="go">Parsing data for 22Feb19...</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">neutdata</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Read data for {len(neutdata.groupby(&#39;serum&#39;))} sera and &quot;</span>
+<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;{len(neutdata.groupby([&#39;serum&#39;, &#39;virus&#39;]))} serum / virus pairs.&quot;</span><span class="p">)</span>
+<span class="go">Read data for 8 sera and 8 serum / virus pairs.</span>
+</pre></div>
+</div>
+<p>We write the neutralization data to a CSV file in our output directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdatafile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;neutdata.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">neutdatafile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrote neutralization data to </span><span class="si">{neutdatafile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Wrote neutralization data to _example_analysis/rachelstyle2019/neutdata.csv</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fit-and-analyze-the-curves">
+<h2><a class="toc-backref" href="#id5">Fit and analyze the curves</a><a class="headerlink" href="#fit-and-analyze-the-curves" title="Permalink to this headline">¶</a></h2>
+<p>Now we can simply fit the data in <em>neutdata</em> with a
+<a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> as in <a class="reference internal" href="curvefits_example.html#curvefits-example"><span class="std std-ref">Fitting curves to real data</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span> <span class="o">=</span> <span class="n">neutcurve</span><span class="o">.</span><span class="n">CurveFits</span><span class="p">(</span><span class="n">neutdata</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Make plots that show the curves for all replicates for each serum /
+virus combination:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_reps</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotReplicates</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//rachelstyle2019_example-12.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-12.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-12.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="_images/rachelstyle2019_example-12.png" src="_images/rachelstyle2019_example-12.png" />
+</div>
+<p>Make plots that just show the across-replicate averages for each serum /
+virus combination:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_avgs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotAverages</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//rachelstyle2019_example-13.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="_images/rachelstyle2019_example-13.png" src="_images/rachelstyle2019_example-13.png" />
+</div>
+<p>Make plots that show all viruses for each serum. Note that for this
+particular dataset, this plot isn’t really any different than the one
+above–but we make it here because it will be different for datasets that
+involve multiple different viruses:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_sera</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;virus&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                            <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//rachelstyle2019_example-14.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-14.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-14.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="_images/rachelstyle2019_example-14.png" src="_images/rachelstyle2019_example-14.png" />
+</div>
+<p>Now we write all of the plots to PDF files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">plotname</span><span class="p">,</span> <span class="n">fig</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;replicates_plot&#39;</span><span class="p">,</span> <span class="n">fig_reps</span><span class="p">),</span>
+<span class="gp">... </span>                      <span class="p">(</span><span class="s1">&#39;average_plot&#39;</span><span class="p">,</span> <span class="n">fig_avgs</span><span class="p">),</span>
+<span class="gp">... </span>                      <span class="p">(</span><span class="s1">&#39;sera_plot&#39;</span><span class="p">,</span> <span class="n">fig_sera</span><span class="p">)]:</span>
+<span class="gp">... </span>    <span class="n">plotfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">plotname</span> <span class="o">+</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Creating plot </span><span class="si">{plotfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plotfile</span><span class="p">)</span>
+<span class="go">Creating plot _example_analysis/rachelstyle2019/replicates_plot.pdf</span>
+<span class="go">Creating plot _example_analysis/rachelstyle2019/average_plot.pdf</span>
+<span class="go">Creating plot _example_analysis/rachelstyle2019/sera_plot.pdf</span>
+</pre></div>
+</div>
+<p>We also look at the numerical values of the fit parameters, including
+the IC50s:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
+<span class="go">      serum virus replicate  nreplicates    ic50    ic50_bound ic50_str  midpoint  slope  top  bottom</span>
+<span class="go">0  HC080048    wt   average            3 0.00638  interpolated  0.00638   0.00638   2.71    1       0</span>
+<span class="go">1  HC080043    wt   average            3 0.00273  interpolated  0.00273   0.00273   1.35    1       0</span>
+<span class="go">2  HC060106    wt   average            3  0.0111  interpolated   0.0111    0.0111   1.16    1       0</span>
+<span class="go">3  HC140010    wt   average            3  0.0105  interpolated   0.0105    0.0105   3.36    1       0</span>
+<span class="go">4  HC070072    wt   average            3 0.00473  interpolated  0.00473   0.00473   1.79    1       0</span>
+<span class="go">5  HC070041    wt   average            3 0.00158  interpolated  0.00158   0.00158   3.86    1       0</span>
+<span class="go">6  HC120043    wt   average            3 0.00229  interpolated  0.00229   0.00229   1.97    1       0</span>
+<span class="go">7  HC150036    wt   average            3 0.00155  interpolated  0.00155   0.00155   2.61    1       0</span>
+</pre></div>
+</div>
+<p>We write these fit parameters to a CSV file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fitfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;fitparams.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fitfile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Wrote fit parameters to </span><span class="si">{fitfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Wrote fit parameters to _example_analysis/rachelstyle2019/fitparams.csv</span>
+</pre></div>
+</div>
+<p>So overall, this analysis has created several plots and CSV files in
+<em>outdir</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Here are the created files in </span><span class="si">{outdir}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">  &quot;</span> <span class="o">+</span>
+<span class="gp">... </span>      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">))))</span>
+<span class="go">Here are the created files in _example_analysis/rachelstyle2019/:</span>
+<span class="go">  average_plot.pdf</span>
+<span class="go">  fitparams.csv</span>
+<span class="go">  neutdata.csv</span>
+<span class="go">  replicates_plot.pdf</span>
+<span class="go">  sera_plot.pdf</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="processing-your-own-data">
+<h2><a class="toc-backref" href="#id6">Processing your own data</a><a class="headerlink" href="#processing-your-own-data" title="Permalink to this headline">¶</a></h2>
+<p>This document processes some example data.
+To run the same analysis in your own data, download this document as a Jupyter notebook here:</p>
+<a class="reference download internal" href="rachelstyle2019_example_full.ipynb">Download this page as a Jupyter notebook (with outputs)</a><p>Then go to the <a class="reference internal" href="#specify-configuration-of-data">Specify configuration of data</a> section and update the <em>config_file</em> data to point to a YAML file configuring your actual data, and change the <em>outdir</em> variable to point to the output directory that you actually want to create.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/BloomLogo.jpg" alt="Logo"/>
+    
+    <h1 class="logo logo-name">neutcurve</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Fit and plot neutralization curves</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jbloomlab&repo=neutcurve&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+    <img
+        alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+        src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">neutcurve documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="raw_examples.html">Raw data from plate reader</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Bloom lab “Rachel-style 2019” flu neutralization assays</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neutcurve.html">neutcurve package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="package_index.html">package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="raw_examples.html">Raw data from plate reader</a><ul>
+      <li>Previous: <a href="raw_examples.html" title="previous chapter">Raw data from plate reader</a></li>
+      <li>Next: <a href="neutcurve.html" title="next chapter">neutcurve package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019--2019, Bloom lab.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/rachelstyle2019_example.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/jbloomlab/neutcurve" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

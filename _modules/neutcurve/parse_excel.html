@@ -1,0 +1,290 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>neutcurve.parse_excel &#8212; neutcurve 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for neutcurve.parse_excel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">==================</span>
+<span class="sd">parse_excel</span>
+<span class="sd">==================</span>
+
+<span class="sd">Defines functions for parsing data directly from Excel in specific formats.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="parseRachelStyle2019"><a class="viewcode-back" href="../../neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019">[docs]</a><span class="k">def</span> <span class="nf">parseRachelStyle2019</span><span class="p">(</span><span class="o">*</span><span class="p">,</span>
+                         <span class="n">excelfile</span><span class="p">,</span>
+                         <span class="n">sheet_mapping</span><span class="p">,</span>
+                         <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse data from Rachel Eguia&#39;s 2019-style assays on Bloom lab Tecan.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        `excelfile` (str)</span>
+<span class="sd">            Excel file with data exactly as produced by plate reader.</span>
+<span class="sd">        `sheet_mapping` (dict)</span>
+<span class="sd">            Describes data in each sheet of `excelfile`. There should</span>
+<span class="sd">            be a key matching the name of each Excel sheet. The value</span>
+<span class="sd">            for each key is another dict with the following keys / values</span>
+<span class="sd">            describing the data for that plate (we assume one sheet per</span>
+<span class="sd">            serum  / virus pair):</span>
+
+<span class="sd">              - &#39;serum&#39;: name of serum.</span>
+<span class="sd">              - &#39;virus&#39;: name of virus.</span>
+<span class="sd">              - &#39;dilution_factor&#39;: fold-dilution of serum along plate.</span>
+<span class="sd">              - &#39;initial_concentration&#39;: final serum concentration in</span>
+<span class="sd">                the first well used to start the dilution series.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A pandas DataFrame in the tidy format read by</span>
+<span class="sd">        :class:`neutcurve.curvefits.CurveFits`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">excelfile</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;cannot find `excelfile` </span><span class="si">{excelfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">sheet_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">excelfile</span><span class="p">,</span>
+                               <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># read all sheets</span>
+                               <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;xlrd&#39;</span><span class="p">,</span>
+                               <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+                               <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">nrows</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                               <span class="p">)</span>
+
+    <span class="c1"># keys of sheet_mapping should be str</span>
+    <span class="n">sheet_mapping</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="n">val</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">sheet_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">extra_sheets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_data</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_mapping</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extra_sheets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;`excelfile` </span><span class="si">{excelfile}</span><span class="s2"> has the following extra &quot;</span>
+                         <span class="n">f</span><span class="s2">&quot;sheets not in `sheet_mapping`: </span><span class="si">{extra_sheets}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">neutdata</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">sheet_info</span> <span class="ow">in</span> <span class="n">sheet_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">sheet</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sheet_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;sheet </span><span class="si">{sheet}</span><span class="s2"> specified in `sheet_mapping` &quot;</span>
+                             <span class="n">f</span><span class="s2">&quot;is not present in `excelfile` </span><span class="si">{excelfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="s1">&#39;RachelStyle2019&#39;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dilution_factor&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_concentration&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;`sheet_mapping` does not specify </span><span class="si">{key}</span><span class="s2"> &quot;</span>
+                                 <span class="n">f</span><span class="s2">&quot;for sheet </span><span class="si">{sheet}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">neutdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_parse_BloomLab_TecanPlate</span><span class="p">(</span>
+                <span class="n">sheet_df</span><span class="o">=</span><span class="n">sheet_data</span><span class="p">[</span><span class="n">sheet</span><span class="p">],</span>
+                <span class="n">sheet_name_for_err</span><span class="o">=</span><span class="n">f</span><span class="s2">&quot;sheet </span><span class="si">{sheet}</span><span class="s2"> of </span><span class="si">{excelfile}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">neutdata</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_BloomLab_TecanPlate</span><span class="p">(</span><span class="o">*</span><span class="p">,</span>
+                               <span class="n">sheet_df</span><span class="p">,</span>
+                               <span class="n">sheet_name_for_err</span><span class="p">,</span>
+                               <span class="n">initial_concentration</span><span class="p">,</span>
+                               <span class="n">dilution_factor</span><span class="p">,</span>
+                               <span class="n">layout</span><span class="p">,</span>
+                               <span class="n">serum</span><span class="p">,</span>
+                               <span class="n">virus</span><span class="p">,</span>
+                               <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process data frame for one 96-well plate of Bloom lab Tecan.&quot;&quot;&quot;</span>
+    <span class="c1"># expected rows / columns</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">))</span>
+
+    <span class="c1"># check for expected rows / columns</span>
+    <span class="k">if</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{sheet_name_for_err}</span><span class="s2"> does not have expected rows.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="n">f</span><span class="s2">&quot;Expected: </span><span class="si">{rows}</span><span class="se">\n</span><span class="s2">Got: {sheet_df.index.tolist()}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">cols</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{sheet_name_for_err}</span><span class="s2"> does not have expected &quot;</span>
+                         <span class="n">f</span><span class="s2">&quot;columns.</span><span class="se">\n</span><span class="s2">Expected: </span><span class="si">{cols}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="n">f</span><span class="s2">&quot;Got: {sheet_df.columns.tolist()}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">sheet_df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Entries in </span><span class="si">{sheet_name_for_err}</span><span class="s2"> not all numerical&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">&#39;RachelStyle2019&#39;</span><span class="p">:</span>
+        <span class="n">reps</span> <span class="o">=</span> <span class="p">{</span><span class="n">rep</span><span class="p">:</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">rep</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
+                                                        <span class="p">(</span><span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">),</span>
+                                                        <span class="p">(</span><span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">)]}</span>
+        <span class="n">no_serum</span> <span class="o">=</span> <span class="p">(</span><span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">virus_only</span> <span class="o">=</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">]</span>
+        <span class="n">media_only</span> <span class="o">=</span> <span class="p">(</span><span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;H&#39;</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">media_only</span> <span class="o">&gt;</span> <span class="n">virus_only</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;In </span><span class="si">{sheet_name_for_err}</span><span class="s2">, the media-only &quot;</span>
+                             <span class="n">f</span><span class="s2">&quot;control has more signal than the virus-only &quot;</span>
+                             <span class="n">f</span><span class="s2">&quot;control, which is unexpected:</span><span class="se">\n</span><span class="si">{sheet_df}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># compute fraction infectivity for each replicate</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">rep</span><span class="p">:</span> <span class="p">(</span><span class="n">repval</span> <span class="o">-</span> <span class="n">virus_only</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">no_serum</span> <span class="o">-</span> <span class="n">virus_only</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">rep</span><span class="p">,</span> <span class="n">repval</span> <span class="ow">in</span> <span class="n">reps</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;concentration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_concentration</span> <span class="o">/</span> <span class="n">dilution_factor</span><span class="o">**</span><span class="n">i</span>
+                                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+              <span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="s1">&#39;concentration&#39;</span><span class="p">,</span>
+                    <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">,</span>
+                    <span class="n">value_name</span><span class="o">=</span><span class="s1">&#39;fraction infectivity&#39;</span>
+                    <span class="p">)</span>
+              <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;invalid `layout` of </span><span class="si">{layout}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">df</span>
+            <span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">serum</span><span class="o">=</span><span class="n">serum</span><span class="p">,</span>
+                    <span class="n">virus</span><span class="o">=</span><span class="n">virus</span><span class="p">)</span>
+            <span class="p">[[</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">,</span> <span class="s1">&#39;replicate&#39;</span><span class="p">,</span> <span class="s1">&#39;concentration&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;fraction infectivity&#39;</span><span class="p">]]</span>
+            <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/BloomLogo.jpg" alt="Logo"/>
+    
+    <h1 class="logo logo-name">neutcurve</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Fit and plot neutralization curves</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jbloomlab&repo=neutcurve&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+    <img
+        alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+        src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">neutcurve documentation</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hillcurve_example.html">Hill-curve neutralization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../raw_examples.html">Raw data from plate reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../neutcurve.html">neutcurve package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../package_index.html">package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acknowledgments.html">Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019--2019, Bloom lab.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/jbloomlab/neutcurve" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

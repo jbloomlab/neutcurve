@@ -1,0 +1,192 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>parse_excel &#8212; neutcurve 0.1.dev0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="package index" href="package_index.html" />
+    <link rel="prev" title="hillcurve" href="neutcurve.hillcurve.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-neutcurve.parse_excel"></span><div class="section" id="parse-excel">
+<h1>parse_excel<a class="headerlink" href="#parse-excel" title="Permalink to this headline">¶</a></h1>
+<p>Defines functions for parsing data directly from Excel in specific formats.</p>
+<dl class="function">
+<dt id="neutcurve.parse_excel.parseRachelStyle2019">
+<code class="descclassname">neutcurve.parse_excel.</code><code class="descname">parseRachelStyle2019</code><span class="sig-paren">(</span><em>*</em>, <em>excelfile</em>, <em>sheet_mapping</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/parse_excel.html#parseRachelStyle2019"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.parse_excel.parseRachelStyle2019" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse data from Rachel Eguia’s 2019-style assays on Bloom lab Tecan.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><cite>excelfile</cite> (str)</dt>
+<dd>Excel file with data exactly as produced by plate reader.</dd>
+<dt><cite>sheet_mapping</cite> (dict)</dt>
+<dd><p class="first">Describes data in each sheet of <cite>excelfile</cite>. There should
+be a key matching the name of each Excel sheet. The value
+for each key is another dict with the following keys / values
+describing the data for that plate (we assume one sheet per
+serum  / virus pair):</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>‘serum’: name of serum.</li>
+<li>‘virus’: name of virus.</li>
+<li>‘dilution_factor’: fold-dilution of serum along plate.</li>
+<li>‘initial_concentration’: final serum concentration in
+the first well used to start the dilution series.</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>A pandas DataFrame in the tidy format read by
+<a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a>.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/BloomLogo.jpg" alt="Logo"/>
+    
+    <h1 class="logo logo-name">neutcurve</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Fit and plot neutralization curves</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jbloomlab&repo=neutcurve&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+    <img
+        alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+        src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">neutcurve documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raw_examples.html">Raw data from plate reader</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="neutcurve.html">neutcurve package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neutcurve.html#neutcurve">neutcurve</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="neutcurve.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_index.html">package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="neutcurve.html">neutcurve package</a><ul>
+      <li>Previous: <a href="neutcurve.hillcurve.html" title="previous chapter">hillcurve</a></li>
+      <li>Next: <a href="package_index.html" title="next chapter">package index</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019--2019, Bloom lab.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/neutcurve.parse_excel.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/jbloomlab/neutcurve" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

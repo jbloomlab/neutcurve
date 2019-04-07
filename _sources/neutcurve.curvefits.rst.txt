@@ -1,0 +1,4 @@
+.. automodule:: neutcurve.curvefits
+    :members:
+    :undoc-members:
+    :show-inheritance:
