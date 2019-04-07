@@ -188,7 +188,7 @@ shows error bars indicating the standard error:
 
     >>> curve = fits.getCurve(serum='FI6v3', virus='WT', replicate='average')
     >>> print(f"The IC50 is {curve.ic50():.3g}")
-    The IC50 is 0.0195
+    The IC50 is 0.017
     >>> fig, ax = curve.plot()
 
 Accessing the fit parameters for all curves
@@ -206,18 +206,18 @@ the upper or lower limits of the data:
 
     >>> fits.fitParams()
           serum     virus replicate  nreplicates   ic50    ic50_bound ic50_str  midpoint  slope  top  bottom
-    0     FI6v3        WT   average            3 0.0195  interpolated   0.0195    0.0195      3    1       0
-    1     FI6v3    K(-8T)   average            3 0.0325  interpolated   0.0325    0.0325    2.9    1       0
-    2     FI6v3      P80D   average            3 0.0124  interpolated   0.0124    0.0124    2.3    1       0
-    3     FI6v3     V135T   average            3 0.0241  interpolated   0.0241    0.0241   2.09    1       0
-    4     FI6v3     K280A   average            3 0.0142  interpolated   0.0142    0.0142   3.18    1       0
-    5     FI6v3     K280S   average            3 0.0389  interpolated   0.0389    0.0389    2.9    1       0
-    6     FI6v3     K280T   average            3 0.0392  interpolated   0.0392    0.0392   2.33    1       0
-    7     FI6v3     N291S   average            3  0.106  interpolated    0.106     0.106   2.77    1       0
-    8     FI6v3  M17L-HA2   average            3  0.022  interpolated    0.022     0.022   2.69    1       0
-    9     FI6v3  G47R-HA2   average            3 0.0356  interpolated   0.0356    0.0356   3.32    1       0
-    10  H17-L19        WT   average            3   0.11  interpolated     0.11      0.11   4.75    1       0
-    11  H17-L19     V135T   average            3   11.4         upper    >11.4      15.5   2.77    1       0
+    0     FI6v3        WT   average            3  0.017  interpolated    0.017     0.017   2.28    1       0
+    1     FI6v3    K(-8T)   average            3 0.0283  interpolated   0.0283    0.0283    2.4    1       0
+    2     FI6v3      P80D   average            3 0.0123  interpolated   0.0123    0.0123   2.05    1       0
+    3     FI6v3     V135T   average            3 0.0229  interpolated   0.0229    0.0229   1.83    1       0
+    4     FI6v3     K280A   average            3 0.0106  interpolated   0.0106    0.0106   1.86    1       0
+    5     FI6v3     K280S   average            3 0.0428  interpolated   0.0428    0.0428      2    1       0
+    6     FI6v3     K280T   average            3 0.0348  interpolated   0.0348    0.0348   1.82    1       0
+    7     FI6v3     N291S   average            3 0.0845  interpolated   0.0845    0.0845    1.8    1       0
+    8     FI6v3  M17L-HA2   average            3 0.0198  interpolated   0.0198    0.0198   2.06    1       0
+    9     FI6v3  G47R-HA2   average            3 0.0348  interpolated   0.0348    0.0348    2.6    1       0
+    10  H17-L19        WT   average            3  0.107  interpolated    0.107     0.107   3.94    1       0
+    11  H17-L19     V135T   average            3   11.4         upper    >11.4      15.5   2.76    1       0
 
 Looking above, you can see how the IC50 is handled depending on if it is
 interpolated (in the range of concentrations used in the experiments)
@@ -242,7 +242,7 @@ each replicate as well as the average of replicates:
     0  FI6v3      WT         1          NaN 0.0167  interpolated   0.0167    0.0167    2.5    1       0
     1  FI6v3      WT         2          NaN  0.019  interpolated    0.019     0.019   2.51    1       0
     2  FI6v3      WT         3          NaN 0.0152  interpolated   0.0152    0.0152   1.88    1       0
-    3  FI6v3      WT   average            3 0.0195  interpolated   0.0195    0.0195      3    1       0
+    3  FI6v3      WT   average            3  0.017  interpolated    0.017     0.017   2.28    1       0
     4  FI6v3  K(-8T)         1          NaN 0.0308  interpolated   0.0308    0.0308   2.62    1       0
 
 Note that the “average” is the curve fit to the average of the data

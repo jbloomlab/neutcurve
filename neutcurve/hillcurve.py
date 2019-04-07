@@ -50,6 +50,13 @@ class HillCurve:
             Do we do the actual fitting on the concentrations or log
             concentrations? Gives equivalent results in principle, but
             fitting to log concentrations may be more efficient in pratice.
+        `use_stderr_for_fit` (bool)
+            Do we use `fs_stderr` for the fitting, or just for plotting?
+            Usually it is a good idea to set to `False` and **not** use
+            for fitting if you only have a few replicates, and the standard
+            error is often not that accurate and so will weight some
+            points much more than others in a way that may not be
+            justified.
 
     Attributes:
         `cs` (numpy array)
@@ -233,6 +240,7 @@ class HillCurve:
                  fixbottom=0,
                  fixtop=1,
                  fitlogc=True,
+                 use_stderr_for_fit=False,
                  ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
@@ -314,7 +322,8 @@ class HillCurve:
                 xdata=xdata,
                 ydata=self.fs,
                 p0=initguess,
-                sigma=self.fs_stderr,
+                sigma=self.fs_stderr if use_stderr_for_fit else None,
+                absolute_sigma=True,
                 )
 
         for i, varname in enumerate(func_vars):
