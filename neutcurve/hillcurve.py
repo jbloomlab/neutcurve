@@ -281,8 +281,9 @@ class HillCurve:
 
         # set up function and initial guesses
         if fitlogc:
-            evalfunc = self.evaluate_log
+            evalfunc = self._evaluate_log
             xdata = scipy.log(self.cs)
+            self.midpoint = scipy.log(self.midpoint)
         else:
             evalfunc = self.evaluate
             xdata = self.cs
@@ -318,6 +319,8 @@ class HillCurve:
 
         for i, varname in enumerate(func_vars):
             setattr(self, varname, popt[i])
+        if fitlogc:
+            self.midpoint = scipy.exp(self.midpoint)
 
     def ic50(self, method='interpolate'):
         r"""IC50 value.
@@ -404,9 +407,9 @@ class HillCurve:
         return b + (t - b) / (1 + (c / m)**s)
 
     @staticmethod
-    def evaluate_log(logc, m, s, b, t):
-        """Like :class:`HillCurve.evaluate` but takes natural log :math:`c`."""
-        return b + (t - b) / (1 + (scipy.exp(logc) / m)**s)
+    def _evaluate_log(logc, logm, s, b, t):
+        """Like :class:`HillCurve.evaluate` but on log concentration scale."""
+        return b + (t - b) / (1 + scipy.exp(s * (logc - logm)))
 
     def plot(self,
              *,

@@ -216,7 +216,7 @@ the upper or lower limits of the data:
     7     FI6v3     N291S   average            3  0.106  interpolated    0.106     0.106   2.77    1       0
     8     FI6v3  M17L-HA2   average            3  0.022  interpolated    0.022     0.022   2.69    1       0
     9     FI6v3  G47R-HA2   average            3 0.0356  interpolated   0.0356    0.0356   3.32    1       0
-    10  H17-L19        WT   average            3   0.11  interpolated     0.11      0.11   4.76    1       0
+    10  H17-L19        WT   average            3   0.11  interpolated     0.11      0.11   4.75    1       0
     11  H17-L19     V135T   average            3   11.4         upper    >11.4      15.5   2.77    1       0
 
 Looking above, you can see how the IC50 is handled depending on if it is
