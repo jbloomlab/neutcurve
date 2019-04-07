@@ -414,6 +414,32 @@ class CurveFits:
 
         return self.plotGrid(plots, **kwargs)
 
+    def plotAverages(self,
+                     *,
+                     color='black',
+                     marker='o',
+                     **kwargs,
+                     ):
+        """Plot grid with a curve for each serum / virus pair.
+
+        Args:
+            `color` (str)
+                Color the curves.
+            `marker` (str)
+                Marker for the curves.
+            `**kwargs`
+                Other keyword arguments that can be passed to
+                :meth:`CurveFits.plotReplicates`.
+
+        Returns:
+            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
+
+        """
+        return self.plotReplicates(average_only=True,
+                                   colors=[color],
+                                   markers=[marker],
+                                   **kwargs)
+
     def plotReplicates(self,
                        *,
                        ncol=4,
