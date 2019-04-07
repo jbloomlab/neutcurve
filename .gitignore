@@ -6,6 +6,7 @@
 *.pyc
 docs/neutcurve.*
 docs/_build
+_example_analysis
 __pycache__
 build
 dist

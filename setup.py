@@ -53,6 +53,7 @@ setup(
         'pandas>=0.24',
         'matplotlib>=3.0.0',
         'xlrd>=1.2',
+        'pyyaml>=3.13',
         ],
     platforms='Linux and Mac OS X.',
     packages=['neutcurve'],

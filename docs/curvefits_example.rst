@@ -18,7 +18,7 @@ streamlines the fitting and plotting of a set of
 :class:`neutcurve.hillcurve.HillCurve` neutralization curves.
 Here we demonstrate how to do this.
 
-Importing the necessary packages
+Importing Python packages
 --------------------------------
 
 First, import the necessary Python modules. In addition to the
