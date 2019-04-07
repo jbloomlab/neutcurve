@@ -124,15 +124,13 @@ Fitting the curves
 Once you have the tidy data frame, it’s easy to pass it to
 :class:`neutcurve.curvefits.CurveFits`. We expect all of these
 antibodies to go to complete neutralization when they are effective, so
-we use the `fixbottom=0` argument (see
+we use default values of `fixtop=1` and `fixbottom=0` argument (see
 :class:`neutcurve.hillcurve.HillCurves` and :ref:`hillcurve_example` for more details about the
 `fixtop` and `fixbottom` options):
 
 .. nbplot::
 
-    >>> fits = neutcurve.CurveFits(data,
-    ...                            fixbottom=0,
-    ...                            )
+    >>> fits = neutcurve.CurveFits(data)
 
 Now we can look at the different sera for which we have fit curves:
 

@@ -36,11 +36,13 @@ and 0. The reason is that some antibodies and sera do not go to complete
 neutralization (see
 `here <https://doi.org/10.1371/journal.ppat.1005110>`__ for a discussion
 of the phenomenon for HIV). For such antibodies, :math:`b` will in
-general by :math:`>0`. Therefore, in the fitting you have the option of
+general be :math:`>0`. Therefore, in the fitting you have the option of
 constraining the top and bottom to :math:`t = 1` and :math:`b = 0`, or
-to fit them as free parameters. The default is to constrain the top to
-:math:`t = 1`, but fit the bottom :math:`b` to allow for incomplete
-neutralization.
+to fit them as free parameters. 
+The default is to constrain the top to
+:math:`t = 1` and the bottom to :math:`b = 0`, but you should look at your curves
+to ensure this makes sense--and if they don't plateau at complete neutralization,
+set the bottom :math:`b` to be a free parameter to allow for incomplete neutralization.
 
 Since :math:`f\left(c\right)` in Equation :eq:`curve` is the fraction **infectivity**, we expect
 :math:`f\left(c\right)` to get smaller as the antibody concentration
@@ -137,13 +139,13 @@ define the curve:
     ...       f"The midpoint (m) is {curve.midpoint:.3g}\n"
     ...       f"The slope (Hill coefficient)s is {curve.slope:.3g}")
     The top (t) is 1
-    The bottom (b) is -0.0282
-    The midpoint (m) is 0.0173
-    The slope (Hill coefficient)s is 2.33
+    The bottom (b) is 0
+    The midpoint (m) is 0.0167
+    The slope (Hill coefficient)s is 2.5
 
-Note that the top is exactly 1 because by default it is constrained to
-that value, whereas the bottom is not quite zero because it is treated a
-free parameter. If you want to change whether the top and/or bottom are
+Note that the top and bottom are one and zero as they were constrained
+to those values.
+If you want to change whether the top and/or bottom are
 fixed or fit, you can do that using the `fixtop` and `fixbottom`
 arguments to :class:`neutcurve.hillcurve.HillCurve` as described in
 the docs for that class. For instance, below we fit the top and fix the
@@ -153,7 +155,6 @@ bottom (it makes very little difference for this particular dataset):
 
     >>> curve2 = neutcurve.HillCurve(data['concentration'],
     ...                              data['fraction infectivity'],
-    ...                              fixbottom=0,
     ...                              fixtop=False)
     ...
     >>> print(f"The top (t) is {curve2.top:.3g}\n"
@@ -174,7 +175,7 @@ particular dataset, the IC50 is very close to the midpoint:
 .. nbplot::
 
     >>> print(f"The IC50 is {curve.ic50():.3g}")
-    The IC50 is 0.0169
+    The IC50 is 0.0167
 
 Note that the method for getting the IC50
 (:meth:`neutcurve.hillcurve.HillCurve.ic50`) has some different
@@ -195,7 +196,7 @@ bounds:
     >>> curve.ic50_bound()
     'interpolated'
     >>> curve.ic50_str()
-    '0.0169'
+    '0.0167'
 
 We can plot the neutralization curve using the
 :meth:`neutcurve.hillcurve.HillCurve.plot` function. This returns a

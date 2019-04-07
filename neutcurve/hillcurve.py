@@ -96,7 +96,7 @@ class HillCurve:
 
     .. nbplot::
 
-        >>> neut = HillCurve(cs, fs)
+        >>> neut = HillCurve(cs, fs, fixbottom=False)
         >>> scipy.allclose(neut.midpoint, m)
         True
         >>> scipy.allclose(neut.slope, s)
@@ -131,7 +131,7 @@ class HillCurve:
         >>> b2 = 0
         >>> t2 = 1
         >>> fs2 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs]
-        >>> neut2 = HillCurve(cs, fs2, fixbottom=b2)
+        >>> neut2 = HillCurve(cs, fs2)
         >>> scipy.allclose(neut2.midpoint, m)
         True
         >>> scipy.allclose(neut2.ic50(), m)
@@ -148,7 +148,7 @@ class HillCurve:
         >>> (cs3[-1] < m)
         True
         >>> fs3 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs3]
-        >>> neut3 = HillCurve(cs3, fs3, fixbottom=b2)
+        >>> neut3 = HillCurve(cs3, fs3)
         >>> neut3.ic50() is None
         True
         >>> scipy.allclose(neut3.ic50(method='bound'), cs3[-1])
@@ -218,7 +218,7 @@ class HillCurve:
 
     .. nbplot::
 
-        >>> neut_linear = HillCurve(cs, fs, fitlogc=False)
+        >>> neut_linear = HillCurve(cs, fs, fitlogc=False, fixbottom=False)
         >>> all(scipy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
         ...     for attr in ['top', 'bottom', 'slope', 'midpoint'])
         True
@@ -230,7 +230,7 @@ class HillCurve:
                  fs,
                  *,
                  fs_stderr=None,
-                 fixbottom=False,
+                 fixbottom=0,
                  fixtop=1,
                  fitlogc=True,
                  ):
@@ -250,26 +250,17 @@ class HillCurve:
             raise ValueError('concentrations in `cs` must all be > 0')
 
         # make initial guess for slope to have the right sign
-        if self.fs[0] >= self.fs[-1]:
-            self.slope = 1.5
-        else:
-            self.slope = -1.5
+        self.slope = 1.5
 
         # make initial guess for top and bottom
         if fixtop is False:
-            if self.slope > 0:
-                self.top = self.fs.max()
-            else:
-                self.top = self.fs.min()
+            self.top = max(1, self.fs.max())
         else:
             if not isinstance(fixtop, (int, float)):
                 raise ValueError('`fixtop` is not `False` or a number')
             self.top = fixtop
         if fixbottom is False:
-            if self.slope > 0:
-                self.bottom = self.fs.min()
-            else:
-                self.bottom = self.fs.max()
+            self.bottom = min(0, self.fs.min())
         else:
             if not isinstance(fixbottom, (int, float)):
                 raise ValueError('`fixbottom` is not `False` or a number')
@@ -278,15 +269,9 @@ class HillCurve:
         # make initial guess for midpoint
         midval = (self.top - self.bottom) / 2.0
         if (self.fs > midval).all():
-            if self.slope > 0:
-                self.midpoint = self.cs[-1]
-            else:
-                self.midpoint = self.cs[0]
+            self.midpoint = self.cs[-1]
         elif (self.fs <= midval).all():
-            if self.slope > 0:
-                self.midpoint = self.cs[0]
-            else:
-                self.midpoint = self.cs[-1]
+            self.midpoint = self.cs[0]
         else:
             # get first index where f crosses midpoint
             i = scipy.argmax((self.fs > midval)[:-1] !=

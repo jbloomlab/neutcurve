@@ -71,7 +71,7 @@ class CurveFits:
                  serum_col='serum',
                  virus_col='virus',
                  replicate_col='replicate',
-                 fixbottom=False,
+                 fixbottom=0,
                  fixtop=1,
                  ):
         """See main class docstring."""
