@@ -3,6 +3,7 @@
 !.gitignore
 !.travis.yml
 !.flake8
+!.nojekyll
 *.pyc
 docs/neutcurve.*
 docs/_build
