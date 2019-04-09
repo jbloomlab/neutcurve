@@ -73,12 +73,19 @@ lab</a> to read these assays.</p>
 type in each of the 8 rows (A to H) and the serum diluted across the 12
 columns (1 to 12). The highest serum concentration is in column 12 and
 it is serially diluted down to the lowest concentration in column 1. The
-samples are as follows: - there are three replicates of the same virus
-and serum in rows D, E, and F - rows C and G have the no-serum control
+samples are as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li>there are three replicates of the same virus
+and serum in rows D, E, and F</li>
+<li>rows C and G have the no-serum control
 used to establish the maximal signal in the absence of neutralization -
 row B has the virus-only control used to establish the background signal
-expected at full neutralization - rows A and G have a media-only control
-that should have very low signal (these rows can also be empty)</p>
+expected at full neutralization</li>
+<li>rows A and G have a media-only control
+that should have very low signal (these rows can also be empty)</li>
+</ul>
+</div></blockquote>
 <p>See
 <a class="reference download internal" download="" href="_downloads/31f7947cf0c14bf9af7f0c9acccbe66e/rachelstyle2019_22Feb19_setup.pdf"><code class="xref download docutils literal notranslate"><span class="pre">example_data/rachelstyle2019_22Feb19_setup.pdf</span></code></a>
 for Rachel’s lab notes on how exactly she set up the assays analyzed
@@ -147,42 +154,42 @@ that specifies the information in that Excel file:</p>
 <span class="go">        serum: HC080048</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      17:</span>
 <span class="go">        serum: HC080043</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      18:</span>
 <span class="go">        serum: HC060106</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      19:</span>
 <span class="go">        serum: HC140010</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      20:</span>
 <span class="go">        serum: HC070072</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      21:</span>
 <span class="go">        serum: HC070041</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      22:</span>
 <span class="go">        serum: HC120043</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 <span class="go">      23:</span>
 <span class="go">        serum: HC150036</span>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
-<span class="go">        initial_concentration: 0.037</span>
+<span class="go">        initial_concentration: 0.00926</span>
 </pre></div>
 </div>
 <p>Note how the YAML file lists the experiment for each Excel file (in this
@@ -203,7 +210,7 @@ written:</p>
 <p>Now we read in the configuration specified in our <em>config_file</em> into the
 variable <em>config</em>, which will be a list of dicts:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next, for each dict in <em>config</em>, we use
@@ -288,15 +295,15 @@ involve multiple different viruses:</p>
 <p>We also look at the numerical values of the fit parameters, including
 the IC50s:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
-<span class="go">      serum virus replicate  nreplicates    ic50    ic50_bound ic50_str  midpoint  slope  top  bottom</span>
-<span class="go">0  HC080048    wt   average            3 0.00638  interpolated  0.00638   0.00638   2.71    1       0</span>
-<span class="go">1  HC080043    wt   average            3 0.00273  interpolated  0.00273   0.00273   1.35    1       0</span>
-<span class="go">2  HC060106    wt   average            3  0.0111  interpolated   0.0111    0.0111   1.16    1       0</span>
-<span class="go">3  HC140010    wt   average            3  0.0105  interpolated   0.0105    0.0105   3.36    1       0</span>
-<span class="go">4  HC070072    wt   average            3 0.00473  interpolated  0.00473   0.00473   1.79    1       0</span>
-<span class="go">5  HC070041    wt   average            3 0.00158  interpolated  0.00158   0.00158   3.86    1       0</span>
-<span class="go">6  HC120043    wt   average            3 0.00229  interpolated  0.00229   0.00229   1.97    1       0</span>
-<span class="go">7  HC150036    wt   average            3 0.00155  interpolated  0.00155   0.00155   2.61    1       0</span>
+<span class="go">      serum virus replicate  nreplicates     ic50    ic50_bound  ic50_str  midpoint  slope  top  bottom</span>
+<span class="go">0  HC080048    wt   average            3   0.0016  interpolated    0.0016    0.0016   2.71    1       0</span>
+<span class="go">1  HC080043    wt   average            3 0.000684  interpolated  0.000684  0.000684   1.35    1       0</span>
+<span class="go">2  HC060106    wt   average            3  0.00279  interpolated   0.00279   0.00279   1.16    1       0</span>
+<span class="go">3  HC140010    wt   average            3  0.00262  interpolated   0.00262   0.00262   3.36    1       0</span>
+<span class="go">4  HC070072    wt   average            3  0.00118  interpolated   0.00118   0.00118   1.79    1       0</span>
+<span class="go">5  HC070041    wt   average            3 0.000396  interpolated  0.000396  0.000396   3.86    1       0</span>
+<span class="go">6  HC120043    wt   average            3 0.000573  interpolated  0.000573  0.000573   1.97    1       0</span>
+<span class="go">7  HC150036    wt   average            3 0.000388  interpolated  0.000388  0.000388   2.61    1       0</span>
 </pre></div>
 </div>
 <p>We write these fit parameters to a CSV file:</p>
