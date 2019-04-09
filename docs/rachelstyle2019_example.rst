@@ -35,11 +35,14 @@ The assays are assumed to be in 96-well plates, with a different sample
 type in each of the 8 rows (A to H) and the serum diluted across the 12
 columns (1 to 12). The highest serum concentration is in column 12 and
 it is serially diluted down to the lowest concentration in column 1. The
-samples are as follows: - there are three replicates of the same virus
-and serum in rows D, E, and F - rows C and G have the no-serum control
+samples are as follows:
+  - there are three replicates of the same virus
+and serum in rows D, E, and F
+  - rows C and G have the no-serum control
 used to establish the maximal signal in the absence of neutralization -
 row B has the virus-only control used to establish the background signal
-expected at full neutralization - rows A and G have a media-only control
+expected at full neutralization
+  - rows A and G have a media-only control
 that should have very low signal (these rows can also be empty)
 
 See
@@ -127,42 +130,42 @@ Here are the contents of the YAML configuration file.
             serum: HC080048
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           17:
             serum: HC080043
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           18:
             serum: HC060106
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           19:
             serum: HC140010
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           20:
             serum: HC070072
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           21:
             serum: HC070041
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           22:
             serum: HC120043
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
           23:
             serum: HC150036
             virus: wt
             dilution_factor: 3
-            initial_concentration: 0.037
+            initial_concentration: 0.00926
 
 Note how the YAML file lists the experiment for each Excel file (in this
 case, there is only one), and then gives the name of the Excel file
@@ -287,15 +290,15 @@ the IC50s:
 .. nbplot::
 
     >>> fits.fitParams()
-          serum virus replicate  nreplicates    ic50    ic50_bound ic50_str  midpoint  slope  top  bottom
-    0  HC080048    wt   average            3 0.00638  interpolated  0.00638   0.00638   2.71    1       0
-    1  HC080043    wt   average            3 0.00273  interpolated  0.00273   0.00273   1.35    1       0
-    2  HC060106    wt   average            3  0.0111  interpolated   0.0111    0.0111   1.16    1       0
-    3  HC140010    wt   average            3  0.0105  interpolated   0.0105    0.0105   3.36    1       0
-    4  HC070072    wt   average            3 0.00473  interpolated  0.00473   0.00473   1.79    1       0
-    5  HC070041    wt   average            3 0.00158  interpolated  0.00158   0.00158   3.86    1       0
-    6  HC120043    wt   average            3 0.00229  interpolated  0.00229   0.00229   1.97    1       0
-    7  HC150036    wt   average            3 0.00155  interpolated  0.00155   0.00155   2.61    1       0
+          serum virus replicate  nreplicates     ic50    ic50_bound  ic50_str  midpoint  slope  top  bottom
+    0  HC080048    wt   average            3   0.0016  interpolated    0.0016    0.0016   2.71    1       0
+    1  HC080043    wt   average            3 0.000684  interpolated  0.000684  0.000684   1.35    1       0
+    2  HC060106    wt   average            3  0.00279  interpolated   0.00279   0.00279   1.16    1       0
+    3  HC140010    wt   average            3  0.00262  interpolated   0.00262   0.00262   3.36    1       0
+    4  HC070072    wt   average            3  0.00118  interpolated   0.00118   0.00118   1.79    1       0
+    5  HC070041    wt   average            3 0.000396  interpolated  0.000396  0.000396   3.86    1       0
+    6  HC120043    wt   average            3 0.000573  interpolated  0.000573  0.000573   1.97    1       0
+    7  HC150036    wt   average            3 0.000388  interpolated  0.000388  0.000388   2.61    1       0
 
 We write these fit parameters to a CSV file:
 
