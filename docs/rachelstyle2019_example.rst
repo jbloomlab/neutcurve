@@ -36,14 +36,15 @@ type in each of the 8 rows (A to H) and the serum diluted across the 12
 columns (1 to 12). The highest serum concentration is in column 12 and
 it is serially diluted down to the lowest concentration in column 1. The
 samples are as follows:
+
   - there are three replicates of the same virus
-and serum in rows D, E, and F
+    and serum in rows D, E, and F
   - rows C and G have the no-serum control
-used to establish the maximal signal in the absence of neutralization -
-row B has the virus-only control used to establish the background signal
-expected at full neutralization
+    used to establish the maximal signal in the absence of neutralization -
+    row B has the virus-only control used to establish the background signal
+    expected at full neutralization
   - rows A and G have a media-only control
-that should have very low signal (these rows can also be empty)
+    that should have very low signal (these rows can also be empty)
 
 See
 :download:`example_data/rachelstyle2019_22Feb19_setup.pdf`
@@ -191,7 +192,7 @@ variable *config*, which will be a list of dicts:
 .. nbplot::
 
     >>> with open(config_file) as f:
-    ...     config = yaml.load(f)
+    ...     config = yaml.safe_load(f)
 
 .. Next cell sets right excelfile path if running with pytest from top directory.
 .. nbplot::
