@@ -324,6 +324,7 @@ class HillCurve:
                 p0=initguess,
                 sigma=self.fs_stderr if use_stderr_for_fit else None,
                 absolute_sigma=True,
+                maxfev=1000,
                 )
 
         for i, varname in enumerate(func_vars):
