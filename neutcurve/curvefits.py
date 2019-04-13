@@ -158,7 +158,7 @@ class CurveFits:
                             )
 
         self._hillcurves = {}  # curves computed by `getCurve` cached here
-        self._fitparams = None  # cache data frame computed by `fitParams`
+        self._fitparams = {}  # cache data frame computed by `fitParams`
 
     def getCurve(self, *, serum, virus, replicate):
         """Get the fitted curve for this sample.
@@ -221,12 +221,21 @@ class CurveFits:
     def fitParams(self,
                   *,
                   average_only=True,
+                  ics=(50,),
+                  ics_precision=0,
                   ):
         """Get data frame with curve fitting parameters.
 
         Args:
             `average_only` (bool)
                 If `True`, only get parameters for average across replicates.
+            `ics` (iterable)
+                Include ICXX for each number in this list, where the number
+                is the percent neutralized. So if `ics` only contains 50,
+                we include the IC50. If it includes 95, we include the IC95.
+            `ics_precision` (int)
+                Include this many digits after decimal when creating the
+                ICXX columns.
 
         Returns:
             A pandas DataFrame with fit parameters for each serum / virus /
@@ -237,18 +246,29 @@ class CurveFits:
               - 'virus'
               - 'replicate'
               - 'nreplicates': number of replicates for average, NaN otherwise.
-              - 'ic50': IC50 or its bound as a number.
-              - 'ic50_bound': string indicating if IC50 interpolated from data,
+              - 'icXX': ICXX or its bound as a number, where `XX` is each
+                number in `ics`.
+              - 'icXX_bound': string indicating if ICXX interpolated from data,
                 or is an upper or lower bound.
-              - 'ic50_str': IC50 represented as string, with > or < indicating
+              - 'icXX_str': ICXX represented as string, with > or < indicating
                 if it is an upper or lower bound.
-              - 'midpoint': same as IC50 iff bottom and top are 0 and 1.
+              - 'midpoint': midpoint of curve, same as IC50 only if bottom
+                and top are 0 and 1.
               - 'slope': Hill slope of curve.
               - 'top': top of curve.
               - 'bottom': bottom of curve.
 
         """
-        if self._fitparams is None:
+        ics = tuple(ics)
+        ic_colprefixes = [f"ic{{:.{ics_precision}f}}".format(ic) for ic in ics]
+        if len(ic_colprefixes) != len(set(ic_colprefixes)):
+            raise ValueError('column names for ICXX not unique.\n'
+                             'Either you have duplicate entries in `ics` '
+                             'or you need to increase `ics_precision`.')
+
+        key = (average_only, ics, ics_precision)
+
+        if key not in self._fitparams:
             d = collections.defaultdict(list)
             params = ['midpoint', 'slope', 'top', 'bottom']
             for serum in self.sera:
@@ -256,6 +276,8 @@ class CurveFits:
                     replicates = self.replicates[(serum, virus)]
                     nreplicates = sum(r != 'average' for r in replicates)
                     assert nreplicates == len(replicates) - 1
+                    if average_only:
+                        replicates = ['average']
                     for replicate in replicates:
                         curve = self.getCurve(serum=serum,
                                               virus=virus,
@@ -268,27 +290,27 @@ class CurveFits:
                             d['nreplicates'].append(nreplicates)
                         else:
                             d['nreplicates'].append(float('nan'))
-                        d['ic50'].append(curve.ic50('bound'))
-                        d['ic50_bound'].append(curve.ic50_bound())
-                        d['ic50_str'].append(curve.ic50_str())
+                        for ic, colprefix in zip(ics, ic_colprefixes):
+                            f = ic / 100
+                            d[colprefix].append(curve.icXX(f, method='bound'))
+                            d[f"{colprefix}_bound"].append(curve.icXX_bound(f))
+                            d[f"{colprefix}_str"].append(curve.icXX_str(f))
                         for param in params:
                             d[param].append(getattr(curve, param))
 
-            self._fitparams = (pd.DataFrame(d)
-                               [['serum', 'virus', 'replicate', 'nreplicates',
-                                 'ic50', 'ic50_bound', 'ic50_str'] + params]
-                               .assign(nreplicates=lambda x: (x['nreplicates']
-                                                              .astype('Int64'))
-                                       )
-                               )
-
-        if average_only:
-            return (self._fitparams
-                    .query('replicate == "average"')
-                    .reset_index(drop=True)
+            ic_cols = []
+            for prefix in ic_colprefixes:
+                ic_cols += [prefix, f"{prefix}_bound", f"{prefix}_str"]
+            self._fitparams[key] = (
+                    pd.DataFrame(d)
+                    [['serum', 'virus', 'replicate', 'nreplicates']
+                     + ic_cols + params]
+                    .assign(nreplicates=lambda x: (x['nreplicates']
+                                                   .astype('Int64'))
+                            )
                     )
-        else:
-            return self._fitparams
+
+        return self._fitparams[key]
 
     def plotSera(self,
                  *,

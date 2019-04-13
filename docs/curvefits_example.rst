@@ -245,8 +245,30 @@ each replicate as well as the average of replicates:
     3  FI6v3      WT   average            3  0.017  interpolated    0.017     0.017   2.28    1       0
     4  FI6v3  K(-8T)         1          NaN 0.0308  interpolated   0.0308    0.0308   2.62    1       0
 
-Note that the “average” is the curve fit to the average of the data
+The “average” is the curve fit to the average of the data
 points, not the average of the fit parameters for individual curves.
+
+We can also include arbitrary inhibitory concentrations, such as the IC95 in
+addition to the IC50 via the `ics` argument to
+:meth:`neutcurve.curvefits.CurveFits.fitParams`.
+For instance:
+
+.. nbplot::
+
+    >>> fits.fitParams(ics=[50, 95])
+          serum     virus replicate  nreplicates   ic50    ic50_bound ic50_str   ic95    ic95_bound ic95_str  midpoint  slope  top  bottom
+    0     FI6v3        WT   average            3  0.017  interpolated    0.017  0.062  interpolated    0.062     0.017   2.28    1       0
+    1     FI6v3    K(-8T)   average            3 0.0283  interpolated   0.0283 0.0967  interpolated   0.0967    0.0283    2.4    1       0
+    2     FI6v3      P80D   average            3 0.0123  interpolated   0.0123 0.0516  interpolated   0.0516    0.0123   2.05    1       0
+    3     FI6v3     V135T   average            3 0.0229  interpolated   0.0229  0.114  interpolated    0.114    0.0229   1.83    1       0
+    4     FI6v3     K280A   average            3 0.0106  interpolated   0.0106 0.0516  interpolated   0.0516    0.0106   1.86    1       0
+    5     FI6v3     K280S   average            3 0.0428  interpolated   0.0428  0.186  interpolated    0.186    0.0428      2    1       0
+    6     FI6v3     K280T   average            3 0.0348  interpolated   0.0348  0.176  interpolated    0.176    0.0348   1.82    1       0
+    7     FI6v3     N291S   average            3 0.0845  interpolated   0.0845  0.433  interpolated    0.433    0.0845    1.8    1       0
+    8     FI6v3  M17L-HA2   average            3 0.0198  interpolated   0.0198  0.083  interpolated    0.083    0.0198   2.06    1       0
+    9     FI6v3  G47R-HA2   average            3 0.0348  interpolated   0.0348  0.108  interpolated    0.108    0.0348    2.6    1       0
+    10  H17-L19        WT   average            3  0.107  interpolated    0.107  0.227  interpolated    0.227     0.107   3.94    1       0
+    11  H17-L19     V135T   average            3   11.4         lower    >11.4   11.4         lower    >11.4      15.5   2.76    1       0
 
 Plotting the curves
 -------------------
