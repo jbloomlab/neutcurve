@@ -230,6 +230,17 @@ class HillCurve:
         ...     for attr in ['top', 'bottom', 'slope', 'midpoint'])
         True
 
+    Demonstrate :meth:`HillCurve.icXX`:
+
+    >>> neut.icXX(0.95) is None
+    True
+    >>> scipy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
+    True
+    >>> round(neut.icXX(0.8), 4)
+    0.0896
+    >>> scipy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
+    True
+
     """
 
     def __init__(self,
@@ -332,6 +343,60 @@ class HillCurve:
         if fitlogc:
             self.midpoint = scipy.exp(self.midpoint)
 
+    def icXX(self, fracneut, *, method='interpolate'):
+        """Generalizes :meth:`HillCurve.ic50` to arbitrary frac neutralized.
+
+        For instance, set `fracneut` to 0.95 if you want the IC95, the
+        concentration where 95% is neutralized.
+
+        Args:
+            `fracneut` (float)
+                Compute concentration at which `fracneut` of the virus
+                is expected to be neutralized. Note that this is the
+                expected fraction **neutralized**, not the fraction
+                infectivity.
+            `method` (str)
+                Can have following values:
+
+                  - 'interpolate': only return a number for ICXX if it
+                    is in range of concentrations, otherwise return `None`.
+
+                  - 'bound': if ICXX is out of range of concentrations,
+                    return upper or lower measured concentration depending
+                    on if ICXX is above or below range of concentrations.
+                    Assumes infectivity decreases with concentration.
+
+        Returns:
+            Number giving ICXX or `None` (depending on value of `method`).
+
+        """
+        fracinf = 1 - fracneut
+        if self.top < fracinf and self.bottom < fracinf:
+            bound = 'bottom'
+        elif self.top >= fracinf and self.bottom >= fracinf:
+            bound = 'upper'
+        else:
+            icXX = (self.midpoint * ((self.top - fracinf) /
+                    (fracinf - self.bottom))**(1.0 / self.slope))
+            if (self.cs[0] <= icXX <= self.cs[-1]):
+                return icXX
+            elif icXX < self.cs[0]:
+                bound = 'bottom'
+            else:
+                bound = 'upper'
+
+        if method == 'bound':
+            if bound == 'upper':
+                return self.cs[-1]
+            elif bound == 'lower':
+                return self.cs[0]
+            else:
+                raise ValueError(f"invalid `bound` {bound}")
+        elif method == 'interpolate':
+            return None
+        else:
+            raise ValueError(f"invalid `method` of {method}")
+
     def ic50(self, method='interpolate'):
         r"""IC50 value.
 
@@ -356,29 +421,7 @@ class HillCurve:
             Number giving IC50 or `None` (depending on value of `method`).
 
         """
-        if self.top < 0.5 and self.bottom < 0.5:
-            bound = 'bottom'
-        elif self.top >= 0.5 and self.bottom >= 0.5:
-            bound = 'upper'
-        else:
-            ic50 = (self.midpoint * ((self.top - 0.5) /
-                    (0.5 - self.bottom))**(1.0 / self.slope))
-            if (self.cs[0] <= ic50 <= self.cs[-1]):
-                return ic50
-            elif ic50 < self.cs[0]:
-                bound = 'bottom'
-            else:
-                bound = 'upper'
-
-        if method == 'bound':
-            if bound == 'upper':
-                return self.cs[-1]
-            elif bound == 'lower':
-                return self.cs[0]
-            else:
-                raise ValueError(f"invalid `bound` {bound}")
-        elif method != 'interpolate':
-            raise ValueError(f"invalid `method` of {method}")
+        return self.icXX(0.5, method=method)
 
     def ic50_bound(self):
         """Is IC50 'interpolated', or an 'upper' or 'lower' bound."""

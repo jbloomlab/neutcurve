@@ -198,6 +198,21 @@ bounds:
     >>> curve.ic50_str()
     '0.0167'
 
+We can generalize the IC50 using :meth:`neutcurve.hillcurve.HillCurve.icXX`,
+which will compute the concentration at which an arbitrary fraction of
+virus is expected to be **neutralized** (note that this is fraction neutralized,
+which is one minus the fraction infectivity).
+For instance:
+
+.. nbplot::
+
+    >>> round(curve.icXX(0.95), 4)
+    0.0541
+
+Note that :meth:`neutcurve.hillcurve.HillCurve.icXX` has a `method` argument
+that determines how we handle the case when the ICXX is outside of the range
+of measured concentrations.
+
 We can plot the neutralization curve using the
 :meth:`neutcurve.hillcurve.HillCurve.plot` function. This returns a
 matplotlib figure and axis instance:
