@@ -177,13 +177,12 @@ particular dataset, the IC50 is very close to the midpoint:
     >>> print(f"The IC50 is {curve.ic50():.3g}")
     The IC50 is 0.0167
 
-Note that the method for getting the IC50
-(:meth:`neutcurve.hillcurve.HillCurve.ic50`) has some different
-options for how to handle computing the IC50 if it doesn’t fall within
+Note that :meth:`neutcurve.hillcurve.HillCurve.ic50` has a `method`
+option for how to handle computing the IC50 if it doesn’t fall within
 the range of the provided concentrations and so cannot be interpolated
 (see the docs for that method for details). This doesn’t matter for this
 particular dataset, however, since the IC50 falls within the range of
-the data. There are also two other options that deal with IC50s that
+the data. There are also two other methods that deal with IC50s that
 cannot be interpolated and so are only determinable as upper / lower
 bounds:
 
@@ -206,12 +205,18 @@ For instance:
 
 .. nbplot::
 
-    >>> round(curve.icXX(0.95), 4)
-    0.0541
+    >>> print(f"The IC95 is {curve.icXX(0.95):.3g}")
+    The IC95 is 0.0541
 
 Note that :meth:`neutcurve.hillcurve.HillCurve.icXX` has a `method` argument
 that determines how we handle the case when the ICXX is outside of the range
-of measured concentrations.
+of measured concentrations, and that there are two other methods that deal
+with ICXXs that cannot be interpolated and are only determinable as upper /
+lower bounds:
+
+  - :meth:`neutcurve.hillcurve.HillCurve.icXX_bound`
+
+  - :meth:`neutcurve.hillcurve.HillCurve.icXX_str`
 
 We can plot the neutralization curve using the
 :meth:`neutcurve.hillcurve.HillCurve.plot` function. This returns a

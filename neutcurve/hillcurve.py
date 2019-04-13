@@ -170,7 +170,7 @@ class HillCurve:
         >>> neut.ic50_bound()
         'interpolated'
         >>> neut3.ic50_bound()
-        'upper'
+        'lower'
         >>> neut.ic50_str()
         '0.0337'
         >>> neut3.ic50_str()
@@ -234,10 +234,14 @@ class HillCurve:
 
     >>> neut.icXX(0.95) is None
     True
+    >>> neut.icXX_str(0.95)
+    '>0.512'
+    >>> neut.icXX_bound(0.95)
+    'lower'
     >>> scipy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
     True
-    >>> round(neut.icXX(0.8), 4)
-    0.0896
+    >>> '{:.4f}'.format(neut.icXX(0.8), 4)
+    '0.0896'
     >>> scipy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
     True
 
@@ -423,18 +427,31 @@ class HillCurve:
         """
         return self.icXX(0.5, method=method)
 
-    def ic50_bound(self):
-        """Is IC50 'interpolated', or an 'upper' or 'lower' bound."""
-        if self.ic50(method='interpolate') is not None:
+    def icXX_bound(self, fracneut):
+        """Like :meth:`HillCurve.ic50_bound` for arbitrary frac neutralized."""
+        if self.icXX(fracneut, method='interpolate') is not None:
             return 'interpolated'
         else:
-            ic50 = self.ic50(method='bound')
-            if ic50 == self.cs[0]:
-                return 'lower'
-            elif ic50 == self.cs[-1]:
+            icXX = self.icXX(fracneut, method='bound')
+            if icXX == self.cs[0]:
                 return 'upper'
+            elif icXX == self.cs[-1]:
+                return 'lower'
             else:
-                raise RuntimeError('ic50 is not upper or lower bound')
+                raise RuntimeError(f"icXX not bound for {fracneut}")
+
+    def ic50_bound(self):
+        """Is IC50 'interpolated', or an 'upper' or 'lower' bound."""
+        return self.icXX_bound(0.5)
+
+    def icXX_str(self, fracneut, *, precision=3):
+        """Like :meth:`HillCurve.ic50_str` for arbitrary frac neutralized."""
+        icXX = f"{{:.{precision}g}}".format(self.icXX(fracneut,
+                                                      method='bound'))
+        prefix = {'interpolated': '',
+                  'upper': '<',
+                  'lower': '>'}[self.icXX_bound(fracneut)]
+        return f"{prefix}{icXX}"
 
     def ic50_str(self, precision=3):
         """IC50 as string indicating upper / lower bounds with > or <.
@@ -443,11 +460,7 @@ class HillCurve:
             Number of significant digits in returned string.
 
         """
-        ic50 = f"{{:.{precision}g}}".format(self.ic50('bound'))
-        prefix = {'interpolated': '',
-                  'lower': '<',
-                  'upper': '>'}[self.ic50_bound()]
-        return f"{prefix}{ic50}"
+        return self.icXX_str(0.5, precision=precision)
 
     def fracinfectivity(self, c):
         """Fraction infectivity at `c` for fitted parameters."""

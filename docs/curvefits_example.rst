@@ -217,7 +217,7 @@ the upper or lower limits of the data:
     8     FI6v3  M17L-HA2   average            3 0.0198  interpolated   0.0198    0.0198   2.06    1       0
     9     FI6v3  G47R-HA2   average            3 0.0348  interpolated   0.0348    0.0348    2.6    1       0
     10  H17-L19        WT   average            3  0.107  interpolated    0.107     0.107   3.94    1       0
-    11  H17-L19     V135T   average            3   11.4         upper    >11.4      15.5   2.76    1       0
+    11  H17-L19     V135T   average            3   11.4         lower    >11.4      15.5   2.76    1       0
 
 Looking above, you can see how the IC50 is handled depending on if it is
 interpolated (in the range of concentrations used in the experiments)
