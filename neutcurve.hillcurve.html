@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>hillcurve &#8212; neutcurve 0.1.dev0 documentation</title>
+    <title>hillcurve &#8212; neutcurve 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -180,7 +180,7 @@ using <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_st
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50_bound</span><span class="p">()</span>
 <span class="go">&#39;interpolated&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50_bound</span><span class="p">()</span>
-<span class="go">&#39;upper&#39;</span>
+<span class="go">&#39;lower&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50_str</span><span class="p">()</span>
 <span class="go">&#39;0.0337&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50_str</span><span class="p">()</span>
@@ -234,6 +234,21 @@ log space:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_linear</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fitlogc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">neut</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">neut_linear</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;slope&#39;</span><span class="p">,</span> <span class="s1">&#39;midpoint&#39;</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Demonstrate <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.icXX" title="neutcurve.hillcurve.HillCurve.icXX"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.icXX()</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX_str</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="go">&#39;&gt;0.512&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX_bound</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span>
+<span class="go">&#39;lower&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">),</span> <span class="n">neut</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">&#39;0.0896&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)))</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -325,6 +340,52 @@ Assumes infectivity decreases with concentration.</li>
 <dt>Args:</dt>
 <dd>Number of significant digits in returned string.</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="neutcurve.hillcurve.HillCurve.icXX">
+<code class="descname">icXX</code><span class="sig-paren">(</span><em>fracneut</em>, <em>*</em>, <em>method='interpolate'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generalizes <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50()</span></code></a> to arbitrary frac neutralized.</p>
+<p>For instance, set <cite>fracneut</cite> to 0.95 if you want the IC95, the
+concentration where 95% is neutralized.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt><cite>fracneut</cite> (float)</dt>
+<dd>Compute concentration at which <cite>fracneut</cite> of the virus
+is expected to be neutralized. Note that this is the
+expected fraction <strong>neutralized</strong>, not the fraction
+infectivity.</dd>
+<dt><cite>method</cite> (str)</dt>
+<dd><p class="first">Can have following values:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>‘interpolate’: only return a number for ICXX if it
+is in range of concentrations, otherwise return <cite>None</cite>.</li>
+<li>‘bound’: if ICXX is out of range of concentrations,
+return upper or lower measured concentration depending
+on if ICXX is above or below range of concentrations.
+Assumes infectivity decreases with concentration.</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt>
+<dd>Number giving ICXX or <cite>None</cite> (depending on value of <cite>method</cite>).</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="neutcurve.hillcurve.HillCurve.icXX_bound">
+<code class="descname">icXX_bound</code><span class="sig-paren">(</span><em>fracneut</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_bound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_bound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_bound" title="neutcurve.hillcurve.HillCurve.ic50_bound"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50_bound()</span></code></a> for arbitrary frac neutralized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="neutcurve.hillcurve.HillCurve.icXX_str">
+<code class="descname">icXX_str</code><span class="sig-paren">(</span><em>fracneut</em>, <em>*</em>, <em>precision=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="neutcurve.hillcurve.HillCurve.ic50_str"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50_str()</span></code></a> for arbitrary frac neutralized.</p>
 </dd></dl>
 
 <dl class="method">

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>curvefits &#8212; neutcurve 0.1.dev0 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.1.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -91,13 +91,20 @@ that serum and virus in the order they occur in <cite>data</cite>.</dd>
 </dl>
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.fitParams">
-<code class="descname">fitParams</code><span class="sig-paren">(</span><em>*</em>, <em>average_only=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fitParams</code><span class="sig-paren">(</span><em>*</em>, <em>average_only=True</em>, <em>ics=(50</em>, <em>)</em>, <em>ics_precision=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data frame with curve fitting parameters.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><dl class="first last docutils">
 <dt><cite>average_only</cite> (bool)</dt>
 <dd>If <cite>True</cite>, only get parameters for average across replicates.</dd>
+<dt><cite>ics</cite> (iterable)</dt>
+<dd>Include ICXX for each number in this list, where the number
+is the percent neutralized. So if <cite>ics</cite> only contains 50,
+we include the IC50. If it includes 95, we include the IC95.</dd>
+<dt><cite>ics_precision</cite> (int)</dt>
+<dd>Include this many digits after decimal when creating the
+ICXX columns.</dd>
 </dl>
 </dd>
 <dt>Returns:</dt>
@@ -110,12 +117,14 @@ Columns:</p>
 <li>‘virus’</li>
 <li>‘replicate’</li>
 <li>‘nreplicates’: number of replicates for average, NaN otherwise.</li>
-<li>‘ic50’: IC50 or its bound as a number.</li>
-<li>‘ic50_bound’: string indicating if IC50 interpolated from data,
+<li>‘icXX’: ICXX or its bound as a number, where <cite>XX</cite> is each
+number in <cite>ics</cite>.</li>
+<li>‘icXX_bound’: string indicating if ICXX interpolated from data,
 or is an upper or lower bound.</li>
-<li>‘ic50_str’: IC50 represented as string, with &gt; or &lt; indicating
+<li>‘icXX_str’: ICXX represented as string, with &gt; or &lt; indicating
 if it is an upper or lower bound.</li>
-<li>‘midpoint’: same as IC50 iff bottom and top are 0 and 1.</li>
+<li>‘midpoint’: midpoint of curve, same as IC50 only if bottom
+and top are 0 and 1.</li>
 <li>‘slope’: Hill slope of curve.</li>
 <li>‘top’: top of curve.</li>
 <li>‘bottom’: bottom of curve.</li>
