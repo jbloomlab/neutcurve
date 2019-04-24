@@ -1,8 +1,11 @@
 ======================================
 neutcurve
 ======================================
-.. image:: https://travis-ci.org/jbloomlab/neutcurve.svg?branch=master
-    :target: https://travis-ci.org/jbloomlab/neutcurve.svg?branch=master
+.. image:: https://travis-ci.org/jbloomlab/neutcurve.svg
+    :target: https://travis-ci.org/jbloomlab/neutcurve.svg
+
+.. image:: https://img.shields.io/pypi/v/neutcurve.svg
+        :target: https://pypi.python.org/pypi/neutcurve
 
 ``neutcurve`` is a Python package written by the `Bloom lab <https://research.fhcrc.org/bloom/en.html>`_ for plotting neutralization curves.
 
