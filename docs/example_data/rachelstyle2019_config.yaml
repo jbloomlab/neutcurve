@@ -16,6 +16,7 @@
         virus: wt
         dilution_factor: 3
         initial_concentration: 0.00926
+        excluded_dilutions: [5, 6]
       19:
         serum: HC140010
         virus: wt
