@@ -94,10 +94,13 @@ the docs for that function, for each Excel file we need:
 -  *sheet_mapping*: a dictionary keyed be the name of each sheet in
    *excelfile* which in turn specifies:
 
-   -  ‘serum’: name of serum
-   -  ‘virus’: name of virus
-   -  ‘initial_concentration’: highest concentration of serum
-   -  ‘dilution_factor’: dilution factor in serial dilutions of serum
+   - *serum*: name of serum
+   - *virus*: name of virus
+   - *initial_concentration*: highest concentration of serum
+   - *dilution_factor*: dilution factor in serial dilutions of serum
+   - *excluded_dilutions* (optional): list of dilutions to exclude, with
+     1 being the least dilute and 12 being the most dilute. Useful if some
+     columns in the plate have a known problem (for instance, edge effects).
 
 You can specify this information in a `YAML
 format <https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html>`__
@@ -142,6 +145,7 @@ Here are the contents of the YAML configuration file.
             virus: wt
             dilution_factor: 3
             initial_concentration: 0.00926
+            excluded_dilutions: [5, 6]
           19:
             serum: HC140010
             virus: wt
@@ -174,6 +178,10 @@ case, there is only one), and then gives the name of the Excel file
 (*sheet_mapping*). Therefore, the dictionary for each experiment can be
 directly passed to :func:`neutcurve.parse_excel.parseRachelStyle2019`
 as `**kwargs`.
+
+Note how to illustrate the *excluded_dilutions* option, we have excluded
+two columns from serum *HC060106*. In the plots below, you can see how
+the data points for those columns will be missing.
 
 We also need to specify the output directory where the results are
 written:
@@ -294,7 +302,7 @@ the IC50s:
           serum virus replicate  nreplicates     ic50    ic50_bound  ic50_str  midpoint  slope  top  bottom
     0  HC080048    wt   average            3   0.0016  interpolated    0.0016    0.0016   2.71    1       0
     1  HC080043    wt   average            3 0.000684  interpolated  0.000684  0.000684   1.35    1       0
-    2  HC060106    wt   average            3  0.00279  interpolated   0.00279   0.00279   1.16    1       0
+    2  HC060106    wt   average            3   0.0028  interpolated    0.0028    0.0028   1.23    1       0
     3  HC140010    wt   average            3  0.00262  interpolated   0.00262   0.00262   3.36    1       0
     4  HC070072    wt   average            3  0.00118  interpolated   0.00118   0.00118   1.79    1       0
     5  HC070041    wt   average            3 0.000396  interpolated  0.000396  0.000396   3.86    1       0
