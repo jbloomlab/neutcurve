@@ -113,7 +113,7 @@ def _parse_BloomLab_TecanPlate(*,
     all_cols = list(range(1, ncols + 1))
     if layout == 'RachelStyle2019':
         # reverse excluded dilution columns if assay dilutes columns in reverse
-        exclude_cols = set([ncols - col + 1 for col in excluded_dilutions])
+        exclude_cols = {ncols - col + 1 for col in excluded_dilutions}
     else:
         raise ValueError(f"invalid layout of {layout}")
     if exclude_cols > set(all_cols):
