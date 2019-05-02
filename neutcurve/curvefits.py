@@ -63,6 +63,10 @@ class CurveFits:
             List of all replicates.
     """
 
+    # names commonly used for wildtype virus
+    _WILDTYPE_NAMES = ('WT', 'wt', 'wildtype', 'Wildtype',
+                       'wild type', 'Wild type')
+
     def __init__(self,
                  data,
                  *,
@@ -322,8 +326,7 @@ class CurveFits:
                  markers=CBMARKERS,
                  max_viruses_per_subplot=5,
                  multi_serum_subplots=True,
-                 all_subplots=('WT', 'wt', 'wildtype', 'Wildtype',
-                               'wild type', 'Wild type'),
+                 all_subplots=_WILDTYPE_NAMES,
                  **kwargs,
                  ):
         """Plot grid with replicate-average of viruses for each serum.
@@ -334,7 +337,8 @@ class CurveFits:
             `sera` ('all' or list)
                 Sera to include on plot, in this order.
             `viruses` ('all' or list)
-                Viruses to include on plot.
+                Viruses to include on plot, in this order unless one
+                is specified in `all_subplots`.
             `colors` (iterable)
                 List of colors for different replicates.
             `markers` (iterable)
@@ -345,7 +349,7 @@ class CurveFits:
                 If a serum has more than `max_virus_per_subplot` viruses,
                 do we make multiple subplots for it or raise an error?
             `all_subplots` (iterable)
-                If making multiple subplots for serum, which samples
+                If making multiple subplots for serum, which viruses
                 do we show on all subplots? These are also shown first.
             `**kwargs`
                 Other keyword arguments that can be passed to
@@ -367,8 +371,10 @@ class CurveFits:
 
         # can we share color scheme for viruses among all subplots?
         if len(viruses) <= min(len(colors), len(markers)):
+            ordered_viruses = ([v for v in viruses if v in all_subplots] +
+                               [v for v in viruses if v not in all_subplots])
             virus_to_color_marker = {v: (c, m) for (v, c, m) in
-                                     zip(viruses, colors, markers)}
+                                     zip(ordered_viruses, colors, markers)}
         else:
             virus_to_color_marker = None
 
