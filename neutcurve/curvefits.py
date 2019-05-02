@@ -324,6 +324,7 @@ class CurveFits:
                  viruses='all',
                  colors=CBPALETTE,
                  markers=CBMARKERS,
+                 virus_to_color_marker=None,
                  max_viruses_per_subplot=5,
                  multi_serum_subplots=True,
                  all_subplots=_WILDTYPE_NAMES,
@@ -343,6 +344,10 @@ class CurveFits:
                 List of colors for different replicates.
             `markers` (iterable)
                 List of markers for different replicates.
+            `virus_to_color_marker` (dict or `None`)
+                Optionally specify a specific color and for each virus as
+                2-tuples `(color, marker)`. If you use this option, `colors`
+                and `markers` are ignored.
             `max_viruses_per_subplot` (int)
                 Maximum number of viruses to show on any subplot.
             `multi_serum_subplots` (bool)
@@ -362,19 +367,24 @@ class CurveFits:
         sera, viruses = self._sera_viruses_lists(sera, viruses)
         viruses = set(viruses)
 
-        nplottable = min(len(colors), len(markers))  # max curves per plot
-        if nplottable < max_viruses_per_subplot:
-            raise ValueError('`max_viruses_per_subplot` larger than '
-                             'number of colors or markers')
         if max_viruses_per_subplot < 1:
             raise ValueError('`max_viruses_per_subplot` must be at least 1')
 
-        # can we share color scheme for viruses among all subplots?
-        if len(viruses) <= min(len(colors), len(markers)):
+        # get color scheme for viruses
+        if virus_to_color_marker:
+            extra_viruses = set(viruses) - set(virus_to_color_marker.keys())
+            if extra_viruses:
+                raise ValueError('viruses not in `virus_to_color_marker`: ' +
+                                 str(extra_viruses))
+        elif len(viruses) <= min(len(colors), len(markers)):
+            # can share scheme among subplots
             ordered_viruses = ([v for v in viruses if v in all_subplots] +
                                [v for v in viruses if v not in all_subplots])
             virus_to_color_marker = {v: (c, m) for (v, c, m) in
                                      zip(ordered_viruses, colors, markers)}
+        elif min(len(colors), len(markers)) < max_viruses_per_subplot:
+            raise ValueError('`max_viruses_per_subplot` larger than '
+                             'number of colors or markers')
         else:
             virus_to_color_marker = None
 
