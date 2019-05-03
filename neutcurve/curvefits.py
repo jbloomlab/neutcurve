@@ -594,7 +594,7 @@ class CurveFits:
             The 2-tuple `(sera, viruses)` which are checked lists.
 
         """
-        if sera == 'all':
+        if isinstance(sera, str) and sera == 'all':
             sera = self.sera
         else:
             extra_sera = set(sera) - set(self.sera)
@@ -606,7 +606,7 @@ class CurveFits:
             for virus in self.viruses[serum]:
                 allviruses[virus] = True
         allviruses = list(allviruses.keys())
-        if viruses == 'all':
+        if isinstance(viruses, str) and viruses == 'all':
             viruses = allviruses
         else:
             extra_viruses = set(viruses) - set(allviruses)
