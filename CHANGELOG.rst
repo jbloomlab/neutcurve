@@ -13,7 +13,7 @@ Added
 ++++++
 - Allow exclusion of specific dilutions from *RachelStyle2019* neutralization assays.
 
-- More coloring options for `CurveFits.plotSera`.
+- More / better coloring options for `CurveFits.plotSera`.
 
 0.1.0
 ---------------------------
