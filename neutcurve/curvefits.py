@@ -641,6 +641,10 @@ class CurveFits:
                  linestyle='-',
                  legendtitle=None,
                  orderlegend=None,
+                 titlesize=14,
+                 labelsize=15,
+                 ticksize=12,
+                 legendfontsize=12,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -686,6 +690,14 @@ class CurveFits:
                 Title of legend.
             `orderlegend` (`None` or list)
                 If specified, place legend labels in this order.
+            `titlesize` (float)
+                Size of subplot title font.
+            `labelsize` (float)
+                Size of axis label font.
+            `ticksize` (float)
+                Size of axis tick fonts.
+            `legendfontsize` (float)
+                Size of legend fonts.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -775,7 +787,7 @@ class CurveFits:
         shared_legend_handles = []  # handles if using shared legend
         for (irow, icol), (title, curvelist) in plots.items():
             ax = axes[irow, icol]
-            ax.set_title(title, fontsize=14)
+            ax.set_title(title, fontsize=titlesize)
             for curvedict in curvelist:
                 kwargs = {'color': curvedict['color'],
                           'marker': curvedict['marker'],
@@ -804,8 +816,9 @@ class CurveFits:
                         else:
                             kwargs_tup_to_label[kwargs_tup] = label
                             shared_legend_handles.append(handle)
+            ax.tick_params('both', labelsize=ticksize)
         # draw legend(s)
-        legend_kwargs = {'fontsize': 12,
+        legend_kwargs = {'fontsize': legendfontsize,
                          'numpoints': 1,
                          'markerscale': 1,
                          'handlelength': 1,
@@ -815,7 +828,7 @@ class CurveFits:
                          'borderaxespad': 0.1,
                          'borderpad': 0.2,
                          'title': legendtitle,
-                         'title_fontsize': 13,
+                         'title_fontsize': legendfontsize + 1,
                          'framealpha': 0.6,
                          }
 
@@ -864,13 +877,13 @@ class CurveFits:
         bigax.tick_params(labelcolor='none', top=False, bottom=False,
                           left=False, right=False, which='both')
         if xlabel is None:
-            bigax.set_xlabel(self.conc_col, fontsize=15, labelpad=10)
+            bigax.set_xlabel(self.conc_col, fontsize=labelsize, labelpad=10)
         else:
-            bigax.set_xlabel(xlabel, fontsize=15, labelpad=10)
+            bigax.set_xlabel(xlabel, fontsize=labelsize, labelpad=10)
         if ylabel is None:
-            bigax.set_ylabel(self.fracinf_col, fontsize=15, labelpad=10)
+            bigax.set_ylabel(self.fracinf_col, fontsize=labelsize, labelpad=10)
         else:
-            bigax.set_yabel(ylabel, fontsize=15, labelpad=10)
+            bigax.set_yabel(ylabel, fontsize=labelsize, labelpad=10)
 
         fig.tight_layout()
 

@@ -340,7 +340,8 @@ color scheme:
     ...                           virus_to_color_marker={
     ...                               'WT': ('black', 'o'),
     ...                               'N291S': ('orange', '^'),
-    ...                               'K280S': ('purple', 's')})
+    ...                               'K280S': ('purple', 's')},
+    ...                           legendfontsize=14)
 
 There are various additional options to
 :meth:`neutcurve.curvefits.CurveFits.plotSera` that can further
