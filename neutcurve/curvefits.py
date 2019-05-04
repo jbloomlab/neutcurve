@@ -450,7 +450,15 @@ class CurveFits:
         for iplot, plot in enumerate(plotlist):
             plots[(iplot // ncol, iplot % ncol)] = plot
 
-        return self.plotGrid(plots, **kwargs)
+        if virus_to_color_marker and 'orderlegend' not in kwargs:
+            orderlegend = virus_to_color_marker.keys()
+        else:
+            orderlegend = None
+
+        return self.plotGrid(plots,
+                             orderlegend=orderlegend,
+                             **kwargs,
+                             )
 
     def plotAverages(self,
                      *,
@@ -632,6 +640,7 @@ class CurveFits:
                  linewidth=1,
                  linestyle='-',
                  legendtitle=None,
+                 orderlegend=None,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -675,6 +684,8 @@ class CurveFits:
                 Line style.
             `legendtitle` (str or `None`)
                 Title of legend.
+            `orderlegend` (`None` or list)
+                If specified, place legend labels in this order.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -807,7 +818,23 @@ class CurveFits:
                          'title_fontsize': 13,
                          'framealpha': 0.6,
                          }
+
+        def _ordered_legend(hs):
+            """Get ordered legend handles."""
+            if not orderlegend:
+                return hs
+            else:
+                order_dict = {h: i for i, h in enumerate(orderlegend)}
+                h_labels = [h.get_label() for h in hs]
+                extra_hs = set(h_labels) - set(orderlegend)
+                if extra_hs:
+                    raise ValueError('there are legend handles not in '
+                                     f"`orderlegend`: {extra_hs}")
+                return [h for _, h in sorted(zip(h_labels, hs),
+                                             key=lambda x: order_dict[x[0]])]
+
         if shared_legend and shared_legend_handles:
+            shared_legend_handles = _ordered_legend(shared_legend_handles)
             # shared legend as here: https://stackoverflow.com/a/17328230
             fig.legend(handles=shared_legend_handles,
                        labels=[h.get_label() for h in shared_legend_handles],
@@ -819,6 +846,7 @@ class CurveFits:
         elif legend_handles:
             for (irow, icol), handles in legend_handles.items():
                 ax = axes[irow, icol]
+                handles = _ordered_legend(handles)
                 ax.legend(handles=handles,
                           labels=[h.get_label() for h in handles],
                           loc='lower left',
