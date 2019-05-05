@@ -15,6 +15,8 @@ Added
 
 - More / better coloring options for `CurveFits.plotSera`.
 
+- Allow more precise sizing of `CurveFits` plots.
+
 0.1.0
 ---------------------------
 Initial release

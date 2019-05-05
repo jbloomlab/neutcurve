@@ -488,6 +488,7 @@ class HillCurve:
              markersize=6,
              linewidth=1,
              linestyle='-',
+             yticklocs=None,
              ):
         """Plot the neutralization curve.
 
@@ -512,6 +513,8 @@ class HillCurve:
                 Width of line.
             `linestyle` (str)
                 Line style.
+            `yticklocs` (`None` or list)
+                Exact locations to place yticks; `None` means auto-locate.
 
         Returns:
             The 2-tuple `(fig, ax)` giving the matplotlib figure and axis.
@@ -553,6 +556,8 @@ class HillCurve:
         ax.set_xlabel(xlabel, fontsize=15)
         ax.set_ylabel(ylabel, fontsize=15)
         ax.tick_params('both', labelsize=12)
+        if yticklocs is not None:
+            ax.set_yticks(yticklocs)
 
         if check_ybounds:
             ymin, ymax = ax.get_ylim()
