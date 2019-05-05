@@ -9,6 +9,9 @@ import collections
 import itertools
 import math
 
+import dmslogo.facet
+import dmslogo.utils
+
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
@@ -645,6 +648,9 @@ class CurveFits:
                  labelsize=15,
                  ticksize=12,
                  legendfontsize=12,
+                 align_to_dmslogo_facet=False,
+                 despine=False,
+                 yticklocs=None,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -698,6 +704,16 @@ class CurveFits:
                 Size of axis tick fonts.
             `legendfontsize` (float)
                 Size of legend fonts.
+            `align_to_dmslogo_facet` (`False` or dict)
+                Make plot vertically alignable to ``dmslogo.facet_plot``
+                with same number of rows; dict should have keys for
+                `height_per_ax`, `hspace`, `tmargin`, and `bmargin` with
+                same meaning as ``dmslogo.facet_plot``. Also
+                `right` and `left` for passing to ``subplots_adjust``.
+            `despine` (bool)
+                Remove top and right spines from plots.
+            `yticklocs` (`None` or list)
+                Same meaning as for :meth:`neutcurve.hillcurve.HillCurve.plot`.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -767,13 +783,25 @@ class CurveFits:
             lims['xmax'] = math.exp(math.log(lims['xmax']) +
                                     xextent * extend_lim)
 
+        if align_to_dmslogo_facet:
+            hparams = dmslogo.facet.height_params(
+                                nrows,
+                                align_to_dmslogo_facet['height_per_ax'],
+                                align_to_dmslogo_facet['hspace'],
+                                align_to_dmslogo_facet['tmargin'],
+                                align_to_dmslogo_facet['bmargin'],
+                                )
+            height = hparams['height']
+        else:
+            height = (1 + 2.25 * nrows) * heightscale
+
+        width = (1 + 3 * ncols) * widthscale
         fig, axes = plt.subplots(nrows=nrows,
                                  ncols=ncols,
                                  sharex=True,
                                  sharey=True,
                                  squeeze=False,
-                                 figsize=((1 + 3 * ncols) * widthscale,
-                                          (1 + 2.25 * nrows) * heightscale),
+                                 figsize=(width, height),
                                  )
 
         # set limits on shared axis
@@ -798,6 +826,7 @@ class CurveFits:
                 curvedict['curve'].plot(ax=ax,
                                         xlabel=None,
                                         ylabel=None,
+                                        yticklocs=yticklocs,
                                         **kwargs,
                                         )
                 label = curvedict['label']
@@ -817,6 +846,9 @@ class CurveFits:
                             kwargs_tup_to_label[kwargs_tup] = label
                             shared_legend_handles.append(handle)
             ax.tick_params('both', labelsize=ticksize)
+            if despine:
+                dmslogo.utils.despine(ax=ax)
+
         # draw legend(s)
         legend_kwargs = {'fontsize': legendfontsize,
                          'numpoints': 1,
@@ -847,12 +879,17 @@ class CurveFits:
                                              key=lambda x: order_dict[x[0]])]
 
         if shared_legend and shared_legend_handles:
+            if align_to_dmslogo_facet:
+                right = align_to_dmslogo_facet['right']
+                ranchor = right + 0.15 * (1 - right)
+            else:
+                ranchor = 1
             shared_legend_handles = _ordered_legend(shared_legend_handles)
             # shared legend as here: https://stackoverflow.com/a/17328230
             fig.legend(handles=shared_legend_handles,
                        labels=[h.get_label() for h in shared_legend_handles],
                        loc='center left',
-                       bbox_to_anchor=(1, 0.5),
+                       bbox_to_anchor=(ranchor, 0.5),
                        bbox_transform=fig.transFigure,
                        **legend_kwargs,
                        )
@@ -885,7 +922,15 @@ class CurveFits:
         else:
             bigax.set_yabel(ylabel, fontsize=labelsize, labelpad=10)
 
-        fig.tight_layout()
+        if align_to_dmslogo_facet:
+            fig.subplots_adjust(hspace=hparams['hspace'],
+                                top=hparams['top'],
+                                bottom=hparams['bottom'],
+                                left=align_to_dmslogo_facet['left'],
+                                right=align_to_dmslogo_facet['right'],
+                                )
+        else:
+            fig.tight_layout()
 
         return fig, axes
 
