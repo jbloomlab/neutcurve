@@ -305,9 +305,6 @@ want two columns:
     ...                           ncol=2,
     ...                           xlabel='concentration (ug/ml)')
 
-
-
-
 The above plots all have a different legend for each subplot. This is
 necessary because the number of different viruses being plotted exceeds
 the numbers of colors / markers specified to
@@ -324,9 +321,6 @@ specify that we just show some of the viruses:
     >>> fig, axes = fits.plotSera(viruses=['WT', 'N291S', 'K280S', 'V135T'],
     ...                           xlabel='concentration (ug/ml)') 
 
-
-
-
 Similar to how the above plot uses the `viruses` argument to plot just
 some viruses, we can also use the `sera` argument to plot just some of
 the sera (in this case, just H17-L19):
@@ -336,8 +330,18 @@ the sera (in this case, just H17-L19):
     >>> fig, axes = fits.plotSera(sera=['H17-L19'],
     ...                           xlabel='concentration (ug/ml)')
 
+We can also use the `virus_to_color_marker` argument to specify a particular
+color scheme:
 
+.. nbplot::
 
+    >>> fig, axes = fits.plotSera(viruses=['WT', 'N291S', 'K280S'],
+    ...                           xlabel='concentration (ug/ml)',
+    ...                           virus_to_color_marker={
+    ...                               'WT': ('black', 'o'),
+    ...                               'N291S': ('orange', '^'),
+    ...                               'K280S': ('purple', 's')},
+    ...                           legendfontsize=14)
 
 There are various additional options to
 :meth:`neutcurve.curvefits.CurveFits.plotSera` that can further
@@ -356,9 +360,6 @@ as below:
     >>> fig, axes = fits.plotReplicates(xlabel='concentration (ug/ml)',
     ...                                 legendtitle='replicate')
 
-
-
-
 See the method docstring for
 :meth:`neutcurve.curvefits.CurveFits.plotReplicates` for ways to
 further customize these plots.
@@ -374,7 +375,6 @@ be generated with
 .. nbplot::
 
     >>> fig, axes = fits.plotAverages(xlabel='concentration (ug/ml)')
-
 
 Customized plot arrangements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -478,7 +478,3 @@ Note that in doing this below, we use the colors and markers defined by
     ...                  },
     ...                 xlabel='concentration (ug/ml)',
     ...                 )
-
-
-
-

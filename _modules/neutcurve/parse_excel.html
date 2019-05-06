@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>neutcurve.parse_excel &#8212; neutcurve 0.1.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>neutcurve.parse_excel &#8212; neutcurve 0.2.0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -28,8 +27,6 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <h1>Source code for neutcurve.parse_excel</h1><div class="highlight"><pre>
@@ -65,8 +62,12 @@
 <span class="sd">              - &#39;serum&#39;: name of serum.</span>
 <span class="sd">              - &#39;virus&#39;: name of virus.</span>
 <span class="sd">              - &#39;dilution_factor&#39;: fold-dilution of serum along plate.</span>
-<span class="sd">              - &#39;initial_concentration&#39;: final serum concentration in</span>
-<span class="sd">                the first well used to start the dilution series.</span>
+<span class="sd">              - &#39;initial_concentration&#39;: serum concentration in first well</span>
+<span class="sd">                used to start dilution series.</span>
+<span class="sd">              - &#39;excluded_dilutions&#39; (optional) : list of dilutions to</span>
+<span class="sd">                exclude from returned results, with 1 being least dilute</span>
+<span class="sd">                and 12 being most dilute. Useful if some columns</span>
+<span class="sd">                in plate have a known problem.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A pandas DataFrame in the tidy format read by</span>
@@ -93,20 +94,30 @@
                          <span class="n">f</span><span class="s2">&quot;sheets not in `sheet_mapping`: </span><span class="si">{extra_sheets}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">neutdata</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">req_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dilution_factor&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_concentration&#39;</span><span class="p">,</span> <span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">]</span>
+    <span class="n">optional_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;excluded_dilutions&#39;</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">sheet</span><span class="p">,</span> <span class="n">sheet_info</span> <span class="ow">in</span> <span class="n">sheet_mapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="k">if</span> <span class="n">sheet</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sheet_data</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;sheet </span><span class="si">{sheet}</span><span class="s2"> specified in `sheet_mapping` &quot;</span>
                              <span class="n">f</span><span class="s2">&quot;is not present in `excelfile` </span><span class="si">{excelfile}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+        <span class="n">extra_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sheet_info</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">req_keys</span> <span class="o">+</span> <span class="n">optional_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extra_keys</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;`sheet_mapping` has extra keys </span><span class="si">{extra_keys}</span><span class="s2"> &quot;</span>
+                             <span class="n">f</span><span class="s2">&quot;for sheet </span><span class="si">{sheet}</span><span class="s2">. Allowed keys are </span><span class="si">{req_keys}</span><span class="s2"> &quot;</span>
+                             <span class="n">f</span><span class="s2">&quot;and optionally </span><span class="si">{optional_keys}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;layout&#39;</span><span class="p">:</span> <span class="s1">&#39;RachelStyle2019&#39;</span><span class="p">}</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;dilution_factor&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_concentration&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">req_keys</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;`sheet_mapping` does not specify </span><span class="si">{key}</span><span class="s2"> &quot;</span>
                                  <span class="n">f</span><span class="s2">&quot;for sheet </span><span class="si">{sheet}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">optional_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sheet_info</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet_info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
         <span class="n">neutdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_parse_BloomLab_TecanPlate</span><span class="p">(</span>
                 <span class="n">sheet_df</span><span class="o">=</span><span class="n">sheet_data</span><span class="p">[</span><span class="n">sheet</span><span class="p">],</span>
@@ -125,22 +136,36 @@
                                <span class="n">layout</span><span class="p">,</span>
                                <span class="n">serum</span><span class="p">,</span>
                                <span class="n">virus</span><span class="p">,</span>
+                               <span class="n">excluded_dilutions</span><span class="o">=</span><span class="p">(),</span>
                                <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Process data frame for one 96-well plate of Bloom lab Tecan.&quot;&quot;&quot;</span>
     <span class="c1"># expected rows / columns</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">]</span>
-    <span class="n">cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">13</span><span class="p">))</span>
+    <span class="n">ncols</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">all_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">&#39;RachelStyle2019&#39;</span><span class="p">:</span>
+        <span class="c1"># reverse excluded dilution columns if assay dilutes columns in reverse</span>
+        <span class="n">exclude_cols</span> <span class="o">=</span> <span class="p">{</span><span class="n">ncols</span> <span class="o">-</span> <span class="n">col</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">excluded_dilutions</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;invalid layout of </span><span class="si">{layout}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exclude_cols</span> <span class="o">&gt;</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_cols</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;invalid col to exclude&#39;</span><span class="p">)</span>
+    <span class="n">retained_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">all_cols</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude_cols</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">retained_cols</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no cols retained after `exclude_cols`&#39;</span><span class="p">)</span>
 
     <span class="c1"># check for expected rows / columns</span>
     <span class="k">if</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">rows</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{sheet_name_for_err}</span><span class="s2"> does not have expected rows.</span><span class="se">\n</span><span class="s2">&quot;</span>
                          <span class="n">f</span><span class="s2">&quot;Expected: </span><span class="si">{rows}</span><span class="se">\n</span><span class="s2">Got: {sheet_df.index.tolist()}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">cols</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">!=</span> <span class="n">all_cols</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{sheet_name_for_err}</span><span class="s2"> does not have expected &quot;</span>
-                         <span class="n">f</span><span class="s2">&quot;columns.</span><span class="se">\n</span><span class="s2">Expected: </span><span class="si">{cols}</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="n">f</span><span class="s2">&quot;columns.</span><span class="se">\n</span><span class="s2">Expected: </span><span class="si">{all_cols}</span><span class="se">\n</span><span class="s2">&quot;</span>
                          <span class="n">f</span><span class="s2">&quot;Got: {sheet_df.columns.tolist()}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">sheet_df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_numeric_dtype</span><span class="p">(</span><span class="n">sheet_df</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">all_cols</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Entries in </span><span class="si">{sheet_name_for_err}</span><span class="s2"> not all numerical&quot;</span><span class="p">)</span>
+
+    <span class="n">sheet_df</span> <span class="o">=</span> <span class="n">sheet_df</span><span class="p">[</span><span class="n">retained_cols</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">layout</span> <span class="o">==</span> <span class="s1">&#39;RachelStyle2019&#39;</span><span class="p">:</span>
         <span class="n">reps</span> <span class="o">=</span> <span class="p">{</span><span class="n">rep</span><span class="p">:</span> <span class="n">sheet_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">rep</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">),</span>
@@ -156,8 +181,9 @@
         <span class="c1"># compute fraction infectivity for each replicate</span>
         <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">rep</span><span class="p">:</span> <span class="p">(</span><span class="n">repval</span> <span class="o">-</span> <span class="n">virus_only</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">no_serum</span> <span class="o">-</span> <span class="n">virus_only</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">rep</span><span class="p">,</span> <span class="n">repval</span> <span class="ow">in</span> <span class="n">reps</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;concentration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_concentration</span> <span class="o">/</span> <span class="n">dilution_factor</span><span class="o">**</span><span class="n">i</span>
-                                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;concentration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">initial_concentration</span> <span class="o">/</span>
+                                 <span class="n">dilution_factor</span><span class="o">**</span><span class="p">(</span><span class="n">ncols</span> <span class="o">-</span> <span class="n">col</span><span class="p">)</span>
+                                 <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">retained_cols</span><span class="p">]</span>
         <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
               <span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="s1">&#39;concentration&#39;</span><span class="p">,</span>
                     <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">,</span>
@@ -181,7 +207,6 @@
 </pre></div>
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -214,7 +239,7 @@
     
 
 <p>
-<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+<a href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -252,20 +277,10 @@
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -274,8 +289,8 @@
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

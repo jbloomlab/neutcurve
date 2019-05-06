@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Bloom lab “Rachel-style 2019” flu neutralization assays &#8212; neutcurve 0.1.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>Bloom lab “Rachel-style 2019” flu neutralization assays &#8212; neutcurve 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="neutcurve package" href="neutcurve.html" />
@@ -30,8 +29,6 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="bloom-lab-rachel-style-2019-flu-neutralization-assays">
@@ -39,12 +36,12 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#experimental-setup" id="id1">Experimental setup</a></li>
-<li><a class="reference internal" href="#import-python-packages" id="id2">Import Python packages</a></li>
-<li><a class="reference internal" href="#specify-configuration-of-data" id="id3">Specify configuration of data</a></li>
-<li><a class="reference internal" href="#read-the-data-from-the-excel-files" id="id4">Read the data from the Excel files</a></li>
-<li><a class="reference internal" href="#fit-and-analyze-the-curves" id="id5">Fit and analyze the curves</a></li>
-<li><a class="reference internal" href="#processing-your-own-data" id="id6">Processing your own data</a></li>
+<li><p><a class="reference internal" href="#experimental-setup" id="id1">Experimental setup</a></p></li>
+<li><p><a class="reference internal" href="#import-python-packages" id="id2">Import Python packages</a></p></li>
+<li><p><a class="reference internal" href="#specify-configuration-of-data" id="id3">Specify configuration of data</a></p></li>
+<li><p><a class="reference internal" href="#read-the-data-from-the-excel-files" id="id4">Read the data from the Excel files</a></p></li>
+<li><p><a class="reference internal" href="#fit-and-analyze-the-curves" id="id5">Fit and analyze the curves</a></p></li>
+<li><p><a class="reference internal" href="#processing-your-own-data" id="id6">Processing your own data</a></p></li>
 </ul>
 </div>
 <div class="section" id="experimental-setup">
@@ -57,14 +54,14 @@ assays exactly as described here.</p>
 <p>For general background on the Bloom lab GFP influenza neutralization
 assays, see:</p>
 <ul class="simple">
-<li>The <a class="reference external" href="https://jvi.asm.org/content/87/23/12531.full">Hooper et al
+<li><p>The <a class="reference external" href="https://jvi.asm.org/content/87/23/12531.full">Hooper et al
 (2013)</a> paper that
-originally described these assays.</li>
-<li>The <a class="reference external" href="https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006271">Doud et al
+originally described these assays.</p></li>
+<li><p>The <a class="reference external" href="https://journals.plos.org/plospathogens/article?id=10.1371/journal.ppat.1006271">Doud et al
 (2017)</a>
-paper that gives a more detailed protocol.</li>
-<li>The extensive experimental details at
-<a class="reference external" href="https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay">https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay</a></li>
+paper that gives a more detailed protocol.</p></li>
+<li><p>The extensive experimental details at
+<a class="reference external" href="https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay">https://github.com/jbloomlab/flu_PB1flank-GFP_neut_assay</a></p></li>
 </ul>
 <p>Here we describe how to parse data from the Excel files created by the
 Tecan Safire Infinite M1000 used by the <a class="reference external" href="https://research.fhcrc.org/bloom/en.html">Bloom
@@ -76,14 +73,14 @@ it is serially diluted down to the lowest concentration in column 1. The
 samples are as follows:</p>
 <blockquote>
 <div><ul class="simple">
-<li>there are three replicates of the same virus
-and serum in rows D, E, and F</li>
-<li>rows C and G have the no-serum control
+<li><p>there are three replicates of the same virus
+and serum in rows D, E, and F</p></li>
+<li><p>rows C and G have the no-serum control
 used to establish the maximal signal in the absence of neutralization -
 row B has the virus-only control used to establish the background signal
-expected at full neutralization</li>
-<li>rows A and G have a media-only control
-that should have very low signal (these rows can also be empty)</li>
+expected at full neutralization</p></li>
+<li><p>rows A and G have a media-only control
+that should have very low signal (these rows can also be empty)</p></li>
 </ul>
 </div></blockquote>
 <p>See
@@ -124,13 +121,17 @@ above.</p>
 by <a class="reference internal" href="neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019" title="neutcurve.parse_excel.parseRachelStyle2019"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.parse_excel.parseRachelStyle2019()</span></code></a>. As described in
 the docs for that function, for each Excel file we need:</p>
 <ul class="simple">
-<li><em>excelfile</em>: the name of the Excel file</li>
-<li><em>sheet_mapping</em>: a dictionary keyed be the name of each sheet in
-<em>excelfile</em> which in turn specifies:<ul>
-<li>‘serum’: name of serum</li>
-<li>‘virus’: name of virus</li>
-<li>‘initial_concentration’: highest concentration of serum</li>
-<li>‘dilution_factor’: dilution factor in serial dilutions of serum</li>
+<li><p><em>excelfile</em>: the name of the Excel file</p></li>
+<li><p><em>sheet_mapping</em>: a dictionary keyed be the name of each sheet in
+<em>excelfile</em> which in turn specifies:</p>
+<ul>
+<li><p><em>serum</em>: name of serum</p></li>
+<li><p><em>virus</em>: name of virus</p></li>
+<li><p><em>initial_concentration</em>: highest concentration of serum</p></li>
+<li><p><em>dilution_factor</em>: dilution factor in serial dilutions of serum</p></li>
+<li><p><em>excluded_dilutions</em> (optional): list of dilutions to exclude, with
+1 being the least dilute and 12 being the most dilute. Useful if some
+columns in the plate have a known problem (for instance, edge effects).</p></li>
 </ul>
 </li>
 </ul>
@@ -165,6 +166,7 @@ that specifies the information in that Excel file:</p>
 <span class="go">        virus: wt</span>
 <span class="go">        dilution_factor: 3</span>
 <span class="go">        initial_concentration: 0.00926</span>
+<span class="go">        excluded_dilutions: [5, 6]</span>
 <span class="go">      19:</span>
 <span class="go">        serum: HC140010</span>
 <span class="go">        virus: wt</span>
@@ -198,6 +200,9 @@ case, there is only one), and then gives the name of the Excel file
 (<em>sheet_mapping</em>). Therefore, the dictionary for each experiment can be
 directly passed to <a class="reference internal" href="neutcurve.parse_excel.html#neutcurve.parse_excel.parseRachelStyle2019" title="neutcurve.parse_excel.parseRachelStyle2019"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.parse_excel.parseRachelStyle2019()</span></code></a>
 as <cite>**kwargs</cite>.</p>
+<p>Note how to illustrate the <em>excluded_dilutions</em> option, we have excluded
+two columns from serum <em>HC060106</em>. In the plots below, you can see how
+the data points for those columns will be missing.</p>
 <p>We also need to specify the output directory where the results are
 written:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_example_analysis/rachelstyle2019/&#39;</span>
@@ -256,7 +261,7 @@ virus combination:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//rachelstyle2019_example-12.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-12.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-12.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/rachelstyle2019_example-12.png" src="_images/rachelstyle2019_example-12.png" />
 </div>
 <p>Make plots that just show the across-replicate averages for each serum /
@@ -265,7 +270,7 @@ virus combination:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//rachelstyle2019_example-13.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/rachelstyle2019_example-13.png" src="_images/rachelstyle2019_example-13.png" />
 </div>
 <p>Make plots that show all viruses for each serum. Note that for this
@@ -277,7 +282,7 @@ involve multiple different viruses:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//rachelstyle2019_example-14.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-14.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-14.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/rachelstyle2019_example-14.png" src="_images/rachelstyle2019_example-14.png" />
 </div>
 <p>Now we write all of the plots to PDF files:</p>
@@ -298,7 +303,7 @@ the IC50s:</p>
 <span class="go">      serum virus replicate  nreplicates     ic50    ic50_bound  ic50_str  midpoint  slope  top  bottom</span>
 <span class="go">0  HC080048    wt   average            3   0.0016  interpolated    0.0016    0.0016   2.71    1       0</span>
 <span class="go">1  HC080043    wt   average            3 0.000684  interpolated  0.000684  0.000684   1.35    1       0</span>
-<span class="go">2  HC060106    wt   average            3  0.00279  interpolated   0.00279   0.00279   1.16    1       0</span>
+<span class="go">2  HC060106    wt   average            3   0.0028  interpolated    0.0028    0.0028   1.23    1       0</span>
 <span class="go">3  HC140010    wt   average            3  0.00262  interpolated   0.00262   0.00262   3.36    1       0</span>
 <span class="go">4  HC070072    wt   average            3  0.00118  interpolated   0.00118   0.00118   1.79    1       0</span>
 <span class="go">5  HC070041    wt   average            3 0.000396  interpolated  0.000396  0.000396   3.86    1       0</span>
@@ -336,7 +341,6 @@ To run the same analysis in your own data, download this document as a Jupyter n
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -369,7 +373,7 @@ To run the same analysis in your own data, download this document as a Jupyter n
     
 
 <p>
-<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+<a href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -412,20 +416,10 @@ To run the same analysis in your own data, download this document as a Jupyter n
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -434,8 +428,8 @@ To run the same analysis in your own data, download this document as a Jupyter n
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/rachelstyle2019_example.rst.txt"

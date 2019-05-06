@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>curvefits &#8212; neutcurve 0.1.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>curvefits &#8212; neutcurve 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="hillcurve" href="neutcurve.hillcurve.html" />
@@ -30,8 +29,6 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <span class="target" id="module-neutcurve.curvefits"></span><div class="section" id="curvefits">
@@ -42,50 +39,48 @@
 <em class="property">class </em><code class="descclassname">neutcurve.curvefits.</code><code class="descname">CurveFits</code><span class="sig-paren">(</span><em>data</em>, <em>*</em>, <em>conc_col='concentration'</em>, <em>fracinf_col='fraction infectivity'</em>, <em>serum_col='serum'</em>, <em>virus_col='virus'</em>, <em>replicate_col='replicate'</em>, <em>fixbottom=0</em>, <em>fixtop=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Fit and display <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a> curves.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>data</cite> (pandas DataFrame)</dt>
-<dd>Tidy dataframe with data.</dd>
-<dt><cite>conc_col</cite> (str)</dt>
-<dd>Column in <cite>data</cite> with concentrations of serum.</dd>
-<dt><cite>fracinf_col</cite> (str)</dt>
-<dd>Column in <cite>data</cite> with fraction infectivity.</dd>
-<dt><cite>serum_col</cite> (str)</dt>
-<dd>Column in <cite>data</cite> with serum name.</dd>
-<dt><cite>virus_col</cite> (str)</dt>
-<dd>Column in <cite>data</cite> with name of virus being neutralized.</dd>
-<dt><cite>replicate_col</cite> (str`)</dt>
-<dd>Column in data with name of replicate of this measurement.
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>data</cite> (pandas DataFrame)</dt><dd><p>Tidy dataframe with data.</p>
+</dd>
+<dt><cite>conc_col</cite> (str)</dt><dd><p>Column in <cite>data</cite> with concentrations of serum.</p>
+</dd>
+<dt><cite>fracinf_col</cite> (str)</dt><dd><p>Column in <cite>data</cite> with fraction infectivity.</p>
+</dd>
+<dt><cite>serum_col</cite> (str)</dt><dd><p>Column in <cite>data</cite> with serum name.</p>
+</dd>
+<dt><cite>virus_col</cite> (str)</dt><dd><p>Column in <cite>data</cite> with name of virus being neutralized.</p>
+</dd>
+<dt><cite>replicate_col</cite> (str`)</dt><dd><p>Column in data with name of replicate of this measurement.
 Replicates must all have the same concentrations for each
 serum / virus combination. Replicates can <strong>not</strong> be named
-‘average’ as we compute the average from the replicates.</dd>
-<dt><cite>fixbottom</cite> (<cite>False</cite> or float)</dt>
-<dd>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</dd>
-<dt><cite>fixtop</cite> (<cite>False</cite> or float)</dt>
-<dd>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</dd>
+‘average’ as we compute the average from the replicates.</p>
+</dd>
+<dt><cite>fixbottom</cite> (<cite>False</cite> or float)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
+</dd>
+<dt><cite>fixtop</cite> (<cite>False</cite> or float)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Attributes of a <a class="reference internal" href="#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurveFits</span></code></a> include all args except <cite>data</cite> plus:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>df</cite> (pandas DataFrame)</dt>
-<dd>Copy of <cite>data</cite> that only has relevant columns, has additional rows
+<dt>Attributes of a <a class="reference internal" href="#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurveFits</span></code></a> include all args except <cite>data</cite> plus:</dt><dd><dl class="simple">
+<dt><cite>df</cite> (pandas DataFrame)</dt><dd><p>Copy of <cite>data</cite> that only has relevant columns, has additional rows
 with <cite>replicate_col</cite> of ‘average’ that hold replicate averages, and
 added columns ‘stderr’ (standard error of fraction infectivity
-for ‘average’ if multiple replicates, otherwise <cite>nan</cite>).</dd>
-<dt><cite>sera</cite> (list)</dt>
-<dd>List of all serum names in <cite>serum_col</cite> of <cite>data</cite>, in order
-they occur in <cite>data</cite>.</dd>
-<dt><cite>viruses</cite> (dict)</dt>
-<dd>For each serum in <cite>sera</cite>, <cite>viruses[serum]</cite> gives all viruses
-for that serum in the order they occur in <cite>data</cite>.</dd>
-<dt><cite>replicates</cite> (dict)</dt>
-<dd><cite>replicates[(serum, virus)]</cite> is list of all replicates for
-that serum and virus in the order they occur in <cite>data</cite>.</dd>
-<dt><cite>allviruses</cite> (list)</dt>
-<dd>List of all viruses.</dd>
-<dt><cite>allreplicates</cite> (list)</dt>
-<dd>List of all replicates.</dd>
+for ‘average’ if multiple replicates, otherwise <cite>nan</cite>).</p>
+</dd>
+<dt><cite>sera</cite> (list)</dt><dd><p>List of all serum names in <cite>serum_col</cite> of <cite>data</cite>, in order
+they occur in <cite>data</cite>.</p>
+</dd>
+<dt><cite>viruses</cite> (dict)</dt><dd><p>For each serum in <cite>sera</cite>, <cite>viruses[serum]</cite> gives all viruses
+for that serum in the order they occur in <cite>data</cite>.</p>
+</dd>
+<dt><cite>replicates</cite> (dict)</dt><dd><p><cite>replicates[(serum, virus)]</cite> is list of all replicates for
+that serum and virus in the order they occur in <cite>data</cite>.</p>
+</dd>
+<dt><cite>allviruses</cite> (list)</dt><dd><p>List of all viruses.</p>
+</dd>
+<dt><cite>allreplicates</cite> (list)</dt><dd><p>List of all replicates.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -93,41 +88,39 @@ that serum and virus in the order they occur in <cite>data</cite>.</dd>
 <dt id="neutcurve.curvefits.CurveFits.fitParams">
 <code class="descname">fitParams</code><span class="sig-paren">(</span><em>*</em>, <em>average_only=True</em>, <em>ics=(50</em>, <em>)</em>, <em>ics_precision=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data frame with curve fitting parameters.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>average_only</cite> (bool)</dt>
-<dd>If <cite>True</cite>, only get parameters for average across replicates.</dd>
-<dt><cite>ics</cite> (iterable)</dt>
-<dd>Include ICXX for each number in this list, where the number
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>average_only</cite> (bool)</dt><dd><p>If <cite>True</cite>, only get parameters for average across replicates.</p>
+</dd>
+<dt><cite>ics</cite> (iterable)</dt><dd><p>Include ICXX for each number in this list, where the number
 is the percent neutralized. So if <cite>ics</cite> only contains 50,
-we include the IC50. If it includes 95, we include the IC95.</dd>
-<dt><cite>ics_precision</cite> (int)</dt>
-<dd>Include this many digits after decimal when creating the
-ICXX columns.</dd>
+we include the IC50. If it includes 95, we include the IC95.</p>
+</dd>
+<dt><cite>ics_precision</cite> (int)</dt><dd><p>Include this many digits after decimal when creating the
+ICXX columns.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd><p class="first">A pandas DataFrame with fit parameters for each serum / virus /
+<dt>Returns:</dt><dd><p>A pandas DataFrame with fit parameters for each serum / virus /
 replicate as defined for a <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-mod docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.
 Columns:</p>
-<blockquote class="last">
+<blockquote>
 <div><ul class="simple">
-<li>‘serum’</li>
-<li>‘virus’</li>
-<li>‘replicate’</li>
-<li>‘nreplicates’: number of replicates for average, NaN otherwise.</li>
-<li>‘icXX’: ICXX or its bound as a number, where <cite>XX</cite> is each
-number in <cite>ics</cite>.</li>
-<li>‘icXX_bound’: string indicating if ICXX interpolated from data,
-or is an upper or lower bound.</li>
-<li>‘icXX_str’: ICXX represented as string, with &gt; or &lt; indicating
-if it is an upper or lower bound.</li>
-<li>‘midpoint’: midpoint of curve, same as IC50 only if bottom
-and top are 0 and 1.</li>
-<li>‘slope’: Hill slope of curve.</li>
-<li>‘top’: top of curve.</li>
-<li>‘bottom’: bottom of curve.</li>
+<li><p>‘serum’</p></li>
+<li><p>‘virus’</p></li>
+<li><p>‘replicate’</p></li>
+<li><p>‘nreplicates’: number of replicates for average, NaN otherwise.</p></li>
+<li><p>‘icXX’: ICXX or its bound as a number, where <cite>XX</cite> is each
+number in <cite>ics</cite>.</p></li>
+<li><p>‘icXX_bound’: string indicating if ICXX interpolated from data,
+or is an upper or lower bound.</p></li>
+<li><p>‘icXX_str’: ICXX represented as string, with &gt; or &lt; indicating
+if it is an upper or lower bound.</p></li>
+<li><p>‘midpoint’: midpoint of curve, same as IC50 only if bottom
+and top are 0 and 1.</p></li>
+<li><p>‘slope’: Hill slope of curve.</p></li>
+<li><p>‘top’: top of curve.</p></li>
+<li><p>‘bottom’: bottom of curve.</p></li>
 </ul>
 </div></blockquote>
 </dd>
@@ -138,20 +131,19 @@ and top are 0 and 1.</li>
 <dt id="neutcurve.curvefits.CurveFits.getCurve">
 <code class="descname">getCurve</code><span class="sig-paren">(</span><em>*</em>, <em>serum</em>, <em>virus</em>, <em>replicate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.getCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.getCurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the fitted curve for this sample.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>serum</cite> (str)</dt>
-<dd>Name of a valid serum.</dd>
-<dt><cite>virus</cite> (str)</dt>
-<dd>Name of a valid virus for <cite>serum</cite>.</dd>
-<dt><cite>replicate</cite> (str)</dt>
-<dd>Name of a valid replicate for <cite>serum</cite> and <cite>virus</cite>, or
-‘average’ for the average of all replicates.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>serum</cite> (str)</dt><dd><p>Name of a valid serum.</p>
+</dd>
+<dt><cite>virus</cite> (str)</dt><dd><p>Name of a valid virus for <cite>serum</cite>.</p>
+</dd>
+<dt><cite>replicate</cite> (str)</dt><dd><p>Name of a valid replicate for <cite>serum</cite> and <cite>virus</cite>, or
+‘average’ for the average of all replicates.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>A <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</dd>
+<dt>Returns:</dt><dd><p>A <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -159,76 +151,93 @@ and top are 0 and 1.</li>
 <dt id="neutcurve.curvefits.CurveFits.plotAverages">
 <code class="descname">plotAverages</code><span class="sig-paren">(</span><em>*</em>, <em>color='black'</em>, <em>marker='o'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotAverages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotAverages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with a curve for each serum / virus pair.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>color</cite> (str)</dt>
-<dd>Color the curves.</dd>
-<dt><cite>marker</cite> (str)</dt>
-<dd>Marker for the curves.</dd>
-<dt><cite>**kwargs</cite></dt>
-<dd>Other keyword arguments that can be passed to
-<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotReplicates" title="neutcurve.curvefits.CurveFits.plotReplicates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotReplicates()</span></code></a>.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>color</cite> (str)</dt><dd><p>Color the curves.</p>
+</dd>
+<dt><cite>marker</cite> (str)</dt><dd><p>Marker for the curves.</p>
+</dd>
+<dt><cite>**kwargs</cite></dt><dd><p>Other keyword arguments that can be passed to
+<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotReplicates" title="neutcurve.curvefits.CurveFits.plotReplicates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotReplicates()</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</dd>
+<dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotGrid">
-<code class="descname">plotGrid</code><span class="sig-paren">(</span><em>plots</em>, <em>*</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>widthscale=1</em>, <em>heightscale=1</em>, <em>attempt_shared_legend=True</em>, <em>fix_lims=None</em>, <em>bound_ymin=0</em>, <em>bound_ymax=1</em>, <em>extend_lim=0.07</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>legendtitle=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotGrid</code><span class="sig-paren">(</span><em>plots</em>, <em>*</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>widthscale=1</em>, <em>heightscale=1</em>, <em>attempt_shared_legend=True</em>, <em>fix_lims=None</em>, <em>bound_ymin=0</em>, <em>bound_ymax=1</em>, <em>extend_lim=0.07</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>legendtitle=None</em>, <em>orderlegend=None</em>, <em>titlesize=14</em>, <em>labelsize=15</em>, <em>ticksize=12</em>, <em>legendfontsize=12</em>, <em>align_to_dmslogo_facet=False</em>, <em>despine=False</em>, <em>yticklocs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot arbitrary grid of curves.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>plots</cite> (dict)</dt>
-<dd><p class="first">Plots to draw on grid. Keyed by 2-tuples <cite>(irow, icol)</cite>, which
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt><cite>plots</cite> (dict)</dt><dd><p>Plots to draw on grid. Keyed by 2-tuples <cite>(irow, icol)</cite>, which
 give row and column (0, 1, … numbering) where plot should be
 drawn. Values are the 2-tuples <cite>(title, curvelist)</cite> where
 <cite>title</cite> is title for this plot (or <cite>None</cite>) and <cite>curvelist</cite>
 is a list of dicts keyed by:</p>
-<blockquote class="last">
+<blockquote>
 <div><ul class="simple">
-<li>‘serum’</li>
-<li>‘virus’</li>
-<li>‘replicate’</li>
-<li>‘label’: label for this curve in legend, or <cite>None</cite></li>
-<li>‘color’</li>
-<li>‘marker’: <a class="reference external" href="https://matplotlib.org/api/markers_api.html">https://matplotlib.org/api/markers_api.html</a></li>
+<li><p>‘serum’</p></li>
+<li><p>‘virus’</p></li>
+<li><p>‘replicate’</p></li>
+<li><p>‘label’: label for this curve in legend, or <cite>None</cite></p></li>
+<li><p>‘color’</p></li>
+<li><p>‘marker’: <a class="reference external" href="https://matplotlib.org/api/markers_api.html">https://matplotlib.org/api/markers_api.html</a></p></li>
 </ul>
 </div></blockquote>
 </dd>
-<dt><cite>xlabel</cite>, <cite>ylabel</cite> (<cite>None</cite> or str)</dt>
-<dd>Labels for x- and y-axes. If <cite>None</cite>, use <cite>conc_col</cite>
-and <cite>fracinf_col</cite>, respectively.</dd>
-<dt><cite>widthscale</cite>, <cite>heightscale</cite> (float)</dt>
-<dd>Scale width or height of figure by this much.</dd>
-<dt><cite>attempt_shared_legend</cite> (bool)</dt>
-<dd>Share a single legend among plots if they all share
-in common the same label assigned to the same color / marker.</dd>
-<dt><cite>fix_lims</cite> (dict or <cite>None</cite>)</dt>
-<dd>To fix axis limits, specify any of ‘xmin’, ‘xmax’, ‘ymin’,
-or ‘ymax’ with specified limit.</dd>
-<dt><cite>bound_ymin</cite>, <cite>bound_ymax</cite> (float or <cite>None</cite>)</dt>
-<dd>Make y-axis min and max at least this small / large.
-Ignored if using <cite>fix_lims</cite> for that axis limit.</dd>
-<dt><cite>extend_lim</cite> (float)</dt>
-<dd>For all axis limits not in <cite>fix_lims</cite>, extend this fraction
-of range above and below bounds / data limits.</dd>
-<dt><cite>markersize</cite> (float)</dt>
-<dd>Size of point marker.</dd>
-<dt><cite>linewidth</cite> (float)</dt>
-<dd>Width of line.</dd>
-<dt><cite>linestyle</cite> (str)</dt>
-<dd>Line style.</dd>
-<dt><cite>legendtitle</cite> (str or <cite>None</cite>)</dt>
-<dd>Title of legend.</dd>
+<dt><cite>xlabel</cite>, <cite>ylabel</cite> (<cite>None</cite> or str)</dt><dd><p>Labels for x- and y-axes. If <cite>None</cite>, use <cite>conc_col</cite>
+and <cite>fracinf_col</cite>, respectively.</p>
+</dd>
+<dt><cite>widthscale</cite>, <cite>heightscale</cite> (float)</dt><dd><p>Scale width or height of figure by this much.</p>
+</dd>
+<dt><cite>attempt_shared_legend</cite> (bool)</dt><dd><p>Share a single legend among plots if they all share
+in common the same label assigned to the same color / marker.</p>
+</dd>
+<dt><cite>fix_lims</cite> (dict or <cite>None</cite>)</dt><dd><p>To fix axis limits, specify any of ‘xmin’, ‘xmax’, ‘ymin’,
+or ‘ymax’ with specified limit.</p>
+</dd>
+<dt><cite>bound_ymin</cite>, <cite>bound_ymax</cite> (float or <cite>None</cite>)</dt><dd><p>Make y-axis min and max at least this small / large.
+Ignored if using <cite>fix_lims</cite> for that axis limit.</p>
+</dd>
+<dt><cite>extend_lim</cite> (float)</dt><dd><p>For all axis limits not in <cite>fix_lims</cite>, extend this fraction
+of range above and below bounds / data limits.</p>
+</dd>
+<dt><cite>markersize</cite> (float)</dt><dd><p>Size of point marker.</p>
+</dd>
+<dt><cite>linewidth</cite> (float)</dt><dd><p>Width of line.</p>
+</dd>
+<dt><cite>linestyle</cite> (str)</dt><dd><p>Line style.</p>
+</dd>
+<dt><cite>legendtitle</cite> (str or <cite>None</cite>)</dt><dd><p>Title of legend.</p>
+</dd>
+<dt><cite>orderlegend</cite> (<cite>None</cite> or list)</dt><dd><p>If specified, place legend labels in this order.</p>
+</dd>
+<dt><cite>titlesize</cite> (float)</dt><dd><p>Size of subplot title font.</p>
+</dd>
+<dt><cite>labelsize</cite> (float)</dt><dd><p>Size of axis label font.</p>
+</dd>
+<dt><cite>ticksize</cite> (float)</dt><dd><p>Size of axis tick fonts.</p>
+</dd>
+<dt><cite>legendfontsize</cite> (float)</dt><dd><p>Size of legend fonts.</p>
+</dd>
+<dt><cite>align_to_dmslogo_facet</cite> (<cite>False</cite> or dict)</dt><dd><p>Make plot vertically alignable to <code class="docutils literal notranslate"><span class="pre">dmslogo.facet_plot</span></code>
+with same number of rows; dict should have keys for
+<cite>height_per_ax</cite>, <cite>hspace</cite>, <cite>tmargin</cite>, and <cite>bmargin</cite> with
+same meaning as <code class="docutils literal notranslate"><span class="pre">dmslogo.facet_plot</span></code>. Also
+<cite>right</cite> and <cite>left</cite> for passing to <code class="docutils literal notranslate"><span class="pre">subplots_adjust</span></code>.</p>
+</dd>
+<dt><cite>despine</cite> (bool)</dt><dd><p>Remove top and right spines from plots.</p>
+</dd>
+<dt><cite>yticklocs</cite> (<cite>None</cite> or list)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve.plot" title="neutcurve.hillcurve.HillCurve.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve.plot()</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</dd>
+<dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -236,68 +245,71 @@ of range above and below bounds / data limits.</dd>
 <dt id="neutcurve.curvefits.CurveFits.plotReplicates">
 <code class="descname">plotReplicates</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>subplot_titles='{serum} vs {virus}'</em>, <em>show_average=False</em>, <em>average_only=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotReplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotReplicates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicates for each serum / virus on same plot.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>ncol</cite>, <cite>nrow</cite> (int or <cite>None</cite>)</dt>
-<dd>Specify one of these to set number of columns or rows.</dd>
-<dt><cite>sera</cite> (‘all’ or list)</dt>
-<dd>Sera to include on plot, in this order.</dd>
-<dt><cite>viruses</cite> (‘all’ or list)</dt>
-<dd>Viruses to include on plot, in this order.</dd>
-<dt><cite>colors</cite> (iterable)</dt>
-<dd>List of colors for different replicates.</dd>
-<dt><cite>markers</cite> (iterable)</dt>
-<dd>List of markers for different replicates.</dd>
-<dt><cite>subplot_titles</cite> (str)</dt>
-<dd>Format string to build subplot titles from <em>serum</em> and <em>virus</em>.</dd>
-<dt><cite>show_average</cite> (bool)</dt>
-<dd>Include the replicate-average as a “replicate” in plots.</dd>
-<dt><cite>average_only</cite> (bool)</dt>
-<dd>Show <strong>only</strong> the replicate-average on each plot. No
-legend in this case.</dd>
-<dt><cite>**kwargs</cite></dt>
-<dd>Other keyword arguments that can be passed to
-<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotGrid" title="neutcurve.curvefits.CurveFits.plotGrid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotGrid()</span></code></a>.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>ncol</cite>, <cite>nrow</cite> (int or <cite>None</cite>)</dt><dd><p>Specify one of these to set number of columns or rows.</p>
+</dd>
+<dt><cite>sera</cite> (‘all’ or list)</dt><dd><p>Sera to include on plot, in this order.</p>
+</dd>
+<dt><cite>viruses</cite> (‘all’ or list)</dt><dd><p>Viruses to include on plot, in this order.</p>
+</dd>
+<dt><cite>colors</cite> (iterable)</dt><dd><p>List of colors for different replicates.</p>
+</dd>
+<dt><cite>markers</cite> (iterable)</dt><dd><p>List of markers for different replicates.</p>
+</dd>
+<dt><cite>subplot_titles</cite> (str)</dt><dd><p>Format string to build subplot titles from <em>serum</em> and <em>virus</em>.</p>
+</dd>
+<dt><cite>show_average</cite> (bool)</dt><dd><p>Include the replicate-average as a “replicate” in plots.</p>
+</dd>
+<dt><cite>average_only</cite> (bool)</dt><dd><p>Show <strong>only</strong> the replicate-average on each plot. No
+legend in this case.</p>
+</dd>
+<dt><cite>**kwargs</cite></dt><dd><p>Other keyword arguments that can be passed to
+<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotGrid" title="neutcurve.curvefits.CurveFits.plotGrid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotGrid()</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</dd>
+<dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotSera">
-<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicate-average of viruses for each serum.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>ncol</cite>, <cite>nrow</cite> (int or <cite>None</cite>)</dt>
-<dd>Specify one of these to set number of columns or rows.</dd>
-<dt><cite>sera</cite> (‘all’ or list)</dt>
-<dd>Sera to include on plot, in this order.</dd>
-<dt><cite>viruses</cite> (‘all’ or list)</dt>
-<dd>Viruses to include on plot.</dd>
-<dt><cite>colors</cite> (iterable)</dt>
-<dd>List of colors for different replicates.</dd>
-<dt><cite>markers</cite> (iterable)</dt>
-<dd>List of markers for different replicates.</dd>
-<dt><cite>max_viruses_per_subplot</cite> (int)</dt>
-<dd>Maximum number of viruses to show on any subplot.</dd>
-<dt><cite>multi_serum_subplots</cite> (bool)</dt>
-<dd>If a serum has more than <cite>max_virus_per_subplot</cite> viruses,
-do we make multiple subplots for it or raise an error?</dd>
-<dt><cite>all_subplots</cite> (iterable)</dt>
-<dd>If making multiple subplots for serum, which samples
-do we show on all subplots? These are also shown first.</dd>
-<dt><cite>**kwargs</cite></dt>
-<dd>Other keyword arguments that can be passed to
-<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotGrid" title="neutcurve.curvefits.CurveFits.plotGrid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotGrid()</span></code></a>.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>ncol</cite>, <cite>nrow</cite> (int or <cite>None</cite>)</dt><dd><p>Specify one of these to set number of columns or rows.</p>
+</dd>
+<dt><cite>sera</cite> (‘all’ or list)</dt><dd><p>Sera to include on plot, in this order.</p>
+</dd>
+<dt><cite>viruses</cite> (‘all’ or list)</dt><dd><p>Viruses to include on plot, in this order unless one
+is specified in <cite>all_subplots</cite>.</p>
+</dd>
+<dt><cite>colors</cite> (iterable)</dt><dd><p>List of colors for different replicates.</p>
+</dd>
+<dt><cite>markers</cite> (iterable)</dt><dd><p>List of markers for different replicates.</p>
+</dd>
+<dt><cite>virus_to_color_marker</cite> (dict or <cite>None</cite>)</dt><dd><p>Optionally specify a specific color and for each virus as
+2-tuples <cite>(color, marker)</cite>. If you use this option, <cite>colors</cite>
+and <cite>markers</cite> are ignored.</p>
+</dd>
+<dt><cite>max_viruses_per_subplot</cite> (int)</dt><dd><p>Maximum number of viruses to show on any subplot.</p>
+</dd>
+<dt><cite>multi_serum_subplots</cite> (bool)</dt><dd><p>If a serum has more than <cite>max_virus_per_subplot</cite> viruses,
+do we make multiple subplots for it or raise an error?</p>
+</dd>
+<dt><cite>all_subplots</cite> (iterable)</dt><dd><p>If making multiple subplots for serum, which viruses
+do we show on all subplots? These are also shown first.</p>
+</dd>
+<dt><cite>**kwargs</cite></dt><dd><p>Other keyword arguments that can be passed to
+<a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotGrid" title="neutcurve.curvefits.CurveFits.plotGrid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotGrid()</span></code></a>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</dd>
+<dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -307,7 +319,6 @@ do we show on all subplots? These are also shown first.</dd>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -340,7 +351,7 @@ do we show on all subplots? These are also shown first.</dd>
     
 
 <p>
-<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+<a href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -384,20 +395,10 @@ do we show on all subplots? These are also shown first.</dd>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -406,8 +407,8 @@ do we show on all subplots? These are also shown first.</dd>
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/neutcurve.curvefits.rst.txt"

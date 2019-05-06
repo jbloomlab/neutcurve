@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Fitting curves to real data &#8212; neutcurve 0.1.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>Fitting curves to real data &#8212; neutcurve 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Raw data from plate reader" href="raw_examples.html" />
@@ -30,8 +29,6 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="fitting-curves-to-real-data">
@@ -39,17 +36,18 @@
 <div class="contents local topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#overview" id="id1">Overview</a></li>
-<li><a class="reference internal" href="#importing-python-packages" id="id2">Importing Python packages</a></li>
-<li><a class="reference internal" href="#preparing-the-data" id="id3">Preparing the data</a></li>
-<li><a class="reference internal" href="#fitting-the-curves" id="id4">Fitting the curves</a></li>
-<li><a class="reference internal" href="#looking-at-a-specific-curve" id="id5">Looking at a specific curve</a></li>
-<li><a class="reference internal" href="#accessing-the-fit-parameters-for-all-curves" id="id6">Accessing the fit parameters for all curves</a></li>
-<li><a class="reference internal" href="#plotting-the-curves" id="id7">Plotting the curves</a><ul>
-<li><a class="reference internal" href="#plotting-each-serum-against-multiple-viruses" id="id8">Plotting each serum against multiple viruses</a></li>
-<li><a class="reference internal" href="#plotting-each-replicate" id="id9">Plotting each replicate</a></li>
-<li><a class="reference internal" href="#plotting-average-for-each-serum-virus-pair" id="id10">Plotting average for each serum-virus pair</a></li>
-<li><a class="reference internal" href="#customized-plot-arrangements" id="id11">Customized plot arrangements</a></li>
+<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
+<li><p><a class="reference internal" href="#importing-python-packages" id="id2">Importing Python packages</a></p></li>
+<li><p><a class="reference internal" href="#preparing-the-data" id="id3">Preparing the data</a></p></li>
+<li><p><a class="reference internal" href="#fitting-the-curves" id="id4">Fitting the curves</a></p></li>
+<li><p><a class="reference internal" href="#looking-at-a-specific-curve" id="id5">Looking at a specific curve</a></p></li>
+<li><p><a class="reference internal" href="#accessing-the-fit-parameters-for-all-curves" id="id6">Accessing the fit parameters for all curves</a></p></li>
+<li><p><a class="reference internal" href="#plotting-the-curves" id="id7">Plotting the curves</a></p>
+<ul>
+<li><p><a class="reference internal" href="#plotting-each-serum-against-multiple-viruses" id="id8">Plotting each serum against multiple viruses</a></p></li>
+<li><p><a class="reference internal" href="#plotting-each-replicate" id="id9">Plotting each replicate</a></p></li>
+<li><p><a class="reference internal" href="#plotting-average-for-each-serum-virus-pair" id="id10">Plotting average for each serum-virus pair</a></p></li>
+<li><p><a class="reference internal" href="#customized-plot-arrangements" id="id11">Customized plot arrangements</a></p></li>
 </ul>
 </li>
 </ul>
@@ -121,19 +119,19 @@ DataFrame:</p>
 which must be present. These columns are:</p>
 <blockquote>
 <div><ul class="simple">
-<li><em>serum</em>: the name of the
+<li><p><em>serum</em>: the name of the
 serum (or antibody). FI6v3 and H17-L19 are actually antibodies, not
 sera, but <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> is set up to refer to
-things as serum.</li>
-<li><em>virus</em>: the name of the virus being neutralized by
-the serum.</li>
-<li><em>replicate</em>: the replicate label for the measurement.
+things as serum.</p></li>
+<li><p><em>virus</em>: the name of the virus being neutralized by
+the serum.</p></li>
+<li><p><em>replicate</em>: the replicate label for the measurement.
 Although you can have just one replicate, it’s good experimental
 practice to have several. All the replicates for a given virus / serum
-combination must have been measured at the same concentrations.</li>
-<li><em>concentration</em>: the concentration of the serum.</li>
-<li><em>fraction infectivity</em>: the fraction infectivity of the virus at this
-concentration of the serum measured in this replicate.</li>
+combination must have been measured at the same concentrations.</p></li>
+<li><p><em>concentration</em>: the concentration of the serum.</p></li>
+<li><p><em>fraction infectivity</em>: the fraction infectivity of the virus at this
+concentration of the serum measured in this replicate.</p></li>
 </ul>
 </div></blockquote>
 <p>Note that the data are in <a class="reference external" href="https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html">tidy form</a>;
@@ -190,7 +188,7 @@ plot the curve and print the IC50:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-12.png">png</a>, <a class="reference external" href=".//curvefits_example-12.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-12.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-12.png" src="_images/curvefits_example-12.png" />
 </div>
 <p><a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> also calculates the average and
@@ -205,7 +203,7 @@ shows error bars indicating the standard error:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-13.png">png</a>, <a class="reference external" href=".//curvefits_example-13.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-13.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-13.png" src="_images/curvefits_example-13.png" />
 </div>
 </div>
@@ -294,7 +292,7 @@ variants. You can then plot these curves using
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-17.png">png</a>, <a class="reference external" href=".//curvefits_example-17.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-17.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-17.png" src="_images/curvefits_example-17.png" />
 </div>
 <p>The above plot attempts to put all the viruses measured against each
@@ -312,7 +310,7 @@ want two columns:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-18.png">png</a>, <a class="reference external" href=".//curvefits_example-18.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-18.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-18.png" src="_images/curvefits_example-18.png" />
 </div>
 <p>The above plots all have a different legend for each subplot. This is
@@ -329,7 +327,7 @@ specify that we just show some of the viruses:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-19.png">png</a>, <a class="reference external" href=".//curvefits_example-19.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-19.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-19.png" src="_images/curvefits_example-19.png" />
 </div>
 <p>Similar to how the above plot uses the <cite>viruses</cite> argument to plot just
@@ -340,8 +338,23 @@ the sera (in this case, just H17-L19):</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//curvefits_example-20.png">png</a>, <a class="reference external" href=".//curvefits_example-20.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-20.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/curvefits_example-20.png" src="_images/curvefits_example-20.png" />
+</div>
+<p>We can also use the <cite>virus_to_color_marker</cite> argument to specify a particular
+color scheme:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">viruses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;WT&#39;</span><span class="p">,</span> <span class="s1">&#39;N291S&#39;</span><span class="p">,</span> <span class="s1">&#39;K280S&#39;</span><span class="p">],</span>
+<span class="gp">... </span>                          <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                          <span class="n">virus_to_color_marker</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>                              <span class="s1">&#39;WT&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                              <span class="s1">&#39;N291S&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                              <span class="s1">&#39;K280S&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)},</span>
+<span class="gp">... </span>                          <span class="n">legendfontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//curvefits_example-21.png">png</a>, <a class="reference external" href=".//curvefits_example-21.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-21.pdf">pdf</a>)</p>
+<div class="figure align-center">
+<img alt="_images/curvefits_example-21.png" src="_images/curvefits_example-21.png" />
 </div>
 <p>There are various additional options to
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.plotSera" title="neutcurve.curvefits.CurveFits.plotSera"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits.plotSera()</span></code></a> that can further
@@ -357,9 +370,9 @@ as below:</p>
 <span class="gp">... </span>                                <span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-21.png">png</a>, <a class="reference external" href=".//curvefits_example-21.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-21.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="_images/curvefits_example-21.png" src="_images/curvefits_example-21.png" />
+<p>(<a class="reference external" href=".//curvefits_example-22.png">png</a>, <a class="reference external" href=".//curvefits_example-22.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-22.pdf">pdf</a>)</p>
+<div class="figure align-center">
+<img alt="_images/curvefits_example-22.png" src="_images/curvefits_example-22.png" />
 </div>
 <p>See the method docstring for
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.plotReplicates" title="neutcurve.curvefits.CurveFits.plotReplicates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits.plotReplicates()</span></code></a> for ways to
@@ -374,9 +387,9 @@ be generated with
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotAverages</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-22.png">png</a>, <a class="reference external" href=".//curvefits_example-22.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-22.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="_images/curvefits_example-22.png" src="_images/curvefits_example-22.png" />
+<p>(<a class="reference external" href=".//curvefits_example-23.png">png</a>, <a class="reference external" href=".//curvefits_example-23.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-23.pdf">pdf</a>)</p>
+<div class="figure align-center">
+<img alt="_images/curvefits_example-23.png" src="_images/curvefits_example-23.png" />
 </div>
 </div>
 <div class="section" id="customized-plot-arrangements">
@@ -478,9 +491,9 @@ Note that in doing this below, we use the colors and markers defined by
 <span class="gp">... </span>                <span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-23.png">png</a>, <a class="reference external" href=".//curvefits_example-23.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-23.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="_images/curvefits_example-23.png" src="_images/curvefits_example-23.png" />
+<p>(<a class="reference external" href=".//curvefits_example-24.png">png</a>, <a class="reference external" href=".//curvefits_example-24.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-24.pdf">pdf</a>)</p>
+<div class="figure align-center">
+<img alt="_images/curvefits_example-24.png" src="_images/curvefits_example-24.png" />
 </div>
 </div>
 </div>
@@ -488,7 +501,6 @@ Note that in doing this below, we use the colors and markers defined by
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -521,7 +533,7 @@ Note that in doing this below, we use the colors and markers defined by
     
 
 <p>
-<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+<a href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -568,20 +580,10 @@ Note that in doing this below, we use the colors and markers defined by
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -590,8 +592,8 @@ Note that in doing this below, we use the colors and markers defined by
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/curvefits_example.rst.txt"

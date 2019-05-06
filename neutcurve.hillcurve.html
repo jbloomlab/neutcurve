@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>hillcurve &#8212; neutcurve 0.1.0 documentation</title>
+    <meta charset="utf-8" />
+    <title>hillcurve &#8212; neutcurve 0.2.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="parse_excel" href="neutcurve.parse_excel.html" />
@@ -30,8 +29,6 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <span class="target" id="module-neutcurve.hillcurve"></span><div class="section" id="hillcurve">
@@ -55,50 +52,48 @@ This should lead us to fit <span class="math notranslate nohighlight">\(s &gt; 0
 <a class="reference external" href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill curve</a>,
 except that we are calcuating the fraction <strong>unbound</strong> rather than
 the fraction bound.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>cs</cite> (array-like)</dt>
-<dd>Concentrations of antibody / serum.</dd>
-<dt><cite>fs</cite> (array-like)</dt>
-<dd>Fraction infectivity remaining at each concentration.</dd>
-<dt><cite>fs_stderr</cite> (<cite>None</cite> or array-like)</dt>
-<dd>If not <cite>None</cite>, standard errors on <cite>fs</cite>.</dd>
-<dt><cite>fixbottom</cite> (bool or a float)</dt>
-<dd>If <cite>True</cite>, fix bottom of curve to to this value; otherwise fit.</dd>
-<dt><cite>fixtop</cite> (<cite>False</cite> or a float)</dt>
-<dd>If <cite>True</cite>, fix top of curve to this value; otherwise fit.</dd>
-<dt><cite>fitlogc</cite> (bool)</dt>
-<dd>Do we do the actual fitting on the concentrations or log
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>cs</cite> (array-like)</dt><dd><p>Concentrations of antibody / serum.</p>
+</dd>
+<dt><cite>fs</cite> (array-like)</dt><dd><p>Fraction infectivity remaining at each concentration.</p>
+</dd>
+<dt><cite>fs_stderr</cite> (<cite>None</cite> or array-like)</dt><dd><p>If not <cite>None</cite>, standard errors on <cite>fs</cite>.</p>
+</dd>
+<dt><cite>fixbottom</cite> (bool or a float)</dt><dd><p>If <cite>True</cite>, fix bottom of curve to to this value; otherwise fit.</p>
+</dd>
+<dt><cite>fixtop</cite> (<cite>False</cite> or a float)</dt><dd><p>If <cite>True</cite>, fix top of curve to this value; otherwise fit.</p>
+</dd>
+<dt><cite>fitlogc</cite> (bool)</dt><dd><p>Do we do the actual fitting on the concentrations or log
 concentrations? Gives equivalent results in principle, but
-fitting to log concentrations may be more efficient in pratice.</dd>
-<dt><cite>use_stderr_for_fit</cite> (bool)</dt>
-<dd>Do we use <cite>fs_stderr</cite> for the fitting, or just for plotting?
+fitting to log concentrations may be more efficient in pratice.</p>
+</dd>
+<dt><cite>use_stderr_for_fit</cite> (bool)</dt><dd><p>Do we use <cite>fs_stderr</cite> for the fitting, or just for plotting?
 Usually it is a good idea to set to <cite>False</cite> and <strong>not</strong> use
 for fitting if you only have a few replicates, and the standard
 error is often not that accurate and so will weight some
 points much more than others in a way that may not be
-justified.</dd>
+justified.</p>
+</dd>
 </dl>
 </dd>
-<dt>Attributes:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>cs</cite> (numpy array)</dt>
-<dd>Concentrations, sorted from low to high.</dd>
-<dt><cite>fs</cite> (numpy array)</dt>
-<dd>Fraction infectivity, ordered to match sorted concentrations.</dd>
-<dt><cite>fs_stderr</cite> (numpy array or <cite>None</cite>)</dt>
-<dd>Standard errors on <cite>fs</cite>.</dd>
-<dt><cite>bottom</cite> (float)</dt>
-<dd>Bottom of curve, <span class="math notranslate nohighlight">\(b\)</span> in equation above.</dd>
-<dt><cite>top</cite> (float)</dt>
-<dd>Top of curve, <span class="math notranslate nohighlight">\(t\)</span> in equation above.</dd>
-<dt><cite>midpoint</cite> (float)</dt>
-<dd>Midpoint of curve, <span class="math notranslate nohighlight">\(m\)</span> in equation above. Note
+<dt>Attributes:</dt><dd><dl class="simple">
+<dt><cite>cs</cite> (numpy array)</dt><dd><p>Concentrations, sorted from low to high.</p>
+</dd>
+<dt><cite>fs</cite> (numpy array)</dt><dd><p>Fraction infectivity, ordered to match sorted concentrations.</p>
+</dd>
+<dt><cite>fs_stderr</cite> (numpy array or <cite>None</cite>)</dt><dd><p>Standard errors on <cite>fs</cite>.</p>
+</dd>
+<dt><cite>bottom</cite> (float)</dt><dd><p>Bottom of curve, <span class="math notranslate nohighlight">\(b\)</span> in equation above.</p>
+</dd>
+<dt><cite>top</cite> (float)</dt><dd><p>Top of curve, <span class="math notranslate nohighlight">\(t\)</span> in equation above.</p>
+</dd>
+<dt><cite>midpoint</cite> (float)</dt><dd><p>Midpoint of curve, <span class="math notranslate nohighlight">\(m\)</span> in equation above. Note
 that the midpoint may <strong>not</strong> be the same as the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a>
-if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class="math notranslate nohighlight">\(b \ne 0\)</span>.</dd>
-<dt><cite>slope</cite> (float)</dt>
-<dd>Hill slope of curve, <span class="math notranslate nohighlight">\(s\)</span> in equation above.</dd>
+if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class="math notranslate nohighlight">\(b \ne 0\)</span>.</p>
+</dd>
+<dt><cite>slope</cite> (float)</dt><dd><p>Hill slope of curve, <span class="math notranslate nohighlight">\(s\)</span> in equation above.</p>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -225,7 +220,7 @@ This is done if we call the <a class="reference internal" href="#neutcurve.hillc
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//neutcurve-hillcurve-10.png">png</a>, <a class="reference external" href=".//neutcurve-hillcurve-10.hires.png">hires.png</a>, <a class="reference external" href=".//neutcurve-hillcurve-10.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="figure align-center">
 <img alt="_images/neutcurve-hillcurve-10.png" src="_images/neutcurve-hillcurve-10.png" />
 </div>
 <p>Finally, we confirm that we get the same result regardless
@@ -258,25 +253,23 @@ log space:</p>
 <dd><p>Get data frame with curve data for plotting.</p>
 <p>Useful if you want to get both the points and the fit
 curve to plot.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>concentrations</cite> (array-like or ‘auto’ or ‘measured’)</dt>
-<dd>Concentrations for which we compute the fit values.
+<dl>
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>concentrations</cite> (array-like or ‘auto’ or ‘measured’)</dt><dd><p>Concentrations for which we compute the fit values.
 If ‘auto’ the automatically computed from data
 range using <a class="reference internal" href="#neutcurve.hillcurve.concentrationRange" title="neutcurve.hillcurve.concentrationRange"><code class="xref py py-func docutils literal notranslate"><span class="pre">concentrationRange()</span></code></a>. If
-‘measured’ then only include measured values.</dd>
+‘measured’ then only include measured values.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd><p class="first">A pandas DataFrame with the following columns:</p>
-<blockquote class="last">
+<dt>Returns:</dt><dd><p>A pandas DataFrame with the following columns:</p>
+<blockquote>
 <div><ul class="simple">
-<li>‘concentration’: concentration</li>
-<li>‘fit’: curve fit value at this point</li>
-<li>‘measurement’: value of measurement at this point,
-or numpy.nan if no measurement here.</li>
-<li>‘stderr’: standard error of measurement if provided.</li>
+<li><p>‘concentration’: concentration</p></li>
+<li><p>‘fit’: curve fit value at this point</p></li>
+<li><p>‘measurement’: value of measurement at this point,
+or numpy.nan if no measurement here.</p></li>
+<li><p>‘stderr’: standard error of measurement if provided.</p></li>
 </ul>
 </div></blockquote>
 </dd>
@@ -303,26 +296,24 @@ or numpy.nan if no measurement here.</li>
 <cite>midpoint</cite> if and only if <cite>top = 1</cite> and <cite>bottom = 0</cite>. Calculated
 from <span class="math notranslate nohighlight">\(0.5 = b + \frac{t - b}{1 + (ic50/m)^s}\)</span>, which solves to
 <span class="math notranslate nohighlight">\(ic50 = m \times \left(\frac{t - 0.5}{0.5 - b}\right)^{1/s}\)</span></p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>method</cite> (str)</dt>
-<dd><p class="first">Can have following values:</p>
-<blockquote class="last">
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt><cite>method</cite> (str)</dt><dd><p>Can have following values:</p>
+<blockquote>
 <div><ul class="simple">
-<li>‘interpolate’: only return a number for IC50 if it
-is in range of concentrations, otherwise return <cite>None</cite>.</li>
-<li>‘bound’: if IC50 is out of range of concentrations,
+<li><p>‘interpolate’: only return a number for IC50 if it
+is in range of concentrations, otherwise return <cite>None</cite>.</p></li>
+<li><p>‘bound’: if IC50 is out of range of concentrations,
 return upper or lower measured concentration depending
 on if IC50 is above or below range of concentrations.
-Assumes infectivity decreases with concentration.</li>
+Assumes infectivity decreases with concentration.</p></li>
 </ul>
 </div></blockquote>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>Number giving IC50 or <cite>None</cite> (depending on value of <cite>method</cite>).</dd>
+<dt>Returns:</dt><dd><p>Number giving IC50 or <cite>None</cite> (depending on value of <cite>method</cite>).</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -336,9 +327,9 @@ Assumes infectivity decreases with concentration.</li>
 <dt id="neutcurve.hillcurve.HillCurve.ic50_str">
 <code class="descname">ic50_str</code><span class="sig-paren">(</span><em>precision=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>IC50 as string indicating upper / lower bounds with &gt; or &lt;.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>Number of significant digits in returned string.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><p>Number of significant digits in returned string.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -348,31 +339,29 @@ Assumes infectivity decreases with concentration.</li>
 <dd><p>Generalizes <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50()</span></code></a> to arbitrary frac neutralized.</p>
 <p>For instance, set <cite>fracneut</cite> to 0.95 if you want the IC95, the
 concentration where 95% is neutralized.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>fracneut</cite> (float)</dt>
-<dd>Compute concentration at which <cite>fracneut</cite> of the virus
+<dl>
+<dt>Args:</dt><dd><dl>
+<dt><cite>fracneut</cite> (float)</dt><dd><p>Compute concentration at which <cite>fracneut</cite> of the virus
 is expected to be neutralized. Note that this is the
 expected fraction <strong>neutralized</strong>, not the fraction
-infectivity.</dd>
-<dt><cite>method</cite> (str)</dt>
-<dd><p class="first">Can have following values:</p>
-<blockquote class="last">
+infectivity.</p>
+</dd>
+<dt><cite>method</cite> (str)</dt><dd><p>Can have following values:</p>
+<blockquote>
 <div><ul class="simple">
-<li>‘interpolate’: only return a number for ICXX if it
-is in range of concentrations, otherwise return <cite>None</cite>.</li>
-<li>‘bound’: if ICXX is out of range of concentrations,
+<li><p>‘interpolate’: only return a number for ICXX if it
+is in range of concentrations, otherwise return <cite>None</cite>.</p></li>
+<li><p>‘bound’: if ICXX is out of range of concentrations,
 return upper or lower measured concentration depending
 on if ICXX is above or below range of concentrations.
-Assumes infectivity decreases with concentration.</li>
+Assumes infectivity decreases with concentration.</p></li>
 </ul>
 </div></blockquote>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>Number giving ICXX or <cite>None</cite> (depending on value of <cite>method</cite>).</dd>
+<dt>Returns:</dt><dd><p>Number giving ICXX or <cite>None</cite> (depending on value of <cite>method</cite>).</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -390,35 +379,36 @@ Assumes infectivity decreases with concentration.</li>
 
 <dl class="method">
 <dt id="neutcurve.hillcurve.HillCurve.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>*</em>, <em>concentrations='auto'</em>, <em>ax=None</em>, <em>xlabel='concentration'</em>, <em>ylabel='fraction infectivity'</em>, <em>color='black'</em>, <em>marker='o'</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>*</em>, <em>concentrations='auto'</em>, <em>ax=None</em>, <em>xlabel='concentration'</em>, <em>ylabel='fraction infectivity'</em>, <em>color='black'</em>, <em>marker='o'</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>yticklocs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the neutralization curve.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>concentrations</cite></dt>
-<dd>Concentrations to plot, same meaning as for
-<a class="reference internal" href="#neutcurve.hillcurve.HillCurve.dataframe" title="neutcurve.hillcurve.HillCurve.dataframe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.dataframe()</span></code></a>.</dd>
-<dt><cite>ax</cite> (<cite>None</cite> or matplotlib axes.Axes object)</dt>
-<dd>Use to plot on an existing axis. If using an existing
-axis, do <strong>not</strong> re-scale the axis limits to the data.</dd>
-<dt><cite>xlabel</cite> (str or <cite>None</cite>)</dt>
-<dd>Label for x-axis.</dd>
-<dt><cite>ylabel</cite> (str or <cite>None</cite>)</dt>
-<dd>Label for y-axis.</dd>
-<dt><cite>color</cite> (str)</dt>
-<dd>Color of line and point.</dd>
-<dt><cite>marker</cite> (str)</dt>
-<dd>Marker shape: <a class="reference external" href="https://matplotlib.org/api/markers_api.html">https://matplotlib.org/api/markers_api.html</a></dd>
-<dt><cite>markersize</cite> (float)</dt>
-<dd>Size of point marker.</dd>
-<dt><cite>linewidth</cite> (float)</dt>
-<dd>Width of line.</dd>
-<dt><cite>linestyle</cite> (str)</dt>
-<dd>Line style.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>concentrations</cite></dt><dd><p>Concentrations to plot, same meaning as for
+<a class="reference internal" href="#neutcurve.hillcurve.HillCurve.dataframe" title="neutcurve.hillcurve.HillCurve.dataframe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.dataframe()</span></code></a>.</p>
+</dd>
+<dt><cite>ax</cite> (<cite>None</cite> or matplotlib axes.Axes object)</dt><dd><p>Use to plot on an existing axis. If using an existing
+axis, do <strong>not</strong> re-scale the axis limits to the data.</p>
+</dd>
+<dt><cite>xlabel</cite> (str or <cite>None</cite>)</dt><dd><p>Label for x-axis.</p>
+</dd>
+<dt><cite>ylabel</cite> (str or <cite>None</cite>)</dt><dd><p>Label for y-axis.</p>
+</dd>
+<dt><cite>color</cite> (str)</dt><dd><p>Color of line and point.</p>
+</dd>
+<dt><cite>marker</cite> (str)</dt><dd><p>Marker shape: <a class="reference external" href="https://matplotlib.org/api/markers_api.html">https://matplotlib.org/api/markers_api.html</a></p>
+</dd>
+<dt><cite>markersize</cite> (float)</dt><dd><p>Size of point marker.</p>
+</dd>
+<dt><cite>linewidth</cite> (float)</dt><dd><p>Width of line.</p>
+</dd>
+<dt><cite>linestyle</cite> (str)</dt><dd><p>Line style.</p>
+</dd>
+<dt><cite>yticklocs</cite> (<cite>None</cite> or list)</dt><dd><p>Exact locations to place yticks; <cite>None</cite> means auto-locate.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>The 2-tuple <cite>(fig, ax)</cite> giving the matplotlib figure and axis.</dd>
+<dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, ax)</cite> giving the matplotlib figure and axis.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -431,22 +421,21 @@ axis, do <strong>not</strong> re-scale the axis limits to the data.</dd>
 <p>Useful if you want to plot a curve by fitting values to densely
 sampled points and need the concentrations at which to compute
 these points.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd><dl class="first last docutils">
-<dt><cite>bottom</cite> (float)</dt>
-<dd>Lowest concentration.</dd>
-<dt><cite>top</cite> (float)</dt>
-<dd>Highest concentration.</dd>
-<dt><cite>npoints</cite> (int)</dt>
-<dd>Number of points.</dd>
-<dt><cite>extend</cite> (float)</dt>
-<dd>After transforming to log space, extend range of points
-by this much below and above <cite>bottom</cite> and <cite>top</cite>.</dd>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>bottom</cite> (float)</dt><dd><p>Lowest concentration.</p>
+</dd>
+<dt><cite>top</cite> (float)</dt><dd><p>Highest concentration.</p>
+</dd>
+<dt><cite>npoints</cite> (int)</dt><dd><p>Number of points.</p>
+</dd>
+<dt><cite>extend</cite> (float)</dt><dd><p>After transforming to log space, extend range of points
+by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
+</dd>
 </dl>
 </dd>
-<dt>Returns:</dt>
-<dd>A numpy array of <cite>npoints</cite> concentrations.</dd>
+<dt>Returns:</dt><dd><p>A numpy array of <cite>npoints</cite> concentrations.</p>
+</dd>
 </dl>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>               <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.15</span><span class="p">,</span> <span class="mf">4.64</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">21.54</span><span class="p">,</span> <span class="mf">46.42</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
@@ -465,7 +454,6 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</dd>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -498,7 +486,7 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</dd>
     
 
 <p>
-<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
+<a href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -542,20 +530,10 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</dd>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -564,8 +542,8 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</dd>
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/neutcurve.hillcurve.rst.txt"
