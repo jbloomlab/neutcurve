@@ -555,7 +555,8 @@ class HillCurve:
         ax.set_xscale('log')
         ax.set_xlabel(xlabel, fontsize=15)
         ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params('both', labelsize=12)
+        ax.tick_params('both', labelsize=12, length=5, width=1)
+        ax.minorticks_off()
         if yticklocs is not None:
             ax.set_yticks(yticklocs)
 

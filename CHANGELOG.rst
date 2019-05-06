@@ -17,6 +17,10 @@ Added
 
 - Allow more precise sizing of `CurveFits` plots.
 
+Changed
+++++++++
+- Smaller tick mark sizes.
+
 0.1.0
 ---------------------------
 Initial release
