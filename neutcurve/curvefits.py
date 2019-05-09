@@ -331,6 +331,7 @@ class CurveFits:
                  max_viruses_per_subplot=5,
                  multi_serum_subplots=True,
                  all_subplots=_WILDTYPE_NAMES,
+                 titles=None,
                  **kwargs,
                  ):
         """Plot grid with replicate-average of viruses for each serum.
@@ -359,6 +360,8 @@ class CurveFits:
             `all_subplots` (iterable)
                 If making multiple subplots for serum, which viruses
                 do we show on all subplots? These are also shown first.
+            `titles` (`None` or list)
+                Specify custom titles for each subplot different than `sera`.
             `**kwargs`
                 Other keyword arguments that can be passed to
                 :meth:`CurveFits.plotGrid`.
@@ -369,6 +372,11 @@ class CurveFits:
         """
         sera, viruses = self._sera_viruses_lists(sera, viruses)
         viruses = set(viruses)
+
+        if titles is None:
+            titles = sera
+        elif len(sera) != len(titles):
+            raise ValueError(f"`titles`, `sera` != length:\n{titles}\n{sera}")
 
         if max_viruses_per_subplot < 1:
             raise ValueError('`max_viruses_per_subplot` must be at least 1')
@@ -396,7 +404,7 @@ class CurveFits:
         # per serum, and in that case need to share viruses in
         # `all_subplots` among curves.
         plotlist = []
-        for serum in sera:
+        for serum, title in zip(sera, titles):
             curvelist = []
             ivirus = 0
             serum_shared_viruses = [v for v in self.viruses[serum] if
@@ -412,7 +420,7 @@ class CurveFits:
             for virus in serum_shared_viruses + serum_unshared_viruses:
                 if ivirus >= max_viruses_per_subplot:
                     if multi_serum_subplots:
-                        plotlist.append((serum, curvelist))
+                        plotlist.append((title, curvelist))
                         curvelist = [curve for curve in shared_curvelist]
                         ivirus = len(curvelist)
                         assert ivirus < max_viruses_per_subplot
@@ -436,7 +444,7 @@ class CurveFits:
                     shared_curvelist.append(curvelist[-1])
                 ivirus += 1
             if curvelist:
-                plotlist.append((serum, curvelist))
+                plotlist.append((title, curvelist))
         if not plotlist:
             raise ValueError('no curves for these sera / viruses')
 
