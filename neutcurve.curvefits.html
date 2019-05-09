@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>curvefits &#8212; neutcurve 0.2.0 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.2.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -276,7 +276,7 @@ legend in this case.</p>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotSera">
-<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>titles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicate-average of viruses for each serum.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -302,6 +302,8 @@ do we make multiple subplots for it or raise an error?</p>
 </dd>
 <dt><cite>all_subplots</cite> (iterable)</dt><dd><p>If making multiple subplots for serum, which viruses
 do we show on all subplots? These are also shown first.</p>
+</dd>
+<dt><cite>titles</cite> (<cite>None</cite> or list)</dt><dd><p>Specify custom titles for each subplot different than <cite>sera</cite>.</p>
 </dd>
 <dt><cite>**kwargs</cite></dt><dd><p>Other keyword arguments that can be passed to
 <a class="reference internal" href="#neutcurve.curvefits.CurveFits.plotGrid" title="neutcurve.curvefits.CurveFits.plotGrid"><code class="xref py py-meth docutils literal notranslate"><span class="pre">CurveFits.plotGrid()</span></code></a>.</p>

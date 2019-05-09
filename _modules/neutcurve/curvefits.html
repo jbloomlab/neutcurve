@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>neutcurve.curvefits &#8212; neutcurve 0.2.0 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 0.2.1 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -363,6 +363,7 @@
                  <span class="n">max_viruses_per_subplot</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                  <span class="n">multi_serum_subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">all_subplots</span><span class="o">=</span><span class="n">_WILDTYPE_NAMES</span><span class="p">,</span>
+                 <span class="n">titles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                  <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot grid with replicate-average of viruses for each serum.</span>
@@ -391,6 +392,8 @@
 <span class="sd">            `all_subplots` (iterable)</span>
 <span class="sd">                If making multiple subplots for serum, which viruses</span>
 <span class="sd">                do we show on all subplots? These are also shown first.</span>
+<span class="sd">            `titles` (`None` or list)</span>
+<span class="sd">                Specify custom titles for each subplot different than `sera`.</span>
 <span class="sd">            `**kwargs`</span>
 <span class="sd">                Other keyword arguments that can be passed to</span>
 <span class="sd">                :meth:`CurveFits.plotGrid`.</span>
@@ -401,6 +404,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sera_viruses_lists</span><span class="p">(</span><span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span><span class="p">)</span>
         <span class="n">viruses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">viruses</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">titles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">titles</span> <span class="o">=</span> <span class="n">sera</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sera</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">titles</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;`titles`, `sera` != length:</span><span class="se">\n</span><span class="si">{titles}</span><span class="se">\n</span><span class="si">{sera}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">max_viruses_per_subplot</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`max_viruses_per_subplot` must be at least 1&#39;</span><span class="p">)</span>
@@ -428,7 +436,7 @@
         <span class="c1"># per serum, and in that case need to share viruses in</span>
         <span class="c1"># `all_subplots` among curves.</span>
         <span class="n">plotlist</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">sera</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">serum</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sera</span><span class="p">,</span> <span class="n">titles</span><span class="p">):</span>
             <span class="n">curvelist</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">ivirus</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">serum_shared_viruses</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]</span> <span class="k">if</span>
@@ -444,7 +452,7 @@
             <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">serum_shared_viruses</span> <span class="o">+</span> <span class="n">serum_unshared_viruses</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">ivirus</span> <span class="o">&gt;=</span> <span class="n">max_viruses_per_subplot</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">multi_serum_subplots</span><span class="p">:</span>
-                        <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">serum</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
+                        <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
                         <span class="n">curvelist</span> <span class="o">=</span> <span class="p">[</span><span class="n">curve</span> <span class="k">for</span> <span class="n">curve</span> <span class="ow">in</span> <span class="n">shared_curvelist</span><span class="p">]</span>
                         <span class="n">ivirus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">curvelist</span><span class="p">)</span>
                         <span class="k">assert</span> <span class="n">ivirus</span> <span class="o">&lt;</span> <span class="n">max_viruses_per_subplot</span>
@@ -468,7 +476,7 @@
                     <span class="n">shared_curvelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curvelist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                 <span class="n">ivirus</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">curvelist</span><span class="p">:</span>
-                <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">serum</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
+                <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">plotlist</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no curves for these sera / viruses&#39;</span><span class="p">)</span>
 
