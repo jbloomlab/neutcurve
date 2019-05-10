@@ -325,6 +325,7 @@ class CurveFits:
                  nrow=None,
                  sera='all',
                  viruses='all',
+                 ignore_serum_virus=None,
                  colors=CBPALETTE,
                  markers=CBMARKERS,
                  virus_to_color_marker=None,
@@ -344,6 +345,9 @@ class CurveFits:
             `viruses` ('all' or list)
                 Viruses to include on plot, in this order unless one
                 is specified in `all_subplots`.
+            `ignore_serum_virus` (`None` or dict)
+                Specific serum / virus combinations to ignore (not plot). Key
+                by serum, and then list viruses to ignore.
             `colors` (iterable)
                 List of colors for different replicates.
             `markers` (iterable)
@@ -405,13 +409,19 @@ class CurveFits:
         # `all_subplots` among curves.
         plotlist = []
         for serum, title in zip(sera, titles):
+            if ignore_serum_virus and serum in ignore_serum_virus:
+                ignore_virus = ignore_serum_virus[serum]
+            else:
+                ignore_virus = {}
             curvelist = []
             ivirus = 0
             serum_shared_viruses = [v for v in self.viruses[serum] if
-                                    (v in viruses) and (v in all_subplots)]
+                                    (v in viruses) and (v in all_subplots) and
+                                    (v not in ignore_virus)]
             serum_unshared_viruses = [v for v in self.viruses[serum] if
                                       (v in viruses) and
-                                      (v not in all_subplots)]
+                                      (v not in all_subplots) and
+                                      (v not in ignore_virus)]
             if len(serum_shared_viruses) >= max_viruses_per_subplot:
                 raise ValueError(f"serum {serum} has too many subplot-shared "
                                  'viruses (in `all_subplots`) relative to '
