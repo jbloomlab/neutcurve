@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>curvefits &#8212; neutcurve 0.2.1 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.2.2 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -169,7 +169,7 @@ and top are 0 and 1.</p></li>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotGrid">
-<code class="descname">plotGrid</code><span class="sig-paren">(</span><em>plots</em>, <em>*</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>widthscale=1</em>, <em>heightscale=1</em>, <em>attempt_shared_legend=True</em>, <em>fix_lims=None</em>, <em>bound_ymin=0</em>, <em>bound_ymax=1</em>, <em>extend_lim=0.07</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>legendtitle=None</em>, <em>orderlegend=None</em>, <em>titlesize=14</em>, <em>labelsize=15</em>, <em>ticksize=12</em>, <em>legendfontsize=12</em>, <em>align_to_dmslogo_facet=False</em>, <em>despine=False</em>, <em>yticklocs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotGrid</code><span class="sig-paren">(</span><em>plots</em>, <em>*</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>widthscale=1</em>, <em>heightscale=1</em>, <em>attempt_shared_legend=True</em>, <em>fix_lims=None</em>, <em>bound_ymin=0</em>, <em>bound_ymax=1</em>, <em>extend_lim=0.07</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>legendtitle=None</em>, <em>orderlegend=None</em>, <em>titlesize=14</em>, <em>labelsize=15</em>, <em>ticksize=12</em>, <em>legendfontsize=12</em>, <em>align_to_dmslogo_facet=False</em>, <em>despine=False</em>, <em>yticklocs=None</em>, <em>sharex=True</em>, <em>sharey=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot arbitrary grid of curves.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
@@ -189,8 +189,10 @@ is a list of dicts keyed by:</p>
 </ul>
 </div></blockquote>
 </dd>
-<dt><cite>xlabel</cite>, <cite>ylabel</cite> (<cite>None</cite> or str)</dt><dd><p>Labels for x- and y-axes. If <cite>None</cite>, use <cite>conc_col</cite>
-and <cite>fracinf_col</cite>, respectively.</p>
+<dt><cite>xlabel</cite>, <cite>ylabel</cite> (<cite>None</cite>, str, or list)</dt><dd><p>Labels for x- and y-axes. If <cite>None</cite>, use <cite>conc_col</cite>
+and <cite>fracinf_col</cite>, respectively. If str, use this shared
+for all axes. If list, should be same length as <cite>plots</cite>
+and gives axis label for each subplot.</p>
 </dd>
 <dt><cite>widthscale</cite>, <cite>heightscale</cite> (float)</dt><dd><p>Scale width or height of figure by this much.</p>
 </dd>
@@ -234,6 +236,10 @@ same meaning as <code class="docutils literal notranslate"><span class="pre">dms
 </dd>
 <dt><cite>yticklocs</cite> (<cite>None</cite> or list)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve.plot" title="neutcurve.hillcurve.HillCurve.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve.plot()</span></code></a>.</p>
 </dd>
+<dt><cite>sharex</cite> (bool)</dt><dd><p>Share x-axis scale among plots.</p>
+</dd>
+<dt><cite>sharey</cite> (bool)</dt><dd><p>Share y-axis scale among plots.</p>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><p>The 2-tuple <cite>(fig, axes)</cite> of matplotlib figure and 2D axes array.</p>
@@ -276,7 +282,7 @@ legend in this case.</p>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotSera">
-<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>titles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>ignore_serum_virus=None</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>titles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicate-average of viruses for each serum.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -286,6 +292,9 @@ legend in this case.</p>
 </dd>
 <dt><cite>viruses</cite> (‘all’ or list)</dt><dd><p>Viruses to include on plot, in this order unless one
 is specified in <cite>all_subplots</cite>.</p>
+</dd>
+<dt><cite>ignore_serum_virus</cite> (<cite>None</cite> or dict)</dt><dd><p>Specific serum / virus combinations to ignore (not plot). Key
+by serum, and then list viruses to ignore.</p>
 </dd>
 <dt><cite>colors</cite> (iterable)</dt><dd><p>List of colors for different replicates.</p>
 </dd>
