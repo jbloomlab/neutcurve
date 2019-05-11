@@ -375,7 +375,7 @@ class CurveFits:
 
         """
         sera, viruses = self._sera_viruses_lists(sera, viruses)
-        viruses = set(viruses)
+        viruses = list(collections.OrderedDict.fromkeys(viruses))
 
         if titles is None:
             titles = sera
@@ -669,6 +669,8 @@ class CurveFits:
                  align_to_dmslogo_facet=False,
                  despine=False,
                  yticklocs=None,
+                 sharex=True,
+                 sharey=True,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -687,9 +689,11 @@ class CurveFits:
                   - 'color'
                   - 'marker': https://matplotlib.org/api/markers_api.html
 
-            `xlabel`, `ylabel` (`None` or str)
+            `xlabel`, `ylabel` (`None`, str, or list)
                 Labels for x- and y-axes. If `None`, use `conc_col`
-                and `fracinf_col`, respectively.
+                and `fracinf_col`, respectively. If str, use this shared
+                for all axes. If list, should be same length as `plots`
+                and gives axis label for each subplot.
             `widthscale`, `heightscale` (float)
                 Scale width or height of figure by this much.
             `attempt_shared_legend` (bool)
@@ -732,6 +736,10 @@ class CurveFits:
                 Remove top and right spines from plots.
             `yticklocs` (`None` or list)
                 Same meaning as for :meth:`neutcurve.hillcurve.HillCurve.plot`.
+            `sharex` (bool)
+                Share x-axis scale among plots.
+            `sharey` (bool)
+                Share y-axis scale among plots.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -744,11 +752,7 @@ class CurveFits:
         nrows = ncols = None
         if fix_lims is None:
             fix_lims = {}
-        lims = fix_lims.copy()
-        if bound_ymin is not None:
-            lims['ymin'] = bound_ymin
-        if bound_ymax is not None:
-            lims['ymax'] = bound_ymax
+        lims = {key: {} for key in plots.keys()}
         for (irow, icol), (_title, curvelist) in plots.items():
             if irow < 0:
                 raise ValueError('invalid row index `irow` < 0')
@@ -768,38 +772,45 @@ class CurveFits:
                                       replicate=curvedict['replicate']
                                       )
                 curvedict['curve'] = curve
-                for lim, attr, limfunc, in [('xmin', 'cs', min),
-                                            ('xmax', 'cs', max),
-                                            ('ymin', 'fs', min),
-                                            ('ymax', 'fs', max)
-                                            ]:
-                    val = limfunc(getattr(curve, attr))
+                for lim, attr, f in [('xmin', 'cs', min), ('xmax', 'cs', max),
+                                     ('ymin', 'fs', min), ('ymax', 'fs', max)]:
+                    val = f(getattr(curve, attr))
                     if lim in fix_lims:
-                        pass
-                    elif lim not in lims:
-                        lims[lim] = val
+                        lims[(irow, icol)][lim] = fix_lims[lim]
+                    elif lim == 'ymin' and (bound_ymin is not None):
+                        lims[(irow, icol)][lim] = min(val, bound_ymin)
+                    elif lim == 'ymax' and (bound_ymax is not None):
+                        lims[(irow, icol)][lim] = max(val, bound_ymax)
                     else:
-                        lims[lim] = limfunc(lims[lim], val)
+                        lims[(irow, icol)][lim] = val
+
+        for share, axtype in [(sharex, 'x'), (sharey, 'y')]:
+            if share:
+                for limtype, limfunc in [('min', min), ('max', max)]:
+                    lim = limfunc(lims[key][axtype + limtype] for key in lims)
+                    for key in lims.keys():
+                        lims[key][axtype + limtype] = lim
 
         # check and then extend limits
-        if lims['xmin'] <= 0:
-            raise ValueError(f"xmin {lims['xmin']} <= 0, which is not allowed")
-        yextent = lims['ymax'] - lims['ymin']
-        if yextent <= 0:
-            raise ValueError('no positive extent for y-axis')
-        if 'ymin' not in fix_lims:
-            lims['ymin'] -= yextent * extend_lim
-        if 'ymax' not in fix_lims:
-            lims['ymax'] += yextent * extend_lim
-        xextent = math.log(lims['xmax']) - math.log(lims['xmin'])
-        if xextent <= 0:
-            raise ValueError('no positive extent for x-axis')
-        if 'xmin' not in fix_lims:
-            lims['xmin'] = math.exp(math.log(lims['xmin']) -
-                                    xextent * extend_lim)
-        if 'xmax' not in fix_lims:
-            lims['xmax'] = math.exp(math.log(lims['xmax']) +
-                                    xextent * extend_lim)
+        for key in plots.keys():
+            if lims[key]['xmin'] <= 0:
+                raise ValueError('xmin <= 0, which is not allowed')
+            yextent = lims[key]['ymax'] - lims[key]['ymin']
+            if yextent <= 0:
+                raise ValueError('no positive extent for y-axis')
+            if 'ymin' not in fix_lims:
+                lims[key]['ymin'] -= yextent * extend_lim
+            if 'ymax' not in fix_lims:
+                lims[key]['ymax'] += yextent * extend_lim
+            xextent = math.log(lims[key]['xmax']) - math.log(lims[key]['xmin'])
+            if xextent <= 0:
+                raise ValueError('no positive extent for x-axis')
+            if 'xmin' not in fix_lims:
+                lims[key]['xmin'] = math.exp(math.log(lims[key]['xmin']) -
+                                             xextent * extend_lim)
+            if 'xmax' not in fix_lims:
+                lims[key]['xmax'] = math.exp(math.log(lims[key]['xmax']) +
+                                             xextent * extend_lim)
 
         if align_to_dmslogo_facet:
             hparams = dmslogo.facet.height_params(
@@ -816,22 +827,25 @@ class CurveFits:
         width = (1 + 3 * ncols) * widthscale
         fig, axes = plt.subplots(nrows=nrows,
                                  ncols=ncols,
-                                 sharex=True,
-                                 sharey=True,
+                                 sharex=sharex,
+                                 sharey=sharey,
                                  squeeze=False,
                                  figsize=(width, height),
                                  )
 
-        # set limits on shared axis
-        axes[0, 0].set_xlim(lims['xmin'], lims['xmax'])
-        axes[0, 0].set_ylim(lims['ymin'], lims['ymax'])
+        # set limits for share axes
+        for irow, icol in plots.keys():
+            axes[irow, icol].set_xlim(lims[irow, icol]['xmin'],
+                                      lims[irow, icol]['xmax'])
+            axes[irow, icol].set_ylim(lims[irow, icol]['ymin'],
+                                      lims[irow, icol]['ymax'])
 
         # make plots
         shared_legend = attempt_shared_legend
         kwargs_tup_to_label = {}  # used to determine if shared legend
         legend_handles = collections.defaultdict(list)
         shared_legend_handles = []  # handles if using shared legend
-        for (irow, icol), (title, curvelist) in plots.items():
+        for i, ((irow, icol), (title, curvelist)) in enumerate(plots.items()):
             ax = axes[irow, icol]
             ax.set_title(title, fontsize=titlesize)
             for curvedict in curvelist:
@@ -841,9 +855,17 @@ class CurveFits:
                           'linewidth': linewidth,
                           'markersize': markersize,
                           }
+                if isinstance(xlabel, list):
+                    ixlabel = xlabel[i]
+                else:
+                    ixlabel = None
+                if isinstance(ylabel, list):
+                    iylabel = ylabel[i]
+                else:
+                    iylabel = None
                 curvedict['curve'].plot(ax=ax,
-                                        xlabel=None,
-                                        ylabel=None,
+                                        xlabel=ixlabel,
+                                        ylabel=iylabel,
                                         yticklocs=yticklocs,
                                         **kwargs,
                                         )
@@ -863,7 +885,8 @@ class CurveFits:
                         else:
                             kwargs_tup_to_label[kwargs_tup] = label
                             shared_legend_handles.append(handle)
-            ax.tick_params('both', labelsize=ticksize)
+            ax.tick_params('both', labelsize=ticksize, bottom=True, left=True,
+                           right=False, top=False)
             if despine:
                 dmslogo.utils.despine(ax=ax)
 
@@ -933,11 +956,11 @@ class CurveFits:
                           left=False, right=False, which='both')
         if xlabel is None:
             bigax.set_xlabel(self.conc_col, fontsize=labelsize, labelpad=10)
-        else:
+        elif not isinstance(xlabel, list):
             bigax.set_xlabel(xlabel, fontsize=labelsize, labelpad=10)
         if ylabel is None:
             bigax.set_ylabel(self.fracinf_col, fontsize=labelsize, labelpad=10)
-        else:
+        elif not isinstance(ylabel, list):
             bigax.set_yabel(ylabel, fontsize=labelsize, labelpad=10)
 
         if align_to_dmslogo_facet:

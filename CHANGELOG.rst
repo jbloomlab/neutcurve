@@ -13,6 +13,8 @@ Added
 +++++++
 - `ignore_serum_virus` to `CurveFits.plotSera`.
 
+- Added options to `CurveFits.plotGrid` to **not** share x- and y-axis, and to allow different labels.
+
 0.2.1
 -------
 
