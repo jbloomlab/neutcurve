@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.2.3
+-------
+
+Changed
+++++++++
+- Fix bug in `CurveFits.plotGrid` when plotting just wildtype.
+
 0.2.2
 ---------
 

@@ -422,10 +422,13 @@ class CurveFits:
                                       (v in viruses) and
                                       (v not in all_subplots) and
                                       (v not in ignore_virus)]
-            if len(serum_shared_viruses) >= max_viruses_per_subplot:
+            unshared = int(bool(len(serum_unshared_viruses)))
+            if len(serum_shared_viruses) > max_viruses_per_subplot - unshared:
                 raise ValueError(f"serum {serum} has too many subplot-shared "
                                  'viruses (in `all_subplots`) relative to '
-                                 'value of `max_viruses_per_subplot`')
+                                 'value of `max_viruses_per_subplot`:\n'
+                                 f"{serum_shared_viruses} is more than "
+                                 f"{max_viruses_per_subplot} viruses.")
             shared_curvelist = []
             for virus in serum_shared_viruses + serum_unshared_viruses:
                 if ivirus >= max_viruses_per_subplot:
