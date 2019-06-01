@@ -777,15 +777,18 @@ class CurveFits:
                 curvedict['curve'] = curve
                 for lim, attr, f in [('xmin', 'cs', min), ('xmax', 'cs', max),
                                      ('ymin', 'fs', min), ('ymax', 'fs', max)]:
-                    val = f(getattr(curve, attr))
                     if lim in fix_lims:
                         lims[(irow, icol)][lim] = fix_lims[lim]
-                    elif lim == 'ymin' and (bound_ymin is not None):
-                        lims[(irow, icol)][lim] = min(val, bound_ymin)
-                    elif lim == 'ymax' and (bound_ymax is not None):
-                        lims[(irow, icol)][lim] = max(val, bound_ymax)
                     else:
-                        lims[(irow, icol)][lim] = val
+                        val = f(getattr(curve, attr))
+                        if lim in lims[(irow, icol)]:
+                            val = f(val, lims[(irow, icol)][lim])
+                        if lim == 'ymin' and (bound_ymin is not None):
+                            lims[(irow, icol)][lim] = min(val, bound_ymin)
+                        elif lim == 'ymax' and (bound_ymax is not None):
+                            lims[(irow, icol)][lim] = max(val, bound_ymax)
+                        else:
+                            lims[(irow, icol)][lim] = val
 
         for share, axtype in [(sharex, 'x'), (sharey, 'y')]:
             if share:
