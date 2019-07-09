@@ -106,7 +106,7 @@ class HillCurve:
         >>> neut = HillCurve(cs, fs, fixbottom=False)
         >>> scipy.allclose(neut.midpoint, m)
         True
-        >>> scipy.allclose(neut.slope, s)
+        >>> scipy.allclose(neut.slope, s, atol=1e-4)
         True
         >>> scipy.allclose(neut.top, t)
         True
@@ -272,16 +272,24 @@ class HillCurve:
         if any(self.cs <= 0):
             raise ValueError('concentrations in `cs` must all be > 0')
 
-        fit_tup = self._fit_curve(fixtop=fixtop,
-                                  fixbottom=fixbottom,
-                                  fitlogc=fitlogc,
-                                  use_stderr_for_fit=use_stderr_for_fit,
-                                  )
+        for method in ['TNC', 'L-BFGS-B', 'SLSQP']:
+            fit_tup = self._minimize_fit(fixtop=fixtop,
+                                         fixbottom=fixbottom,
+                                         fitlogc=fitlogc,
+                                         use_stderr_for_fit=use_stderr_for_fit,
+                                         method=method,
+                                         )
+            if fit_tup is not False:
+                break
+        else:
+            raise RuntimeError(f"fitting failed:\ncs={self.cs}\nfs={self.fs}")
+
         for i, param in enumerate(['midpoint', 'slope', 'bottom', 'top']):
             setattr(self, param, fit_tup[i])
 
-    def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit):
-        """Fit and return `(midpoint, slope, bottom, top)`."""
+    def _minimize_fit(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit,
+                      method):
+        """Fit via minimization, return `(midpoint, slope, bottom, top)`."""
         # make initial guess for slope to have the right sign
         slope = 1.5
 
@@ -328,43 +336,52 @@ class HillCurve:
             func = evalfunc
         elif fixtop is False:
             initguess = [midpoint, slope, top]
+            bounds = [(0, None), (0, None), (bottom, None)]
 
             def func(c, m, s, t):
                 return evalfunc(c, m, s, bottom, t)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
+            bounds = [(0, None), (0, None), (None, top)]
 
             def func(c, m, s, b):
                 return evalfunc(c, m, s, b, top)
         else:
             initguess = [midpoint, slope]
+            bounds = [(0, None), (0, None)]
 
             def func(c, m, s):
                 return evalfunc(c, m, s, bottom, top)
 
-        (popt, pcov) = scipy.optimize.curve_fit(
-                f=func,
-                xdata=xdata,
-                ydata=self.fs,
-                p0=initguess,
-                sigma=self.fs_stderr if use_stderr_for_fit else None,
-                absolute_sigma=True,
-                maxfev=1000,
-                )
+        def min_func(p):
+            """Evaluate to zero when perfect fit."""
+            if (use_stderr_for_fit is None) or (self.fs_stderr is None):
+                return sum((func(xdata, *p) - self.fs)**2)
+            else:
+                return sum((func(xdata, *p) - self.fs / self.fs_stderr)**2)
+
+        initguess = scipy.array(initguess, dtype='float')
+        res = scipy.optimize.minimize(min_func,
+                                      initguess,
+                                      bounds=bounds,
+                                      method='TNC')
+
+        if not res.success:
+            return False
 
         if fitlogc:
             midpoint = scipy.exp(midpoint)
 
-        midpoint = popt[0]
-        slope = popt[1]
+        midpoint = res.x[0]
+        slope = res.x[1]
         if fixbottom is False and fixtop is False:
-            bottom = popt[2]
-            top = popt[3]
+            bottom = res.x[2]
+            top = res.x[3]
         elif fixbottom is False:
-            bottom = popt[2]
+            bottom = res.x[2]
         elif fixtop is False:
-            top = popt[2]
+            top = res.x[2]
 
         return (midpoint, slope, bottom, top)
 
