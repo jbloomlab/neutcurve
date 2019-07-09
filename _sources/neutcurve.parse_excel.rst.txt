@@ -1,4 +1,4 @@
 .. automodule:: neutcurve.parse_excel
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

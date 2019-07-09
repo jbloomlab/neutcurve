@@ -2,9 +2,9 @@ neutcurve package
 =================
 
 .. automodule:: neutcurve
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Submodules
 ----------
@@ -15,4 +15,3 @@ Submodules
    neutcurve.curvefits
    neutcurve.hillcurve
    neutcurve.parse_excel
-

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>curvefits &#8212; neutcurve 0.2.4 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.2.5 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,6 +29,8 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <span class="target" id="module-neutcurve.curvefits"></span><div class="section" id="curvefits">
@@ -36,7 +38,7 @@
 <p>Defines <a class="reference internal" href="#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurveFits</span></code></a> to fit curves and display / plot results.</p>
 <dl class="class">
 <dt id="neutcurve.curvefits.CurveFits">
-<em class="property">class </em><code class="descclassname">neutcurve.curvefits.</code><code class="descname">CurveFits</code><span class="sig-paren">(</span><em>data</em>, <em>*</em>, <em>conc_col='concentration'</em>, <em>fracinf_col='fraction infectivity'</em>, <em>serum_col='serum'</em>, <em>virus_col='virus'</em>, <em>replicate_col='replicate'</em>, <em>fixbottom=0</em>, <em>fixtop=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">neutcurve.curvefits.</code><code class="sig-name descname">CurveFits</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">*</em>, <em class="sig-param">conc_col='concentration'</em>, <em class="sig-param">fracinf_col='fraction infectivity'</em>, <em class="sig-param">serum_col='serum'</em>, <em class="sig-param">virus_col='virus'</em>, <em class="sig-param">replicate_col='replicate'</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Fit and display <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a> curves.</p>
 <dl class="simple">
@@ -86,7 +88,7 @@ that serum and virus in the order they occur in <cite>data</cite>.</p>
 </dl>
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.fitParams">
-<code class="descname">fitParams</code><span class="sig-paren">(</span><em>*</em>, <em>average_only=True</em>, <em>ics=(50</em>, <em>)</em>, <em>ics_precision=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fitParams</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">average_only=True</em>, <em class="sig-param">ics=(50</em>, <em class="sig-param">)</em>, <em class="sig-param">ics_precision=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data frame with curve fitting parameters.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
@@ -129,7 +131,7 @@ and top are 0 and 1.</p></li>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.getCurve">
-<code class="descname">getCurve</code><span class="sig-paren">(</span><em>*</em>, <em>serum</em>, <em>virus</em>, <em>replicate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.getCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.getCurve" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">getCurve</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">serum</em>, <em class="sig-param">virus</em>, <em class="sig-param">replicate</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.getCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.getCurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the fitted curve for this sample.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -149,7 +151,7 @@ and top are 0 and 1.</p></li>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotAverages">
-<code class="descname">plotAverages</code><span class="sig-paren">(</span><em>*</em>, <em>color='black'</em>, <em>marker='o'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotAverages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotAverages" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotAverages</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">color='black'</em>, <em class="sig-param">marker='o'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotAverages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotAverages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with a curve for each serum / virus pair.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -169,7 +171,7 @@ and top are 0 and 1.</p></li>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotGrid">
-<code class="descname">plotGrid</code><span class="sig-paren">(</span><em>plots</em>, <em>*</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>widthscale=1</em>, <em>heightscale=1</em>, <em>attempt_shared_legend=True</em>, <em>fix_lims=None</em>, <em>bound_ymin=0</em>, <em>bound_ymax=1</em>, <em>extend_lim=0.07</em>, <em>markersize=6</em>, <em>linewidth=1</em>, <em>linestyle='-'</em>, <em>legendtitle=None</em>, <em>orderlegend=None</em>, <em>titlesize=14</em>, <em>labelsize=15</em>, <em>ticksize=12</em>, <em>legendfontsize=12</em>, <em>align_to_dmslogo_facet=False</em>, <em>despine=False</em>, <em>yticklocs=None</em>, <em>sharex=True</em>, <em>sharey=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotGrid</code><span class="sig-paren">(</span><em class="sig-param">plots</em>, <em class="sig-param">*</em>, <em class="sig-param">xlabel=None</em>, <em class="sig-param">ylabel=None</em>, <em class="sig-param">widthscale=1</em>, <em class="sig-param">heightscale=1</em>, <em class="sig-param">attempt_shared_legend=True</em>, <em class="sig-param">fix_lims=None</em>, <em class="sig-param">bound_ymin=0</em>, <em class="sig-param">bound_ymax=1</em>, <em class="sig-param">extend_lim=0.07</em>, <em class="sig-param">markersize=6</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">legendtitle=None</em>, <em class="sig-param">orderlegend=None</em>, <em class="sig-param">titlesize=14</em>, <em class="sig-param">labelsize=15</em>, <em class="sig-param">ticksize=12</em>, <em class="sig-param">legendfontsize=12</em>, <em class="sig-param">align_to_dmslogo_facet=False</em>, <em class="sig-param">despine=False</em>, <em class="sig-param">yticklocs=None</em>, <em class="sig-param">sharex=True</em>, <em class="sig-param">sharey=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotGrid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotGrid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot arbitrary grid of curves.</p>
 <dl>
 <dt>Args:</dt><dd><dl>
@@ -249,7 +251,7 @@ same meaning as <code class="docutils literal notranslate"><span class="pre">dms
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotReplicates">
-<code class="descname">plotReplicates</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>subplot_titles='{serum} vs {virus}'</em>, <em>show_average=False</em>, <em>average_only=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotReplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotReplicates" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotReplicates</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">ncol=4</em>, <em class="sig-param">nrow=None</em>, <em class="sig-param">sera='all'</em>, <em class="sig-param">viruses='all'</em>, <em class="sig-param">colors=('#999999'</em>, <em class="sig-param">'#E69F00'</em>, <em class="sig-param">'#56B4E9'</em>, <em class="sig-param">'#009E73'</em>, <em class="sig-param">'#F0E442'</em>, <em class="sig-param">'#0072B2'</em>, <em class="sig-param">'#D55E00'</em>, <em class="sig-param">'#CC79A7')</em>, <em class="sig-param">markers=('o'</em>, <em class="sig-param">'^'</em>, <em class="sig-param">'s'</em>, <em class="sig-param">'D'</em>, <em class="sig-param">'v'</em>, <em class="sig-param">'&lt;'</em>, <em class="sig-param">'&gt;'</em>, <em class="sig-param">'p')</em>, <em class="sig-param">subplot_titles='{serum} vs {virus}'</em>, <em class="sig-param">show_average=False</em>, <em class="sig-param">average_only=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotReplicates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotReplicates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicates for each serum / virus on same plot.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -282,7 +284,7 @@ legend in this case.</p>
 
 <dl class="method">
 <dt id="neutcurve.curvefits.CurveFits.plotSera">
-<code class="descname">plotSera</code><span class="sig-paren">(</span><em>*</em>, <em>ncol=4</em>, <em>nrow=None</em>, <em>sera='all'</em>, <em>viruses='all'</em>, <em>ignore_serum_virus=None</em>, <em>colors=('#999999'</em>, <em>'#E69F00'</em>, <em>'#56B4E9'</em>, <em>'#009E73'</em>, <em>'#F0E442'</em>, <em>'#0072B2'</em>, <em>'#D55E00'</em>, <em>'#CC79A7')</em>, <em>markers=('o'</em>, <em>'^'</em>, <em>'s'</em>, <em>'D'</em>, <em>'v'</em>, <em>'&lt;'</em>, <em>'&gt;'</em>, <em>'p')</em>, <em>virus_to_color_marker=None</em>, <em>max_viruses_per_subplot=5</em>, <em>multi_serum_subplots=True</em>, <em>all_subplots=('WT'</em>, <em>'wt'</em>, <em>'wildtype'</em>, <em>'Wildtype'</em>, <em>'wild type'</em>, <em>'Wild type')</em>, <em>titles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotSera</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">ncol=4</em>, <em class="sig-param">nrow=None</em>, <em class="sig-param">sera='all'</em>, <em class="sig-param">viruses='all'</em>, <em class="sig-param">ignore_serum_virus=None</em>, <em class="sig-param">colors=('#999999'</em>, <em class="sig-param">'#E69F00'</em>, <em class="sig-param">'#56B4E9'</em>, <em class="sig-param">'#009E73'</em>, <em class="sig-param">'#F0E442'</em>, <em class="sig-param">'#0072B2'</em>, <em class="sig-param">'#D55E00'</em>, <em class="sig-param">'#CC79A7')</em>, <em class="sig-param">markers=('o'</em>, <em class="sig-param">'^'</em>, <em class="sig-param">'s'</em>, <em class="sig-param">'D'</em>, <em class="sig-param">'v'</em>, <em class="sig-param">'&lt;'</em>, <em class="sig-param">'&gt;'</em>, <em class="sig-param">'p')</em>, <em class="sig-param">virus_to_color_marker=None</em>, <em class="sig-param">max_viruses_per_subplot=5</em>, <em class="sig-param">multi_serum_subplots=True</em>, <em class="sig-param">all_subplots=('WT'</em>, <em class="sig-param">'wt'</em>, <em class="sig-param">'wildtype'</em>, <em class="sig-param">'Wildtype'</em>, <em class="sig-param">'wild type'</em>, <em class="sig-param">'Wild type')</em>, <em class="sig-param">titles=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.plotSera"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.plotSera" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot grid with replicate-average of viruses for each serum.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -330,6 +332,7 @@ do we show on all subplots? These are also shown first.</p>
 
 
           </div>
+          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -362,7 +365,7 @@ do we show on all subplots? These are also shown first.</p>
     
 
 <p>
-<a href="https://travis-ci.org/jbloomlab/neutcurve">
+<a class="badge" href="https://travis-ci.org/jbloomlab/neutcurve">
     <img
         alt="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
         src="https://secure.travis-ci.org/jbloomlab/neutcurve.svg?branch=master"
@@ -401,15 +404,23 @@ do we show on all subplots? These are also shown first.</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
@@ -418,8 +429,8 @@ do we show on all subplots? These are also shown first.</p>
       &copy;2019--2019, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/neutcurve.curvefits.rst.txt"
