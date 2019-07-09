@@ -254,7 +254,7 @@ class HillCurve:
                  fs_stderr=None,
                  fixbottom=0,
                  fixtop=1,
-                 fitlogc=True,
+                 fitlogc=False,
                  use_stderr_for_fit=False,
                  ):
         """See main class docstring."""
@@ -272,65 +272,76 @@ class HillCurve:
         if any(self.cs <= 0):
             raise ValueError('concentrations in `cs` must all be > 0')
 
+        fit_tup = self._fit_curve(fixtop=fixtop,
+                                  fixbottom=fixbottom,
+                                  fitlogc=fitlogc,
+                                  use_stderr_for_fit=use_stderr_for_fit,
+                                  )
+        for i, param in enumerate(['midpoint', 'slope', 'bottom', 'top']):
+            setattr(self, param, fit_tup[i])
+
+    def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit):
+        """Fit and return `(midpoint, slope, bottom, top)`."""
         # make initial guess for slope to have the right sign
-        self.slope = 1.5
+        slope = 1.5
 
         # make initial guess for top and bottom
         if fixtop is False:
-            self.top = max(1, self.fs.max())
+            top = max(1, self.fs.max())
         else:
             if not isinstance(fixtop, (int, float)):
                 raise ValueError('`fixtop` is not `False` or a number')
-            self.top = fixtop
+            top = fixtop
         if fixbottom is False:
-            self.bottom = min(0, self.fs.min())
+            bottom = min(0, self.fs.min())
         else:
             if not isinstance(fixbottom, (int, float)):
                 raise ValueError('`fixbottom` is not `False` or a number')
-            self.bottom = fixbottom
+            bottom = fixbottom
 
         # make initial guess for midpoint
-        midval = (self.top - self.bottom) / 2.0
+        midval = (top - bottom) / 2.0
         if (self.fs > midval).all():
-            self.midpoint = self.cs[-1]
+            # guess above midpoint by amount equal to spacing of last 1 points
+            midpoint = self.cs[-1]**2 / self.cs[-2]
         elif (self.fs <= midval).all():
-            self.midpoint = self.cs[0]
+            # guess below midpoint by amount equal to spacing of last 1 points
+            midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
         else:
             # get first index where f crosses midpoint
             i = scipy.argmax((self.fs > midval)[:-1] !=
                              (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
-            self.midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
+            midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
 
         # set up function and initial guesses
         if fitlogc:
             evalfunc = self._evaluate_log
             xdata = scipy.log(self.cs)
-            self.midpoint = scipy.log(self.midpoint)
+            midpoint = scipy.log(midpoint)
         else:
             evalfunc = self.evaluate
             xdata = self.cs
+
         if fixtop is False and fixbottom is False:
-            func_vars = ['midpoint', 'slope', 'bottom', 'top']
+            initguess = [midpoint, slope, bottom, top]
             func = evalfunc
         elif fixtop is False:
-            func_vars = ['midpoint', 'slope', 'top']
+            initguess = [midpoint, slope, top]
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, self.bottom, t)
+                return evalfunc(c, m, s, bottom, t)
 
         elif fixbottom is False:
-            func_vars = ['midpoint', 'slope', 'bottom']
+            initguess = [midpoint, slope, bottom]
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, self.top)
+                return evalfunc(c, m, s, b, top)
         else:
-            func_vars = ['midpoint', 'slope']
+            initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, self.bottom, self.top)
-
-        initguess = [getattr(self, varname) for varname in func_vars]
+                return evalfunc(c, m, s, bottom, top)
 
         (popt, pcov) = scipy.optimize.curve_fit(
                 f=func,
@@ -342,10 +353,20 @@ class HillCurve:
                 maxfev=1000,
                 )
 
-        for i, varname in enumerate(func_vars):
-            setattr(self, varname, popt[i])
         if fitlogc:
-            self.midpoint = scipy.exp(self.midpoint)
+            midpoint = scipy.exp(midpoint)
+
+        midpoint = popt[0]
+        slope = popt[1]
+        if fixbottom is False and fixtop is False:
+            bottom = popt[2]
+            top = popt[3]
+        elif fixbottom is False:
+            bottom = popt[2]
+        elif fixtop is False:
+            top = popt[2]
+
+        return (midpoint, slope, bottom, top)
 
     def icXX(self, fracneut, *, method='interpolate'):
         """Generalizes :meth:`HillCurve.ic50` to arbitrary frac neutralized.
