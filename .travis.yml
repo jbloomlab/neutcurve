@@ -8,16 +8,7 @@ cache: pip
 # temporarily pin pydocstyle for reason here:
 # https://gitlab.com/pycqa/flake8-docstrings/issues/36
 install:
-  - >
-     pip install
-     flake8
-     flake8-docstrings
-     flake8-rst-docstrings
-     flake8-builtins
-     flake8-import-order
-     flake8-comprehensions
-     flake8-bugbear
-     pydocstyle<4
+  - pip install -r test_requirements.txt
   - pip install -e .
 
 script: 
