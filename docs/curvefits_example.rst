@@ -478,3 +478,52 @@ Note that in doing this below, we use the colors and markers defined by
     ...                  },
     ...                 xlabel='concentration (ug/ml)',
     ...                 )
+
+Fitting some problematic curves
+--------------------------------
+Here we demonstrate that the method can also fit a problematic HIV curve
+that never reaches the IC50.
+
+Data frame with data for virus not neutralized at any concentration:
+
+.. nbplot::
+
+    >>> hiv_neut_data = pd.concat([
+    ...     pd.DataFrame({'serum': 'BF520.1',
+    ...                   'virus': 'H330R',
+    ...                   'replicate': 1,
+    ...                   'concentration' : [0.020576132, 0.061728395,
+    ...                                      0.185185185, 0.555555556,
+    ...                                      1.666666667, 5],
+    ...                    'fraction infectivity': [0.721440083, 0.882537173,
+    ...                                             1.01964302, 0.904916836,
+    ...                                             0.870465533, 0.866026089]}),
+    ...     pd.DataFrame({'serum': 'BF520.1',
+    ...                   'virus': 'H330R',
+    ...                   'replicate': 2,
+    ...                   'concentration' : [0.020576132, 0.061728395,
+    ...                                      0.185185185, 0.555555556,
+    ...                                      1.666666667, 5],
+    ...                    'fraction infectivity': [0.857961054, 0.973908617,
+    ...                                             1.04569174, 1.007668321,
+    ...                                             0.959208349, 1.046646303]})])
+    >>> hiv_neut_data.head()
+         serum  virus  replicate  concentration  fraction infectivity
+    0  BF520.1  H330R          1         0.0206                 0.721
+    1  BF520.1  H330R          1         0.0617                 0.883
+    2  BF520.1  H330R          1          0.185                  1.02
+    3  BF520.1  H330R          1          0.556                 0.905
+    4  BF520.1  H330R          1           1.67                  0.87
+
+Fit and plot curve:
+
+.. nbplot::
+
+    >>> hiv_fit = neutcurve.CurveFits(hiv_neut_data)
+    >>> _ = hiv_fit.plotSera(xlabel='concentration (ug/ml)')
+
+.. nbplot::
+
+    >>> hiv_fit.fitParams()
+         serum  virus replicate  nreplicates  ic50 ic50_bound ic50_str  midpoint  slope  top  bottom
+    0  BF520.1  H330R   average            2     5      lower       >5       123   23.1    1       0
