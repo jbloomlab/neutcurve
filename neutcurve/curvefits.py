@@ -333,13 +333,15 @@ class CurveFits:
                  multi_serum_subplots=True,
                  all_subplots=_WILDTYPE_NAMES,
                  titles=None,
+                 vlines=None,
                  **kwargs,
                  ):
         """Plot grid with replicate-average of viruses for each serum.
 
         Args:
             `ncol`, `nrow` (int or `None`)
-                Specify one of these to set number of columns or rows.
+                Specify one of these to set number of columns or rows,
+                other should be `None`.
             `sera` ('all' or list)
                 Sera to include on plot, in this order.
             `viruses` ('all' or list)
@@ -366,6 +368,10 @@ class CurveFits:
                 do we show on all subplots? These are also shown first.
             `titles` (`None` or list)
                 Specify custom titles for each subplot different than `sera`.
+            `vlines` (`None` or dict)
+                Add vertical lines to plots. Keyed by serum name, values
+                are lists of dicts with a key 'x' giving x-location of vertical
+                line, and optional keys 'linewidth', 'color', and 'linestyle'.
             `**kwargs`
                 Other keyword arguments that can be passed to
                 :meth:`CurveFits.plotGrid`.
@@ -408,6 +414,7 @@ class CurveFits:
         # per serum, and in that case need to share viruses in
         # `all_subplots` among curves.
         plotlist = []
+        vlines_list = []
         for serum, title in zip(sera, titles):
             if ignore_serum_virus and serum in ignore_serum_virus:
                 ignore_virus = ignore_serum_virus[serum]
@@ -434,6 +441,10 @@ class CurveFits:
                 if ivirus >= max_viruses_per_subplot:
                     if multi_serum_subplots:
                         plotlist.append((title, curvelist))
+                        if vlines and (serum in vlines):
+                            vlines_list.append(vlines[serum])
+                        else:
+                            vlines_list.append(None)
                         curvelist = [curve for curve in shared_curvelist]
                         ivirus = len(curvelist)
                         assert ivirus < max_viruses_per_subplot
@@ -458,6 +469,10 @@ class CurveFits:
                 ivirus += 1
             if curvelist:
                 plotlist.append((title, curvelist))
+                if vlines and (serum in vlines):
+                    vlines_list.append(vlines[serum])
+                else:
+                    vlines_list.append(None)
         if not plotlist:
             raise ValueError('no curves for these sera / viruses')
 
@@ -471,8 +486,14 @@ class CurveFits:
 
         # convert plotlist to plots dict for `plotGrid`
         plots = {}
-        for iplot, plot in enumerate(plotlist):
-            plots[(iplot // ncol, iplot % ncol)] = plot
+        vlines_axkey = {}
+        assert len(plotlist) == len(vlines_list)
+        for iplot, (plot, ivline) in enumerate(zip(plotlist, vlines_list)):
+            irow = iplot // ncol
+            icol = iplot % ncol
+            plots[(irow, icol)] = plot
+            if ivline:
+                vlines_axkey[(irow, icol)] = ivline
 
         if virus_to_color_marker and 'orderlegend' not in kwargs:
             orderlegend = virus_to_color_marker.keys()
@@ -481,6 +502,7 @@ class CurveFits:
 
         return self.plotGrid(plots,
                              orderlegend=orderlegend,
+                             vlines=vlines_axkey,
                              **kwargs,
                              )
 
@@ -674,6 +696,7 @@ class CurveFits:
                  yticklocs=None,
                  sharex=True,
                  sharey=True,
+                 vlines=None,
                  ):
         """Plot arbitrary grid of curves.
 
@@ -743,11 +766,22 @@ class CurveFits:
                 Share x-axis scale among plots.
             `sharey` (bool)
                 Share y-axis scale among plots.
+            `vlines` (dict or `None`)
+                Vertical lines to draw. Keyed by 2-tuples `(irow, icol)`, which
+                give row and column of plot in grid (0, 1, ... numbering).
+                Values are lists of dicts with a key 'x' giving the x-location
+                of the vertical line, and optionally keys 'linewidth',
+                'color', and 'linestyle'.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
 
         """
+        vline_defaults = {'linewidth': 1,
+                          'color': 'gray',
+                          'linestyle': ':',
+                          }
+
         if not plots:
             raise ValueError('empty `plots`')
 
@@ -895,6 +929,15 @@ class CurveFits:
                            right=False, top=False)
             if despine:
                 dmslogo.utils.despine(ax=ax)
+            if vlines and ((irow, icol) in vlines):
+                for vline in vlines[(irow, icol)]:
+                    vline_d = vline_defaults.copy()
+                    for key, val in vline.items():
+                        vline_d[key] = val
+                    ax.axvline(vline_d['x'],
+                               linestyle=vline_d['linestyle'],
+                               linewidth=vline_d['linewidth'],
+                               color=vline_d['color'])
 
         # draw legend(s)
         legend_kwargs = {'fontsize': legendfontsize,

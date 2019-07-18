@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.3.0
+-----
+
+Added
++++++
+- Ability to draw vertical lines on neutralization curves (`vlines` option to `CurveFits.plotGrid` and `CurveFits.plotSera`).
+
 0.2.5
 -----
 
