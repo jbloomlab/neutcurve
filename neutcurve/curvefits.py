@@ -777,9 +777,9 @@ class CurveFits:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
 
         """
-        vline_defaults = {'linewidth': 1,
+        vline_defaults = {'linewidth': 1.5,
                           'color': 'gray',
-                          'linestyle': ':',
+                          'linestyle': '--',
                           }
 
         if not plots:
