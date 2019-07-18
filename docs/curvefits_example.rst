@@ -527,3 +527,22 @@ Fit and plot curve:
     >>> hiv_fit.fitParams()
          serum  virus replicate  nreplicates  ic50 ic50_bound ic50_str  midpoint  slope  top  bottom
     0  BF520.1  H330R   average            2     5      lower       >5       123   23.1    1       0
+
+Drawing vertical lines
+-----------------------
+It can sometimes be useful to draw vertical lines on the plot, such as to
+indicate concentrations used for selection experiments. This can be done in
+a highly customized way using the `vlines` option to
+:meth:`neutcurve.curvefits.CurveFits.plotSera` as in the example below:
+
+.. nbplot::
+
+    >>> fig, axes = fits.plotSera(
+    ...                 max_viruses_per_subplot=6,
+    ...                 nrow=1,
+    ...                 ncol=None,
+    ...                 xlabel='concentration (ug/ml)',
+    ...                 vlines={'FI6v3': [{'x': 0.5}, {'x': 10, 'color': 'magenta'}],
+    ...                         'H17-L19': [{'x': 5, 'linestyle': '--', 'color': 'red'}],
+    ...                         },
+    ...                 )
