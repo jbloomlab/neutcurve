@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.3.1
+------
+
+Fixed
+++++++
+- Fixed bug when IC50 is at lower bound.
+
 0.3.0
 -----
 
