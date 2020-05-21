@@ -513,7 +513,7 @@ class HillCurve:
         """
         fracinf = 1 - fracneut
         if self.top < fracinf and self.bottom < fracinf:
-            bound = 'bottom'
+            bound = 'lower'
         elif self.top >= fracinf and self.bottom >= fracinf:
             bound = 'upper'
         else:
@@ -522,7 +522,7 @@ class HillCurve:
             if (self.cs[0] <= icXX <= self.cs[-1]):
                 return icXX
             elif icXX < self.cs[0]:
-                bound = 'bottom'
+                bound = 'lower'
             else:
                 bound = 'upper'
 
