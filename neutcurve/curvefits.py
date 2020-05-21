@@ -445,7 +445,7 @@ class CurveFits:
                             vlines_list.append(vlines[serum])
                         else:
                             vlines_list.append(None)
-                        curvelist = [curve for curve in shared_curvelist]
+                        curvelist = list(shared_curvelist)
                         ivirus = len(curvelist)
                         assert ivirus < max_viruses_per_subplot
                     else:
