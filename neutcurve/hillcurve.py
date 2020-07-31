@@ -36,11 +36,22 @@ class HillCurve:
     except that we are calcuating the fraction **unbound** rather than
     the fraction bound.
 
+    In some cases, you may want to fit the fraction bound (or neutralized)
+    rather than the fraction infectivity (or unbound). In that case, set
+    `infectivity_or_bound='bound'` and then the equation that is fit will
+    be :math:`f\left(c\right) = t + \frac{b - t}{1 + \left(c/m\right)^s}`,
+    which means that `f\left(c\right)` gets larger rather than smaller
+    as :math:`c` increases.
+
     Args:
         `cs` (array-like)
             Concentrations of antibody / serum.
         `fs` (array-like)
             Fraction infectivity remaining at each concentration.
+        `infectivity_or_bound` ({'infectivity', 'bound'})
+            Fit the fraction infectivity (:math:`f\left(c\right)` decreases
+            as :math:`c` increases), or fraction bound (:math:`f\left(c\right)`
+            increases as :math:`c` increases). See equations above.
         `fs_stderr` (`None` or array-like)
             If not `None`, standard errors on `fs`.
         `fixbottom` (bool or a float)
@@ -252,6 +263,7 @@ class HillCurve:
                  cs,
                  fs,
                  *,
+                 infectivity_or_bound='infectivity',
                  fs_stderr=None,
                  fixbottom=0,
                  fixtop=1,
@@ -269,6 +281,10 @@ class HillCurve:
             self.fs_stderr = None
         self.fs = self.fs[self.cs.argsort()]
         self.cs = self.cs[self.cs.argsort()]
+
+        if infectivity_or_bound not in {'infectivity', 'bound'}:
+            raise ValueError('invalid `infectivity_or_bound`')
+        self._infectivity_or_bound = infectivity_or_bound
 
         if any(self.cs <= 0):
             raise ValueError('concentrations in `cs` must all be > 0')
@@ -342,23 +358,27 @@ class HillCurve:
 
         if fixtop is False and fixbottom is False:
             initguess = [midpoint, slope, bottom, top]
-            func = evalfunc
+
+            def func(c, m, s, b, t):
+                return evalfunc(c, m, s, b, t, self._infectivity_or_bound)
+
         elif fixtop is False:
             initguess = [midpoint, slope, top]
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t)
+                return evalfunc(c, m, s, bottom, t, self._infectivity_or_bound)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top)
+                return evalfunc(c, m, s, b, top, self._infectivity_or_bound)
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top)
+                return evalfunc(c, m, s, bottom, top,
+                                self._infectivity_or_bound)
 
         (popt, pcov) = scipy.optimize.curve_fit(
                 f=func,
@@ -433,26 +453,30 @@ class HillCurve:
 
         if fixtop is False and fixbottom is False:
             initguess = [midpoint, slope, bottom, top]
-            func = evalfunc
             bounds = bounds + [(None, None), (None, None)]
+
+            def func(c, m, s, b, t):
+                return evalfunc(c, m, s, b, t, self._infectivity_or_bound)
+
         elif fixtop is False:
             initguess = [midpoint, slope, top]
             bounds.append((bottom, None))
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t)
+                return evalfunc(c, m, s, bottom, t, self._infectivity_or_bound)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
             bounds.append((None, top))
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top)
+                return evalfunc(c, m, s, b, top, self._infectivity_or_bound)
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top)
+                return evalfunc(c, m, s, bottom, top,
+                                self._infectivity_or_bound)
 
         def min_func(p):
             """Evaluate to zero when perfect fit."""
@@ -603,17 +627,35 @@ class HillCurve:
     def fracinfectivity(self, c):
         """Fraction infectivity at `c` for fitted parameters."""
         return self.evaluate(c, self.midpoint, self.slope,
-                             self.bottom, self.top)
+                             self.bottom, self.top,
+                             self._infectivity_or_bound)
 
     @staticmethod
-    def evaluate(c, m, s, b, t):
-        r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`."""
-        return b + (t - b) / (1 + (c / m)**s)
+    def evaluate(c, m, s, b, t,
+                 infectivity_or_bound='infectivity'):
+        r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`.
+
+        If `infectivity_or_bound` is 'bound' rather than 'infectivity', instead
+        :math:`f\left(c\right) = t + \frac{b-t}{1+\left(c/m\right)^s}`.
+
+        """
+        if infectivity_or_bound == 'infectivity':
+            return b + (t - b) / (1 + (c / m)**s)
+        elif infectivity_or_bound == 'bound':
+            return t + (b - t) / (1 + (c / m)**s)
+        else:
+            raise ValueError('invalid `infectivity_or_bound`')
 
     @staticmethod
-    def _evaluate_log(logc, logm, s, b, t):
+    def _evaluate_log(logc, logm, s, b, t,
+                      infectivity_or_bound='infectivity'):
         """Like :class:`HillCurve.evaluate` but on log concentration scale."""
-        return b + (t - b) / (1 + numpy.exp(s * (logc - logm)))
+        if infectivity_or_bound == 'infectivity':
+            return b + (t - b) / (1 + numpy.exp(s * (logc - logm)))
+        elif infectivity_or_bound == 'bound':
+            return t + (b - t) / (1 + numpy.exp(s * (logc - logm)))
+        else:
+            raise ValueError('invalid `infectivity_or_bound`')
 
     def plot(self,
              *,

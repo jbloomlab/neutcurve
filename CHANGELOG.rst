@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 0.4.0
 ------
 
+Added
++++++
+- `infectivity_or_bound` option to allow fitting of fraction bound as well as fraction infecitivity.
+
 Fixed
 +++++
 - `scipy` deprecation warnings.
