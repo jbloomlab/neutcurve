@@ -8,12 +8,14 @@ Defines :class:`HillCurve` for fitting neutralization curves.
 
 import collections
 import math
+import warnings
 
 import matplotlib.pyplot as plt
 
+import numpy
+
 import pandas as pd
 
-import scipy
 import scipy.optimize
 
 
@@ -32,14 +34,25 @@ class HillCurve:
 
     When :math:`t = 1` and :math:`b = 0`, this equation is identical to the
     `Hill curve <https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)>`_,
-    except that we are calcuating the fraction **unbound** rather than
+    except that we are calculating the fraction **unbound** rather than
     the fraction bound.
+
+    You may want to fit the fraction neutralized rather than the fraction
+    infectivity. In that case, set `infectivity_or_neutralized='neutralized'
+    and then the equation that is fit will
+    be :math:`f\left(c\right) = t + \frac{b - t}{1 + \left(c/m\right)^s}`,
+    which means that `f\left(c\right)` gets larger rather than smaller
+    as :math:`c` increases.
 
     Args:
         `cs` (array-like)
             Concentrations of antibody / serum.
         `fs` (array-like)
             Fraction infectivity remaining at each concentration.
+        `infectivity_or_neutralized` ({'infectivity', 'neutralized'})
+            Fit the fraction infectivity (:math:`f\left(c\right)` decreases as
+            :math:`c` increases) or neutralized (:math:`f\left(c\right)`
+            increases as :math:`c` increases). See equations above.
         `fs_stderr` (`None` or array-like)
             If not `None`, standard errors on `fs`.
         `fixbottom` (bool or a float)
@@ -82,7 +95,7 @@ class HillCurve:
 
     .. nbplot::
 
-        >>> import scipy
+        >>> import numpy
         >>>
         >>> from neutcurve import HillCurve
         >>> from neutcurve.colorschemes import CBPALETTE
@@ -104,13 +117,13 @@ class HillCurve:
     .. nbplot::
 
         >>> neut = HillCurve(cs, fs, fixbottom=False)
-        >>> scipy.allclose(neut.midpoint, m)
+        >>> numpy.allclose(neut.midpoint, m)
         True
-        >>> scipy.allclose(neut.slope, s, atol=1e-4)
+        >>> numpy.allclose(neut.slope, s, atol=1e-4)
         True
-        >>> scipy.allclose(neut.top, t)
+        >>> numpy.allclose(neut.top, t)
         True
-        >>> scipy.allclose(neut.bottom, b)
+        >>> numpy.allclose(neut.bottom, b)
         True
 
     Since we fit the curve to simulated data where the bottom was
@@ -122,9 +135,9 @@ class HillCurve:
 
         >>> neut.ic50() > neut.midpoint
         True
-        >>> scipy.allclose(neut.ic50(), 0.0337385586)
+        >>> numpy.allclose(neut.ic50(), 0.0337385586)
         True
-        >>> scipy.allclose(0.5, neut.fracinfectivity(neut.ic50()))
+        >>> numpy.allclose(0.5, neut.fracinfectivity(neut.ic50()))
         True
         >>> neut.fracinfectivity(neut.midpoint) > 0.5
         True
@@ -139,9 +152,9 @@ class HillCurve:
         >>> t2 = 1
         >>> fs2 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs]
         >>> neut2 = HillCurve(cs, fs2)
-        >>> scipy.allclose(neut2.midpoint, m)
+        >>> numpy.allclose(neut2.midpoint, m)
         True
-        >>> scipy.allclose(neut2.ic50(), m)
+        >>> numpy.allclose(neut2.ic50(), m)
         True
 
     Now let's fit to concentrations that are all **less**
@@ -158,7 +171,7 @@ class HillCurve:
         >>> neut3 = HillCurve(cs3, fs3)
         >>> neut3.ic50() is None
         True
-        >>> scipy.allclose(neut3.ic50(method='bound'), cs3[-1])
+        >>> numpy.allclose(neut3.ic50(method='bound'), cs3[-1])
         True
 
     Note that we can determine if the IC50 is interpolated or an upper
@@ -226,7 +239,7 @@ class HillCurve:
     .. nbplot::
 
         >>> neut_linear = HillCurve(cs, fs, fitlogc=False, fixbottom=False)
-        >>> all(scipy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
+        >>> all(numpy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
         ...     for attr in ['top', 'bottom', 'slope', 'midpoint'])
         True
 
@@ -238,12 +251,32 @@ class HillCurve:
     '>0.512'
     >>> neut.icXX_bound(0.95)
     'lower'
-    >>> scipy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
+    >>> numpy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
     True
     >>> '{:.4f}'.format(neut.icXX(0.8), 4)
     '0.0896'
-    >>> scipy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
+    >>> numpy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
     True
+
+    Now fit with `infectivity_or_neutralized='neutralized'`, which is useful
+    when the signal **increases** rather than decreases with increasing
+    concentration (as would be the case if measuring fraction bound rather
+    than fraction infectivity).
+
+    .. nbplot::
+
+       >>> neut_opp = HillCurve(cs, [1 - f for f in fs],
+       ...                      fixtop=False, fixbottom=False,
+       ...                      infectivity_or_neutralized='neutralized')
+       >>> numpy.allclose(neut_opp.top, 0.9)
+       True
+       >>> numpy.allclose(neut_opp.bottom, 0)
+       True
+       >>> numpy.allclose(neut_opp.midpoint, m)
+       True
+       >>> neut_opp.ic50() < neut_opp.midpoint
+       True
+       >>> fig, ax = neut_opp.plot(ylabel='fraction neutralized')
 
     """
 
@@ -251,6 +284,7 @@ class HillCurve:
                  cs,
                  fs,
                  *,
+                 infectivity_or_neutralized='infectivity',
                  fs_stderr=None,
                  fixbottom=0,
                  fixtop=1,
@@ -259,15 +293,29 @@ class HillCurve:
                  ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
-        self.cs = scipy.array(cs)
-        self.fs = scipy.array(fs)
+        self.cs = numpy.array(cs)
+        self.fs = numpy.array(fs)
         if fs_stderr is not None:
-            self.fs_stderr = scipy.array(fs_stderr)
+            self.fs_stderr = numpy.array(fs_stderr)
             self.fs_stderr = self.fs_stderr[self.cs.argsort()]
         else:
             self.fs_stderr = None
         self.fs = self.fs[self.cs.argsort()]
         self.cs = self.cs[self.cs.argsort()]
+
+        if infectivity_or_neutralized == 'infectivity':
+            if self.fs[0] < self.fs[-1] and (self.fs[0] < 0.3 and
+                                             self.fs[-1] > 0.7):
+                warnings.warn('`f` increases with concentration, consider '
+                              '`infectivity_or_neutralized="neutralized"')
+        elif infectivity_or_neutralized == 'neutralized':
+            if self.fs[0] > self.fs[-1] and (self.fs[0] > 0.7 and
+                                             self.fs[-1] < 0.3):
+                warnings.warn('`f` decreases with concentration, consider '
+                              '`infectivity_or_neutralized="infectivity"')
+        else:
+            raise ValueError('invalid `infectivity_or_neutralized`')
+        self._infectivity_or_neutralized = infectivity_or_neutralized
 
         if any(self.cs <= 0):
             raise ValueError('concentrations in `cs` must all be > 0')
@@ -325,7 +373,7 @@ class HillCurve:
             midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
         else:
             # get first index where f crosses midpoint
-            i = scipy.argmax((self.fs > midval)[:-1] !=
+            i = numpy.argmax((self.fs > midval)[:-1] !=
                              (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
@@ -333,31 +381,38 @@ class HillCurve:
         # set up function and initial guesses
         if fitlogc:
             evalfunc = self._evaluate_log
-            xdata = scipy.log(self.cs)
-            midpoint = scipy.log(midpoint)
+            xdata = numpy.log(self.cs)
+            midpoint = numpy.log(midpoint)
         else:
             evalfunc = self.evaluate
             xdata = self.cs
 
         if fixtop is False and fixbottom is False:
             initguess = [midpoint, slope, bottom, top]
-            func = evalfunc
+
+            def func(c, m, s, b, t):
+                return evalfunc(c, m, s, b, t,
+                                self._infectivity_or_neutralized)
+
         elif fixtop is False:
             initguess = [midpoint, slope, top]
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t)
+                return evalfunc(c, m, s, bottom, t,
+                                self._infectivity_or_neutralized)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top)
+                return evalfunc(c, m, s, b, top,
+                                self._infectivity_or_neutralized)
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top)
+                return evalfunc(c, m, s, bottom, top,
+                                self._infectivity_or_neutralized)
 
         (popt, pcov) = scipy.optimize.curve_fit(
                 f=func,
@@ -370,7 +425,7 @@ class HillCurve:
                 )
 
         if fitlogc:
-            midpoint = scipy.exp(midpoint)
+            midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
         slope = popt[1]
@@ -414,7 +469,7 @@ class HillCurve:
             midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
         else:
             # get first index where f crosses midpoint
-            i = scipy.argmax((self.fs > midval)[:-1] !=
+            i = numpy.argmax((self.fs > midval)[:-1] !=
                              (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
@@ -422,8 +477,8 @@ class HillCurve:
         # set up function and initial guesses
         if fitlogc:
             evalfunc = self._evaluate_log
-            xdata = scipy.log(self.cs)
-            midpoint = scipy.log(midpoint)
+            xdata = numpy.log(self.cs)
+            midpoint = numpy.log(midpoint)
             bounds = [(None, None), (0, None)]
         else:
             evalfunc = self.evaluate
@@ -432,26 +487,33 @@ class HillCurve:
 
         if fixtop is False and fixbottom is False:
             initguess = [midpoint, slope, bottom, top]
-            func = evalfunc
             bounds = bounds + [(None, None), (None, None)]
+
+            def func(c, m, s, b, t):
+                return evalfunc(c, m, s, b, t,
+                                self._infectivity_or_neutralized)
+
         elif fixtop is False:
             initguess = [midpoint, slope, top]
             bounds.append((bottom, None))
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t)
+                return evalfunc(c, m, s, bottom, t,
+                                self._infectivity_or_neutralized)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
             bounds.append((None, top))
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top)
+                return evalfunc(c, m, s, b, top,
+                                self._infectivity_or_neutralized)
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top)
+                return evalfunc(c, m, s, bottom, top,
+                                self._infectivity_or_neutralized)
 
         def min_func(p):
             """Evaluate to zero when perfect fit."""
@@ -460,7 +522,7 @@ class HillCurve:
             else:
                 return sum((func(xdata, *p) - self.fs / self.fs_stderr)**2)
 
-        initguess = scipy.array(initguess, dtype='float')
+        initguess = numpy.array(initguess, dtype='float')
         res = scipy.optimize.minimize(min_func,
                                       initguess,
                                       bounds=bounds,
@@ -470,7 +532,7 @@ class HillCurve:
             return False
 
         if fitlogc:
-            midpoint = scipy.exp(midpoint)
+            midpoint = numpy.exp(midpoint)
 
         midpoint = res.x[0]
         slope = res.x[1]
@@ -602,17 +664,36 @@ class HillCurve:
     def fracinfectivity(self, c):
         """Fraction infectivity at `c` for fitted parameters."""
         return self.evaluate(c, self.midpoint, self.slope,
-                             self.bottom, self.top)
+                             self.bottom, self.top,
+                             self._infectivity_or_neutralized)
 
     @staticmethod
-    def evaluate(c, m, s, b, t):
-        r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`."""
-        return b + (t - b) / (1 + (c / m)**s)
+    def evaluate(c, m, s, b, t,
+                 infectivity_or_neutralized='infectivity'):
+        r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`.
+
+        If `infectivity_or_neutralized` is 'neutralized' rather than
+        'infectivity', instead return
+        :math:`f\left(c\right) = t + \frac{b-t}{1+\left(c/m\right)^s}`.
+
+        """
+        if infectivity_or_neutralized == 'infectivity':
+            return b + (t - b) / (1 + (c / m)**s)
+        elif infectivity_or_neutralized == 'neutralized':
+            return t + (b - t) / (1 + (c / m)**s)
+        else:
+            raise ValueError('invalid `infectivity_or_neutralized`')
 
     @staticmethod
-    def _evaluate_log(logc, logm, s, b, t):
+    def _evaluate_log(logc, logm, s, b, t,
+                      infectivity_or_neutralized='infectivity'):
         """Like :class:`HillCurve.evaluate` but on log concentration scale."""
-        return b + (t - b) / (1 + scipy.exp(s * (logc - logm)))
+        if infectivity_or_neutralized == 'infectivity':
+            return b + (t - b) / (1 + numpy.exp(s * (logc - logm)))
+        elif infectivity_or_neutralized == 'neutralized':
+            return t + (b - t) / (1 + numpy.exp(s * (logc - logm)))
+        else:
+            raise ValueError('invalid `infectivity_or_neutralized`')
 
     def plot(self,
              *,
@@ -730,21 +811,21 @@ class HillCurve:
             concentrations = concentrationRange(self.cs[0], self.cs[-1])
         elif concentrations == 'measured':
             concentrations = []
-        concentrations = scipy.concatenate([self.cs, concentrations])
+        concentrations = numpy.concatenate([self.cs, concentrations])
         n = len(concentrations)
 
-        points = scipy.concatenate([self.fs,
-                                    scipy.full(n - len(self.fs), scipy.nan)
+        points = numpy.concatenate([self.fs,
+                                    numpy.full(n - len(self.fs), numpy.nan)
                                     ])
 
         if self.fs_stderr is None:
-            stderr = scipy.full(n, scipy.nan)
+            stderr = numpy.full(n, numpy.nan)
         else:
-            stderr = scipy.concatenate([self.fs_stderr,
-                                        scipy.full(n - len(self.fs), scipy.nan)
+            stderr = numpy.concatenate([self.fs_stderr,
+                                        numpy.full(n - len(self.fs), numpy.nan)
                                         ])
 
-        fit = scipy.array([self.fracinfectivity(c) for c in concentrations])
+        fit = numpy.array([self.fracinfectivity(c) for c in concentrations])
 
         return (pd.DataFrame.from_dict(
                     collections.OrderedDict(
@@ -780,11 +861,11 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     Returns:
         A numpy array of `npoints` concentrations.
 
-    >>> scipy.allclose(concentrationRange(0.1, 100, 10, extend=0),
+    >>> numpy.allclose(concentrationRange(0.1, 100, 10, extend=0),
     ...                [0.1, 0.22, 0.46, 1, 2.15, 4.64, 10, 21.54, 46.42, 100],
     ...                atol=1e-2)
     True
-    >>> scipy.allclose(concentrationRange(0.1, 100, 10),
+    >>> numpy.allclose(concentrationRange(0.1, 100, 10),
     ...                [0.05, 0.13, 0.32, 0.79, 2.00, 5.01,
     ...                 12.59, 31.62, 79.43, 199.53],
     ...                atol=1e-2)
@@ -805,7 +886,7 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     bottom = logbottom - logrange * extend
     top = logtop + logrange * extend
 
-    return scipy.logspace(bottom, top, npoints)
+    return numpy.logspace(bottom, top, npoints)
 
 
 if __name__ == '__main__':

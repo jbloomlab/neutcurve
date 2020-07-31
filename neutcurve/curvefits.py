@@ -44,6 +44,8 @@ class CurveFits:
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `fixtop` (`False` or float)
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `infectivity_or_neutralized` ({'infectivity', 'neutralized'})
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
@@ -64,6 +66,7 @@ class CurveFits:
             List of all viruses.
         `allreplicates` (list)
             List of all replicates.
+
     """
 
     # names commonly used for wildtype virus
@@ -78,6 +81,7 @@ class CurveFits:
                  serum_col='serum',
                  virus_col='virus',
                  replicate_col='replicate',
+                 infectivity_or_neutralized='infectivity',
                  fixbottom=0,
                  fixtop=1,
                  ):
@@ -90,6 +94,7 @@ class CurveFits:
         self.replicate_col = replicate_col
         self.fixbottom = fixbottom
         self.fixtop = fixtop
+        self._infectivity_or_neutralized = infectivity_or_neutralized
 
         # check for required columns
         cols = [self.serum_col, self.virus_col, self.replicate_col,
@@ -207,12 +212,15 @@ class CurveFits:
                 fs_stderr = idata['stderr']
 
             try:
-                curve = neutcurve.HillCurve(cs=idata[self.conc_col],
-                                            fs=idata[self.fracinf_col],
-                                            fs_stderr=fs_stderr,
-                                            fixbottom=self.fixbottom,
-                                            fixtop=self.fixtop,
-                                            )
+                curve = neutcurve.HillCurve(
+                        cs=idata[self.conc_col],
+                        fs=idata[self.fracinf_col],
+                        fs_stderr=fs_stderr,
+                        fixbottom=self.fixbottom,
+                        fixtop=self.fixtop,
+                        infectivity_or_neutralized=(
+                            self._infectivity_or_neutralized)
+                        )
             except RuntimeError as e:
                 idata.to_csv('temp.csv', index=False)
                 # following here: https://stackoverflow.com/a/46091127

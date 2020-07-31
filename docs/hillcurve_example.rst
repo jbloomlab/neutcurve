@@ -49,7 +49,9 @@ Since :math:`f\left(c\right)` in Equation :eq:`curve` is the fraction **infectiv
 increases. Just be aware that some papers will plot fraction neutralized
 rather than fraction infectivity; fraction neutralized is
 :math:`1 - f\left(c\right)`. If your data is fraction neutralized, you
-should convert it to fraction infectivity before using this package.
+should convert it to fraction infectivity before using this package, or
+use the `infectivity_or_neutralized` option described in the docs
+for :class:`neutcurve.hillcurve.HillCurve`.
 
 Fitting using the HillCurve class
 ---------------------------------
