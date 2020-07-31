@@ -64,6 +64,7 @@ class CurveFits:
             List of all viruses.
         `allreplicates` (list)
             List of all replicates.
+
     """
 
     # names commonly used for wildtype virus

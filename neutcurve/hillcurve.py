@@ -11,9 +11,10 @@ import math
 
 import matplotlib.pyplot as plt
 
+import numpy
+
 import pandas as pd
 
-import scipy
 import scipy.optimize
 
 
@@ -82,7 +83,7 @@ class HillCurve:
 
     .. nbplot::
 
-        >>> import scipy
+        >>> import numpy
         >>>
         >>> from neutcurve import HillCurve
         >>> from neutcurve.colorschemes import CBPALETTE
@@ -104,13 +105,13 @@ class HillCurve:
     .. nbplot::
 
         >>> neut = HillCurve(cs, fs, fixbottom=False)
-        >>> scipy.allclose(neut.midpoint, m)
+        >>> numpy.allclose(neut.midpoint, m)
         True
-        >>> scipy.allclose(neut.slope, s, atol=1e-4)
+        >>> numpy.allclose(neut.slope, s, atol=1e-4)
         True
-        >>> scipy.allclose(neut.top, t)
+        >>> numpy.allclose(neut.top, t)
         True
-        >>> scipy.allclose(neut.bottom, b)
+        >>> numpy.allclose(neut.bottom, b)
         True
 
     Since we fit the curve to simulated data where the bottom was
@@ -122,9 +123,9 @@ class HillCurve:
 
         >>> neut.ic50() > neut.midpoint
         True
-        >>> scipy.allclose(neut.ic50(), 0.0337385586)
+        >>> numpy.allclose(neut.ic50(), 0.0337385586)
         True
-        >>> scipy.allclose(0.5, neut.fracinfectivity(neut.ic50()))
+        >>> numpy.allclose(0.5, neut.fracinfectivity(neut.ic50()))
         True
         >>> neut.fracinfectivity(neut.midpoint) > 0.5
         True
@@ -139,9 +140,9 @@ class HillCurve:
         >>> t2 = 1
         >>> fs2 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs]
         >>> neut2 = HillCurve(cs, fs2)
-        >>> scipy.allclose(neut2.midpoint, m)
+        >>> numpy.allclose(neut2.midpoint, m)
         True
-        >>> scipy.allclose(neut2.ic50(), m)
+        >>> numpy.allclose(neut2.ic50(), m)
         True
 
     Now let's fit to concentrations that are all **less**
@@ -158,7 +159,7 @@ class HillCurve:
         >>> neut3 = HillCurve(cs3, fs3)
         >>> neut3.ic50() is None
         True
-        >>> scipy.allclose(neut3.ic50(method='bound'), cs3[-1])
+        >>> numpy.allclose(neut3.ic50(method='bound'), cs3[-1])
         True
 
     Note that we can determine if the IC50 is interpolated or an upper
@@ -226,7 +227,7 @@ class HillCurve:
     .. nbplot::
 
         >>> neut_linear = HillCurve(cs, fs, fitlogc=False, fixbottom=False)
-        >>> all(scipy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
+        >>> all(numpy.allclose(getattr(neut, attr), getattr(neut_linear, attr))
         ...     for attr in ['top', 'bottom', 'slope', 'midpoint'])
         True
 
@@ -238,11 +239,11 @@ class HillCurve:
     '>0.512'
     >>> neut.icXX_bound(0.95)
     'lower'
-    >>> scipy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
+    >>> numpy.allclose(neut.icXX(0.95, method='bound'), neut.cs[-1])
     True
     >>> '{:.4f}'.format(neut.icXX(0.8), 4)
     '0.0896'
-    >>> scipy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
+    >>> numpy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
     True
 
     """
@@ -259,10 +260,10 @@ class HillCurve:
                  ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
-        self.cs = scipy.array(cs)
-        self.fs = scipy.array(fs)
+        self.cs = numpy.array(cs)
+        self.fs = numpy.array(fs)
         if fs_stderr is not None:
-            self.fs_stderr = scipy.array(fs_stderr)
+            self.fs_stderr = numpy.array(fs_stderr)
             self.fs_stderr = self.fs_stderr[self.cs.argsort()]
         else:
             self.fs_stderr = None
@@ -325,7 +326,7 @@ class HillCurve:
             midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
         else:
             # get first index where f crosses midpoint
-            i = scipy.argmax((self.fs > midval)[:-1] !=
+            i = numpy.argmax((self.fs > midval)[:-1] !=
                              (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
@@ -333,8 +334,8 @@ class HillCurve:
         # set up function and initial guesses
         if fitlogc:
             evalfunc = self._evaluate_log
-            xdata = scipy.log(self.cs)
-            midpoint = scipy.log(midpoint)
+            xdata = numpy.log(self.cs)
+            midpoint = numpy.log(midpoint)
         else:
             evalfunc = self.evaluate
             xdata = self.cs
@@ -370,7 +371,7 @@ class HillCurve:
                 )
 
         if fitlogc:
-            midpoint = scipy.exp(midpoint)
+            midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
         slope = popt[1]
@@ -414,7 +415,7 @@ class HillCurve:
             midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
         else:
             # get first index where f crosses midpoint
-            i = scipy.argmax((self.fs > midval)[:-1] !=
+            i = numpy.argmax((self.fs > midval)[:-1] !=
                              (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
@@ -422,8 +423,8 @@ class HillCurve:
         # set up function and initial guesses
         if fitlogc:
             evalfunc = self._evaluate_log
-            xdata = scipy.log(self.cs)
-            midpoint = scipy.log(midpoint)
+            xdata = numpy.log(self.cs)
+            midpoint = numpy.log(midpoint)
             bounds = [(None, None), (0, None)]
         else:
             evalfunc = self.evaluate
@@ -460,7 +461,7 @@ class HillCurve:
             else:
                 return sum((func(xdata, *p) - self.fs / self.fs_stderr)**2)
 
-        initguess = scipy.array(initguess, dtype='float')
+        initguess = numpy.array(initguess, dtype='float')
         res = scipy.optimize.minimize(min_func,
                                       initguess,
                                       bounds=bounds,
@@ -470,7 +471,7 @@ class HillCurve:
             return False
 
         if fitlogc:
-            midpoint = scipy.exp(midpoint)
+            midpoint = numpy.exp(midpoint)
 
         midpoint = res.x[0]
         slope = res.x[1]
@@ -612,7 +613,7 @@ class HillCurve:
     @staticmethod
     def _evaluate_log(logc, logm, s, b, t):
         """Like :class:`HillCurve.evaluate` but on log concentration scale."""
-        return b + (t - b) / (1 + scipy.exp(s * (logc - logm)))
+        return b + (t - b) / (1 + numpy.exp(s * (logc - logm)))
 
     def plot(self,
              *,
@@ -730,21 +731,21 @@ class HillCurve:
             concentrations = concentrationRange(self.cs[0], self.cs[-1])
         elif concentrations == 'measured':
             concentrations = []
-        concentrations = scipy.concatenate([self.cs, concentrations])
+        concentrations = numpy.concatenate([self.cs, concentrations])
         n = len(concentrations)
 
-        points = scipy.concatenate([self.fs,
-                                    scipy.full(n - len(self.fs), scipy.nan)
+        points = numpy.concatenate([self.fs,
+                                    numpy.full(n - len(self.fs), numpy.nan)
                                     ])
 
         if self.fs_stderr is None:
-            stderr = scipy.full(n, scipy.nan)
+            stderr = numpy.full(n, numpy.nan)
         else:
-            stderr = scipy.concatenate([self.fs_stderr,
-                                        scipy.full(n - len(self.fs), scipy.nan)
+            stderr = numpy.concatenate([self.fs_stderr,
+                                        numpy.full(n - len(self.fs), numpy.nan)
                                         ])
 
-        fit = scipy.array([self.fracinfectivity(c) for c in concentrations])
+        fit = numpy.array([self.fracinfectivity(c) for c in concentrations])
 
         return (pd.DataFrame.from_dict(
                     collections.OrderedDict(
@@ -780,11 +781,11 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     Returns:
         A numpy array of `npoints` concentrations.
 
-    >>> scipy.allclose(concentrationRange(0.1, 100, 10, extend=0),
+    >>> numpy.allclose(concentrationRange(0.1, 100, 10, extend=0),
     ...                [0.1, 0.22, 0.46, 1, 2.15, 4.64, 10, 21.54, 46.42, 100],
     ...                atol=1e-2)
     True
-    >>> scipy.allclose(concentrationRange(0.1, 100, 10),
+    >>> numpy.allclose(concentrationRange(0.1, 100, 10),
     ...                [0.05, 0.13, 0.32, 0.79, 2.00, 5.01,
     ...                 12.59, 31.62, 79.43, 199.53],
     ...                atol=1e-2)
@@ -805,7 +806,7 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     bottom = logbottom - logrange * extend
     top = logtop + logrange * extend
 
-    return scipy.logspace(bottom, top, npoints)
+    return numpy.logspace(bottom, top, npoints)
 
 
 if __name__ == '__main__':
