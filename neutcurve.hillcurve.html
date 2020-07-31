@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>hillcurve &#8212; neutcurve 0.3.0 documentation</title>
+    <title>hillcurve &#8212; neutcurve 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -38,7 +38,7 @@
 <p>Defines <a class="reference internal" href="#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">HillCurve</span></code></a> for fitting neutralization curves.</p>
 <dl class="class">
 <dt id="neutcurve.hillcurve.HillCurve">
-<em class="property">class </em><code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">HillCurve</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">fs</em>, <em class="sig-param">*</em>, <em class="sig-param">fs_stderr=None</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em>, <em class="sig-param">fitlogc=False</em>, <em class="sig-param">use_stderr_for_fit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">HillCurve</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">fs</em>, <em class="sig-param">*</em>, <em class="sig-param">infectivity_or_neutralized='infectivity'</em>, <em class="sig-param">fs_stderr=None</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em>, <em class="sig-param">fitlogc=False</em>, <em class="sig-param">use_stderr_for_fit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A fitted Hill curve, optionally with free baselines.</p>
 <p>Fits <span class="math notranslate nohighlight">\(f\left(c\right) = b + \frac{t - b}{1 + \left(c/m\right)^s}\)</span>
@@ -52,13 +52,23 @@ and <span class="math notranslate nohighlight">\(s\)</span> is the slope of the 
 This should lead us to fit <span class="math notranslate nohighlight">\(s &gt; 0\)</span>.</p>
 <p>When <span class="math notranslate nohighlight">\(t = 1\)</span> and <span class="math notranslate nohighlight">\(b = 0\)</span>, this equation is identical to the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Hill_equation_(biochemistry)">Hill curve</a>,
-except that we are calcuating the fraction <strong>unbound</strong> rather than
+except that we are calculating the fraction <strong>unbound</strong> rather than
 the fraction bound.</p>
+<p>You may want to fit the fraction neutralized rather than the fraction
+infectivity. In that case, set <cite>infectivity_or_neutralized=’neutralized’
+and then the equation that is fit will
+be :math:`fleft(cright) = t + frac{b - t}{1 + left(c/mright)^s}</cite>,
+which means that <cite>fleft(cright)</cite> gets larger rather than smaller
+as <span class="math notranslate nohighlight">\(c\)</span> increases.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt><cite>cs</cite> (array-like)</dt><dd><p>Concentrations of antibody / serum.</p>
 </dd>
 <dt><cite>fs</cite> (array-like)</dt><dd><p>Fraction infectivity remaining at each concentration.</p>
+</dd>
+<dt><cite>infectivity_or_neutralized</cite> ({‘infectivity’, ‘neutralized’})</dt><dd><p>Fit the fraction infectivity (<span class="math notranslate nohighlight">\(f\left(c\right)\)</span> decreases as
+<span class="math notranslate nohighlight">\(c\)</span> increases) or neutralized (<span class="math notranslate nohighlight">\(f\left(c\right)\)</span>
+increases as <span class="math notranslate nohighlight">\(c\)</span> increases). See equations above.</p>
 </dd>
 <dt><cite>fs_stderr</cite> (<cite>None</cite> or array-like)</dt><dd><p>If not <cite>None</cite>, standard errors on <cite>fs</cite>.</p>
 </dd>
@@ -101,10 +111,10 @@ if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class=
 </dl>
 <p>Use the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a> method to get the fitted IC50.</p>
 <p>Here are some examples. First, we import the necessary modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve</span> <span class="k">import</span> <span class="n">HillCurve</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve.colorschemes</span> <span class="k">import</span> <span class="n">CBPALETTE</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve</span> <span class="kn">import</span> <span class="n">HillCurve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve.colorschemes</span> <span class="kn">import</span> <span class="n">CBPALETTE</span>
 </pre></div>
 </div>
 <p>Now simulate some data:</p>
@@ -119,13 +129,13 @@ if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class=
 <p>Now fit to these data, and confirm that the fitted values
 are close to the ones used for the simulation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -135,9 +145,9 @@ the IC50 is larger than the midpoint as you have to go past the midpoint
 to get down to 0.5 fraction infectivity:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">(),</span> <span class="mf">0.0337385586</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">(),</span> <span class="mf">0.0337385586</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()))</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span>
 <span class="go">True</span>
@@ -150,9 +160,9 @@ the curve. Now the midpoint and IC50 are the same:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fs2</span> <span class="o">=</span> <span class="p">[</span><span class="n">HillCurve</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut2</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut2</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut2</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut2</span><span class="o">.</span><span class="n">ic50</span><span class="p">(),</span> <span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut2</span><span class="o">.</span><span class="n">ic50</span><span class="p">(),</span> <span class="n">m</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -167,7 +177,7 @@ we call <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50"
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut3</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs3</span><span class="p">,</span> <span class="n">fs3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">),</span> <span class="n">cs3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">),</span> <span class="n">cs3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -229,7 +239,7 @@ This is done if we call the <a class="reference internal" href="#neutcurve.hillc
 of whether we fit using the concentrations in linear or
 log space:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_linear</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fitlogc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">neut</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">neut_linear</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">neut</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">neut_linear</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;slope&#39;</span><span class="p">,</span> <span class="s1">&#39;midpoint&#39;</span><span class="p">])</span>
 <span class="go">True</span>
 </pre></div>
@@ -241,13 +251,35 @@ log space:</p>
 <span class="go">&#39;&gt;0.512&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX_bound</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span>
 <span class="go">&#39;lower&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">),</span> <span class="n">neut</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">),</span> <span class="n">neut</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;</span><span class="si">{:.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">&#39;0.0896&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)))</span>
 <span class="go">True</span>
 </pre></div>
+</div>
+<p>Now fit with <cite>infectivity_or_neutralized=’neutralized’</cite>, which is useful
+when the signal <strong>increases</strong> rather than decreases with increasing
+concentration (as would be the case if measuring fraction bound rather
+than fraction infectivity).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_opp</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">],</span>
+<span class="gp">... </span>                     <span class="n">fixtop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>                     <span class="n">infectivity_or_neutralized</span><span class="o">=</span><span class="s1">&#39;neutralized&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut_opp</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut_opp</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut_opp</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neut_opp</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">neut_opp</span><span class="o">.</span><span class="n">midpoint</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">neut_opp</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;fraction neutralized&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//neutcurve-hillcurve-12.png">png</a>, <a class="reference external" href=".//neutcurve-hillcurve-12.hires.png">hires.png</a>, <a class="reference external" href=".//neutcurve-hillcurve-12.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/neutcurve-hillcurve-12.png" src="_images/neutcurve-hillcurve-12.png" />
 </div>
 <dl class="method">
 <dt id="neutcurve.hillcurve.HillCurve.dataframe">
@@ -280,8 +312,11 @@ or numpy.nan if no measurement here.</p></li>
 
 <dl class="method">
 <dt id="neutcurve.hillcurve.HillCurve.evaluate">
-<em class="property">static </em><code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">c</em>, <em class="sig-param">m</em>, <em class="sig-param">s</em>, <em class="sig-param">b</em>, <em class="sig-param">t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.evaluate" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">c</em>, <em class="sig-param">m</em>, <em class="sig-param">s</em>, <em class="sig-param">b</em>, <em class="sig-param">t</em>, <em class="sig-param">infectivity_or_neutralized='infectivity'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p><span class="math notranslate nohighlight">\(f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}\)</span>.</p>
+<p>If <cite>infectivity_or_neutralized</cite> is ‘neutralized’ rather than
+‘infectivity’, instead return
+<span class="math notranslate nohighlight">\(f\left(c\right) = t + \frac{b-t}{1+\left(c/m\right)^s}\)</span>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -439,11 +474,11 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
 <dt>Returns:</dt><dd><p>A numpy array of <cite>npoints</cite> concentrations.</p>
 </dd>
 </dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>               <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.15</span><span class="p">,</span> <span class="mf">4.64</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">21.54</span><span class="p">,</span> <span class="mf">46.42</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
 <span class="gp">... </span>               <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scipy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
 <span class="gp">... </span>               <span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">,</span> <span class="mf">2.00</span><span class="p">,</span> <span class="mf">5.01</span><span class="p">,</span>
 <span class="gp">... </span>                <span class="mf">12.59</span><span class="p">,</span> <span class="mf">31.62</span><span class="p">,</span> <span class="mf">79.43</span><span class="p">,</span> <span class="mf">199.53</span><span class="p">],</span>
 <span class="gp">... </span>               <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
@@ -550,10 +585,10 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2019, Bloom lab.
+      &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

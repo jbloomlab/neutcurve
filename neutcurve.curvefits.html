@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>curvefits &#8212; neutcurve 0.3.0 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -38,7 +38,7 @@
 <p>Defines <a class="reference internal" href="#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurveFits</span></code></a> to fit curves and display / plot results.</p>
 <dl class="class">
 <dt id="neutcurve.curvefits.CurveFits">
-<em class="property">class </em><code class="sig-prename descclassname">neutcurve.curvefits.</code><code class="sig-name descname">CurveFits</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">*</em>, <em class="sig-param">conc_col='concentration'</em>, <em class="sig-param">fracinf_col='fraction infectivity'</em>, <em class="sig-param">serum_col='serum'</em>, <em class="sig-param">virus_col='virus'</em>, <em class="sig-param">replicate_col='replicate'</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">neutcurve.curvefits.</code><code class="sig-name descname">CurveFits</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">*</em>, <em class="sig-param">conc_col='concentration'</em>, <em class="sig-param">fracinf_col='fraction infectivity'</em>, <em class="sig-param">serum_col='serum'</em>, <em class="sig-param">virus_col='virus'</em>, <em class="sig-param">replicate_col='replicate'</em>, <em class="sig-param">infectivity_or_neutralized='infectivity'</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Fit and display <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a> curves.</p>
 <dl class="simple">
@@ -61,6 +61,8 @@ serum / virus combination. Replicates can <strong>not</strong> be named
 <dt><cite>fixbottom</cite> (<cite>False</cite> or float)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
 </dd>
 <dt><cite>fixtop</cite> (<cite>False</cite> or float)</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
+</dd>
+<dt><cite>infectivity_or_neutralized</cite> ({‘infectivity’, ‘neutralized’})</dt><dd><p>Same meaning as for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
@@ -437,10 +439,10 @@ line, and optional keys ‘linewidth’, ‘color’, and ‘linestyle’.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2019, Bloom lab.
+      &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

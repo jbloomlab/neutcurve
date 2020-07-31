@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Fitting curves to real data &#8212; neutcurve 0.3.0 documentation</title>
+    <title>Fitting curves to real data &#8212; neutcurve 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -72,7 +72,7 @@ Here we demonstrate how to do this.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">neutcurve</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve.colorschemes</span> <span class="k">import</span> <span class="n">CBMARKERS</span><span class="p">,</span> <span class="n">CBPALETTE</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve.colorschemes</span> <span class="kn">import</span> <span class="n">CBMARKERS</span><span class="p">,</span> <span class="n">CBPALETTE</span>
 </pre></div>
 </div>
 <p>Set some pandas display options:</p>
@@ -90,7 +90,7 @@ antibody FI6v3 and strain-specific antibody H17-L19 from <a class="reference ext
 Doud et al
 (2018)</a>.
 These data in numerical form in a CSV file are available in the CSV file
-<a class="reference download internal" download="" href="_downloads/6d9ae1cdf4cf6322167a78fc658f02d7/Doud_et_al_2018-neutdata.csv"><code class="xref download docutils literal notranslate"><span class="pre">example_data/Doud_et_al_2018-neutdata.csv</span></code></a>
+<a class="reference download internal" download="" href="_downloads/e68e601ce5b14196266ffcea19db39d0/Doud_et_al_2018-neutdata.csv"><code class="xref download docutils literal notranslate"><span class="pre">example_data/Doud_et_al_2018-neutdata.csv</span></code></a>
 We start by downloading these data and reading them into a pandas
 DataFrame:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fi6v3_datafile</span> <span class="o">=</span> <span class="s1">&#39;example_data/Doud_et_al_2018-neutdata.csv&#39;</span>
@@ -160,7 +160,7 @@ we use default values of <cite>fixtop=1</cite> and <cite>fixbottom=0</cite> argu
 </div>
 <p>We can also look at the viruses measured against each serum:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">fits</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Viruses measured against </span><span class="si">{serum}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Viruses measured against </span><span class="si">{serum}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
 <span class="gp">... </span>          <span class="nb">str</span><span class="p">(</span><span class="n">fits</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]))</span>
 <span class="go">Viruses measured against FI6v3:</span>
 <span class="go">[&#39;WT&#39;, &#39;K(-8T)&#39;, &#39;P80D&#39;, &#39;V135T&#39;, &#39;K280A&#39;, &#39;K280S&#39;, &#39;K280T&#39;, &#39;N291S&#39;, &#39;M17L-HA2&#39;, &#39;G47R-HA2&#39;]</span>
@@ -186,7 +186,7 @@ particular serum / virus / replicate combination. For instance, here we
 do that for <em>serum</em> FI6v3 versus <em>virus</em> WT for replicate <em>1</em>. We then
 plot the curve and print the IC50:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getCurve</span><span class="p">(</span><span class="n">serum</span><span class="o">=</span><span class="s1">&#39;FI6v3&#39;</span><span class="p">,</span> <span class="n">virus</span><span class="o">=</span><span class="s1">&#39;WT&#39;</span><span class="p">,</span> <span class="n">replicate</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
 <span class="go">The IC50 is 0.0167</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -201,7 +201,7 @@ under a replicate name of “average”. Here is the fit to the average of
 the data for <em>serum</em> FI6v3 and <em>virus</em> WT. Note how the plot now also
 shows error bars indicating the standard error:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">getCurve</span><span class="p">(</span><span class="n">serum</span><span class="o">=</span><span class="s1">&#39;FI6v3&#39;</span><span class="p">,</span> <span class="n">virus</span><span class="o">=</span><span class="s1">&#39;WT&#39;</span><span class="p">,</span> <span class="n">replicate</span><span class="o">=</span><span class="s1">&#39;average&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
 <span class="go">The IC50 is 0.017</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
@@ -252,11 +252,11 @@ few entries in the returned data frame; now there are now values for
 each replicate as well as the average of replicates:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">(</span><span class="n">average_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 <span class="go">   serum   virus replicate  nreplicates   ic50    ic50_bound ic50_str  midpoint  slope  top  bottom</span>
-<span class="go">0  FI6v3      WT         1          NaN 0.0167  interpolated   0.0167    0.0167    2.5    1       0</span>
-<span class="go">1  FI6v3      WT         2          NaN  0.019  interpolated    0.019     0.019   2.51    1       0</span>
-<span class="go">2  FI6v3      WT         3          NaN 0.0152  interpolated   0.0152    0.0152   1.88    1       0</span>
+<span class="go">0  FI6v3      WT         1         &lt;NA&gt; 0.0167  interpolated   0.0167    0.0167    2.5    1       0</span>
+<span class="go">1  FI6v3      WT         2         &lt;NA&gt;  0.019  interpolated    0.019     0.019   2.51    1       0</span>
+<span class="go">2  FI6v3      WT         3         &lt;NA&gt; 0.0152  interpolated   0.0152    0.0152   1.88    1       0</span>
 <span class="go">3  FI6v3      WT   average            3  0.017  interpolated    0.017     0.017   2.28    1       0</span>
-<span class="go">4  FI6v3  K(-8T)         1          NaN 0.0308  interpolated   0.0308    0.0308   2.62    1       0</span>
+<span class="go">4  FI6v3  K(-8T)         1         &lt;NA&gt; 0.0308  interpolated   0.0308    0.0308   2.62    1       0</span>
 </pre></div>
 </div>
 <p>The “average” is the curve fit to the average of the data
@@ -545,7 +545,7 @@ that never reaches the IC50.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hiv_fit</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
 <span class="go">     serum  virus replicate  nreplicates  ic50 ic50_bound ic50_str  midpoint  slope  top  bottom</span>
-<span class="go">0  BF520.1  H330R   average            2     5      lower       &gt;5       123   23.1    1       0</span>
+<span class="go">0  BF520.1  H330R   average            2     5      lower       &gt;5       122   23.1    1       0</span>
 </pre></div>
 </div>
 </div>
@@ -674,10 +674,10 @@ a highly customized way using the <cite>vlines</cite> option to
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2019, Bloom lab.
+      &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

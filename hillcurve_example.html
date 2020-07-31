@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Hill-curve neutralization &#8212; neutcurve 0.3.0 documentation</title>
+    <title>Hill-curve neutralization &#8212; neutcurve 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -74,7 +74,9 @@ set the bottom <span class="math notranslate nohighlight">\(b\)</span> to be a f
 increases. Just be aware that some papers will plot fraction neutralized
 rather than fraction infectivity; fraction neutralized is
 <span class="math notranslate nohighlight">\(1 - f\left(c\right)\)</span>. If your data is fraction neutralized, you
-should convert it to fraction infectivity before using this package.</p>
+should convert it to fraction infectivity before using this package, or
+use the <cite>infectivity_or_neutralized</cite> option described in the docs
+for <a class="reference internal" href="neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.hillcurve.HillCurve</span></code></a>.</p>
 </div>
 <div class="section" id="fitting-using-the-hillcurve-class">
 <h2><a class="toc-backref" href="#id2">Fitting using the HillCurve class</a><a class="headerlink" href="#fitting-using-the-hillcurve-class" title="Permalink to this headline">¶</a></h2>
@@ -99,7 +101,7 @@ neutralization of wildtype (WT) A/WSN/1933 (H1N1) influenza by the
 broadly neutralizing antibody FI6v3 as determined in <a class="reference external" href="https://www.nature.com/articles/s41467-018-03665-3#Fig6">Fig 6a of Doud et
 al (2018)</a>.
 The numerical data in that figure in tidy form are available in the CSV file
-<a class="reference download internal" download="" href="_downloads/6d9ae1cdf4cf6322167a78fc658f02d7/Doud_et_al_2018-neutdata.csv"><code class="xref download docutils literal notranslate"><span class="pre">example_data/Doud_et_al_2018-neutdata.csv</span></code></a>.
+<a class="reference download internal" download="" href="_downloads/e68e601ce5b14196266ffcea19db39d0/Doud_et_al_2018-neutdata.csv"><code class="xref download docutils literal notranslate"><span class="pre">example_data/Doud_et_al_2018-neutdata.csv</span></code></a>.
 We read the data and get just the measurements for replicate 1 of
 the wildtype virus against FI6v3:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fi6v3_datafile</span> <span class="o">=</span> <span class="s1">&#39;example_data/Doud_et_al_2018-neutdata.csv&#39;</span>
@@ -136,10 +138,10 @@ data:</p>
 </div>
 <p>We can now look at the values of each of the four fit parameters that
 define the curve:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The top (t) is </span><span class="si">{curve.top:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The bottom (b) is </span><span class="si">{curve.bottom:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The midpoint (m) is </span><span class="si">{curve.midpoint:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The slope (Hill coefficient)s is </span><span class="si">{curve.slope:.3g}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The top (t) is </span><span class="si">{curve.top:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The bottom (b) is </span><span class="si">{curve.bottom:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The midpoint (m) is </span><span class="si">{curve.midpoint:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The slope (Hill coefficient)s is </span><span class="si">{curve.slope:.3g}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">The top (t) is 1</span>
 <span class="go">The bottom (b) is 0</span>
 <span class="go">The midpoint (m) is 0.0167</span>
@@ -157,10 +159,10 @@ bottom (it makes very little difference for this particular dataset):</p>
 <span class="gp">... </span>                             <span class="n">data</span><span class="p">[</span><span class="s1">&#39;fraction infectivity&#39;</span><span class="p">],</span>
 <span class="gp">... </span>                             <span class="n">fixtop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The top (t) is </span><span class="si">{curve2.top:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The bottom (b) is </span><span class="si">{curve2.bottom:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The midpoint (m) is </span><span class="si">{curve2.midpoint:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
-<span class="gp">... </span>      <span class="n">f</span><span class="s2">&quot;The slope (Hill coefficient)s is </span><span class="si">{curve2.slope:.3g}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The top (t) is </span><span class="si">{curve2.top:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The bottom (b) is </span><span class="si">{curve2.bottom:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The midpoint (m) is </span><span class="si">{curve2.midpoint:.3g}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;The slope (Hill coefficient)s is </span><span class="si">{curve2.slope:.3g}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">The top (t) is 0.987</span>
 <span class="go">The bottom (b) is 0</span>
 <span class="go">The midpoint (m) is 0.0169</span>
@@ -172,7 +174,7 @@ bottom (it makes very little difference for this particular dataset):</p>
 <span class="math notranslate nohighlight">\(m\)</span> when the top (<span class="math notranslate nohighlight">\(t\)</span>) is one and the bottom (<span class="math notranslate nohighlight">\(b\)</span>) is
 zero, but otherwise it may be different than the IC50. For this
 particular dataset, the IC50 is very close to the midpoint:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The IC50 is {curve.ic50():.3g}&quot;</span><span class="p">)</span>
 <span class="go">The IC50 is 0.0167</span>
 </pre></div>
 </div>
@@ -201,7 +203,7 @@ which will compute the concentration at which an arbitrary fraction of
 virus is expected to be <strong>neutralized</strong> (note that this is fraction neutralized,
 which is one minus the fraction infectivity).
 For instance:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;The IC95 is {curve.icXX(0.95):.3g}&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The IC95 is {curve.icXX(0.95):.3g}&quot;</span><span class="p">)</span>
 <span class="go">The IC95 is 0.0541</span>
 </pre></div>
 </div>
@@ -328,10 +330,10 @@ command first if there is clipping.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2019, Bloom lab.
+      &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

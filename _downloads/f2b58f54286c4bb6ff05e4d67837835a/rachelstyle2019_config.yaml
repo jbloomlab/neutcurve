@@ -1,0 +1,44 @@
+- 22Feb19:
+    excelfile: example_data/rachelstyle2019_22Feb19_neutdata.xlsx
+    sheet_mapping:
+      16:
+        serum: HC080048
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      17:
+        serum: HC080043
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      18:
+        serum: HC060106
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+        excluded_dilutions: [5, 6]
+      19:
+        serum: HC140010
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      20:
+        serum: HC070072
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      21:
+        serum: HC070041
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      22:
+        serum: HC120043
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
+      23:
+        serum: HC150036
+        virus: wt
+        dilution_factor: 3
+        initial_concentration: 0.00926
