@@ -11,7 +11,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
 Added
 +++++
-- `infectivity_or_bound` option to allow fitting of fraction bound as well as fraction infecitivity.
+- `infectivity_or_neutralized` option to allow fitting of fraction neutralized as well as fraction infectivity.
 
 Fixed
 +++++
