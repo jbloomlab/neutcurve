@@ -526,7 +526,7 @@ Fit and plot curve:
 
     >>> hiv_fit.fitParams()
          serum  virus replicate  nreplicates  ic50 ic50_bound ic50_str  midpoint  slope  top  bottom
-    0  BF520.1  H330R   average            2     5      lower       >5       123   23.1    1       0
+    0  BF520.1  H330R   average            2     5      lower       >5       122   23.1    1       0
 
 Drawing vertical lines
 -----------------------
