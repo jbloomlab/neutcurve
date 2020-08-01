@@ -1018,7 +1018,7 @@ class CurveFits:
         if ylabel is None:
             bigax.set_ylabel(self.fracinf_col, fontsize=labelsize, labelpad=10)
         elif not isinstance(ylabel, list):
-            bigax.set_yabel(ylabel, fontsize=labelsize, labelpad=10)
+            bigax.set_ylabel(ylabel, fontsize=labelsize, labelpad=10)
 
         if align_to_dmslogo_facet:
             fig.subplots_adjust(hspace=hparams['hspace'],
