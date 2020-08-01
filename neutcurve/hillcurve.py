@@ -364,13 +364,17 @@ class HillCurve:
             bottom = fixbottom
 
         # make initial guess for midpoint
+        # if midpoint guess outside range, guess outside range by amount
+        # equal to spacing of last two points
         midval = (top - bottom) / 2.0
         if (self.fs > midval).all():
-            # guess above midpoint by amount equal to spacing of last 1 points
-            midpoint = self.cs[-1]**2 / self.cs[-2]
+            midpoint = {'infectivity': self.cs[-1]**2 / self.cs[-2],
+                        'neutralized': self.cs[0] / (self.cs[-1] / self.cs[-2])
+                        }[self._infectivity_or_neutralized]
         elif (self.fs <= midval).all():
-            # guess below midpoint by amount equal to spacing of last 1 points
-            midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
+            midpoint = {'neutralized': self.cs[-1]**2 / self.cs[-2],
+                        'infectivity': self.cs[0] / (self.cs[-1] / self.cs[-2])
+                        }[self._infectivity_or_neutralized]
         else:
             # get first index where f crosses midpoint
             i = numpy.argmax((self.fs > midval)[:-1] !=
@@ -460,13 +464,17 @@ class HillCurve:
             bottom = fixbottom
 
         # make initial guess for midpoint
+        # if midpoint guess outside range, guess outside range by amount
+        # equal to spacing of last two points
         midval = (top - bottom) / 2.0
         if (self.fs > midval).all():
-            # guess above midpoint by amount equal to spacing of last 1 points
-            midpoint = self.cs[-1]**2 / self.cs[-2]
+            midpoint = {'infectivity': self.cs[-1]**2 / self.cs[-2],
+                        'neutralized': self.cs[0] / (self.cs[-1] / self.cs[-2])
+                        }[self._infectivity_or_neutralized]
         elif (self.fs <= midval).all():
-            # guess below midpoint by amount equal to spacing of last 1 points
-            midpoint = self.cs[0] / (self.cs[-1] / self.cs[-2])
+            midpoint = {'neutralized': self.cs[-1]**2 / self.cs[-2],
+                        'infectivity': self.cs[0] / (self.cs[-1] / self.cs[-2])
+                        }[self._infectivity_or_neutralized]
         else:
             # get first index where f crosses midpoint
             i = numpy.argmax((self.fs > midval)[:-1] !=
