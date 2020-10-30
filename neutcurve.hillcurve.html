@@ -1,18 +1,19 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>hillcurve &#8212; neutcurve 0.4.2 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>hillcurve &#8212; neutcurve 0.5.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="parse_excel" href="neutcurve.parse_excel.html" />
@@ -36,9 +37,9 @@
   <span class="target" id="module-neutcurve.hillcurve"></span><div class="section" id="hillcurve">
 <h1>hillcurve<a class="headerlink" href="#hillcurve" title="Permalink to this headline">¶</a></h1>
 <p>Defines <a class="reference internal" href="#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">HillCurve</span></code></a> for fitting neutralization curves.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="neutcurve.hillcurve.HillCurve">
-<em class="property">class </em><code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">HillCurve</code><span class="sig-paren">(</span><em class="sig-param">cs</em>, <em class="sig-param">fs</em>, <em class="sig-param">*</em>, <em class="sig-param">infectivity_or_neutralized='infectivity'</em>, <em class="sig-param">fs_stderr=None</em>, <em class="sig-param">fixbottom=0</em>, <em class="sig-param">fixtop=1</em>, <em class="sig-param">fitlogc=False</em>, <em class="sig-param">use_stderr_for_fit=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">HillCurve</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cs</span></em>, <em class="sig-param"><span class="n">fs</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">infectivity_or_neutralized</span><span class="o">=</span><span class="default_value">'infectivity'</span></em>, <em class="sig-param"><span class="n">fs_stderr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fixbottom</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">fixtop</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">fitlogc</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">use_stderr_for_fit</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A fitted Hill curve, optionally with free baselines.</p>
 <p>Fits <span class="math notranslate nohighlight">\(f\left(c\right) = b + \frac{t - b}{1 + \left(c/m\right)^s}\)</span>
@@ -111,14 +112,14 @@ if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class=
 </dl>
 <p>Use the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a> method to get the fitted IC50.</p>
 <p>Here are some examples. First, we import the necessary modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve</span> <span class="kn">import</span> <span class="n">HillCurve</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">neutcurve.colorschemes</span> <span class="kn">import</span> <span class="n">CBPALETTE</span>
 </pre></div>
 </div>
 <p>Now simulate some data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="mf">0.03</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="mf">0.03</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="mf">1.9</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="mf">1.0</span>
@@ -128,7 +129,7 @@ if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class=
 </div>
 <p>Now fit to these data, and confirm that the fitted values
 are close to the ones used for the simulation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">slope</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
@@ -143,7 +144,7 @@ are close to the ones used for the simulation:</p>
 0.1 rather than 0, the midpoint and IC50 are different. Specifically,
 the IC50 is larger than the midpoint as you have to go past the midpoint
 to get down to 0.5 fraction infectivity:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">neut</span><span class="o">.</span><span class="n">midpoint</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">(),</span> <span class="mf">0.0337385586</span><span class="p">)</span>
 <span class="go">True</span>
@@ -156,7 +157,7 @@ to get down to 0.5 fraction infectivity:</p>
 <p>Now here is an example where we constrain both the top
 and the bottom (to 1 and 0, respectively) and fit
 the curve. Now the midpoint and IC50 are the same:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b2</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b2</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fs2</span> <span class="o">=</span> <span class="p">[</span><span class="n">HillCurve</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut2</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs2</span><span class="p">)</span>
@@ -170,7 +171,7 @@ the curve. Now the midpoint and IC50 are the same:</p>
 than the midpoint, so that we never get to complete neutralization.
 The estimated IC50 is unreliable, and so will be returned as <cite>None</cite> unless
 we call <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a> with <cite>method</cite> set to ‘bound’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cs3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cs3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">cs3</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">)</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fs3</span> <span class="o">=</span> <span class="p">[</span><span class="n">HillCurve</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cs3</span><span class="p">]</span>
@@ -184,7 +185,7 @@ we call <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50"
 <p>Note that we can determine if the IC50 is interpolated or an upper
 or lower bound using <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_bound" title="neutcurve.hillcurve.HillCurve.ic50_bound"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50_bound()</span></code></a>, and get a nice string
 using <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="neutcurve.hillcurve.HillCurve.ic50_str"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50_str()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50_bound</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">ic50_bound</span><span class="p">()</span>
 <span class="go">&#39;interpolated&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut3</span><span class="o">.</span><span class="n">ic50_bound</span><span class="p">()</span>
 <span class="go">&#39;lower&#39;</span>
@@ -197,7 +198,7 @@ using <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_st
 <p>We can use the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.dataframe" title="neutcurve.hillcurve.HillCurve.dataframe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dataframe()</span></code></a> method to get the measured
 data and fit data at selected points. First, we do this
 just at measured points:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="s1">&#39;measured&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">dataframe</span><span class="p">(</span><span class="s1">&#39;measured&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">   concentration  measurement    fit  stderr</span>
 <span class="go">0          0.002        0.995  0.995     NaN</span>
 <span class="go">1          0.004        0.981  0.981     NaN</span>
@@ -211,7 +212,7 @@ just at measured points:</p>
 </pre></div>
 </div>
 <p>Then we add in one more point:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">dataframe</span><span class="p">([</span><span class="mf">0.6</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">dataframe</span><span class="p">([</span><span class="mf">0.6</span><span class="p">])</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="go">   concentration  measurement    fit  stderr</span>
 <span class="go">0          0.002        0.995  0.995     NaN</span>
 <span class="go">1          0.004        0.981  0.981     NaN</span>
@@ -228,7 +229,7 @@ just at measured points:</p>
 <p>In reality, you’d typically just call <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.dataframe" title="neutcurve.hillcurve.HillCurve.dataframe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dataframe()</span></code></a> with
 the default argument of ‘auto’ to get a good range to plot.
 This is done if we call the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.plot" title="neutcurve.hillcurve.HillCurve.plot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.plot()</span></code></a> method:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">neut</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">neut</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//neutcurve-hillcurve-10.png">png</a>, <a class="reference external" href=".//neutcurve-hillcurve-10.hires.png">hires.png</a>, <a class="reference external" href=".//neutcurve-hillcurve-10.pdf">pdf</a>)</p>
@@ -238,14 +239,14 @@ This is done if we call the <a class="reference internal" href="#neutcurve.hillc
 <p>Finally, we confirm that we get the same result regardless
 of whether we fit using the concentrations in linear or
 log space:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_linear</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fitlogc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_linear</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">fitlogc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">neut</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">neut_linear</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
 <span class="gp">... </span>    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">,</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="s1">&#39;slope&#39;</span><span class="p">,</span> <span class="s1">&#39;midpoint&#39;</span><span class="p">])</span>
 <span class="go">True</span>
 </pre></div>
 </div>
 <p>Demonstrate <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.icXX" title="neutcurve.hillcurve.HillCurve.icXX"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.icXX()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neut</span><span class="o">.</span><span class="n">icXX_str</span><span class="p">(</span><span class="mf">0.95</span><span class="p">)</span>
 <span class="go">&#39;&gt;0.512&#39;</span>
@@ -263,7 +264,7 @@ log space:</p>
 when the signal <strong>increases</strong> rather than decreases with increasing
 concentration (as would be the case if measuring fraction bound rather
 than fraction infectivity).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_opp</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">],</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neut_opp</span> <span class="o">=</span> <span class="n">HillCurve</span><span class="p">(</span><span class="n">cs</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fs</span><span class="p">],</span>
 <span class="gp">... </span>                     <span class="n">fixtop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixbottom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="gp">... </span>                     <span class="n">infectivity_or_neutralized</span><span class="o">=</span><span class="s1">&#39;neutralized&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut_opp</span><span class="o">.</span><span class="n">top</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
@@ -281,9 +282,9 @@ than fraction infectivity).</p>
 <div class="figure align-default">
 <img alt="_images/neutcurve-hillcurve-12.png" src="_images/neutcurve-hillcurve-12.png" />
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.dataframe">
-<code class="sig-name descname">dataframe</code><span class="sig-paren">(</span><em class="sig-param">concentrations='auto'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">concentrations</span><span class="o">=</span><span class="default_value">'auto'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data frame with curve data for plotting.</p>
 <p>Useful if you want to get both the points and the fit
 curve to plot.</p>
@@ -310,24 +311,24 @@ or numpy.nan if no measurement here.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.evaluate">
-<em class="property">static </em><code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param">c</em>, <em class="sig-param">m</em>, <em class="sig-param">s</em>, <em class="sig-param">b</em>, <em class="sig-param">t</em>, <em class="sig-param">infectivity_or_neutralized='infectivity'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.evaluate" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em>, <em class="sig-param"><span class="n">m</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">t</span></em>, <em class="sig-param"><span class="n">infectivity_or_neutralized</span><span class="o">=</span><span class="default_value">'infectivity'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p><span class="math notranslate nohighlight">\(f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}\)</span>.</p>
 <p>If <cite>infectivity_or_neutralized</cite> is ‘neutralized’ rather than
 ‘infectivity’, instead return
 <span class="math notranslate nohighlight">\(f\left(c\right) = t + \frac{b-t}{1+\left(c/m\right)^s}\)</span>.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.fracinfectivity">
-<code class="sig-name descname">fracinfectivity</code><span class="sig-paren">(</span><em class="sig-param">c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.fracinfectivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.fracinfectivity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fracinfectivity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">c</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.fracinfectivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.fracinfectivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fraction infectivity at <cite>c</cite> for fitted parameters.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.ic50">
-<code class="sig-name descname">ic50</code><span class="sig-paren">(</span><em class="sig-param">method='interpolate'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ic50</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'interpolate'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50" title="Permalink to this definition">¶</a></dt>
 <dd><p>IC50 value.</p>
 <p>Concentration where infectivity remaining is 0.5. Equals
 <cite>midpoint</cite> if and only if <cite>top = 1</cite> and <cite>bottom = 0</cite>. Calculated
@@ -354,15 +355,15 @@ Assumes infectivity decreases with concentration.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.ic50_bound">
 <code class="sig-name descname">ic50_bound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_bound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_bound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is IC50 ‘interpolated’, or an ‘upper’ or ‘lower’ bound.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.ic50_str">
-<code class="sig-name descname">ic50_str</code><span class="sig-paren">(</span><em class="sig-param">precision=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ic50_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>IC50 as string indicating upper / lower bounds with &gt; or &lt;.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>Number of significant digits in returned string.</p>
@@ -370,9 +371,9 @@ Assumes infectivity decreases with concentration.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.icXX">
-<code class="sig-name descname">icXX</code><span class="sig-paren">(</span><em class="sig-param">fracneut</em>, <em class="sig-param">*</em>, <em class="sig-param">method='interpolate'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icXX</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fracneut</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'interpolate'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generalizes <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50()</span></code></a> to arbitrary frac neutralized.</p>
 <p>For instance, set <cite>fracneut</cite> to 0.95 if you want the IC95, the
 concentration where 95% is neutralized.</p>
@@ -402,21 +403,21 @@ Assumes infectivity decreases with concentration.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.icXX_bound">
-<code class="sig-name descname">icXX_bound</code><span class="sig-paren">(</span><em class="sig-param">fracneut</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_bound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_bound" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icXX_bound</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fracneut</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_bound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_bound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Like <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_bound" title="neutcurve.hillcurve.HillCurve.ic50_bound"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50_bound()</span></code></a> for arbitrary frac neutralized.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.icXX_str">
-<code class="sig-name descname">icXX_str</code><span class="sig-paren">(</span><em class="sig-param">fracneut</em>, <em class="sig-param">*</em>, <em class="sig-param">precision=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icXX_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fracneut</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">precision</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.icXX_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.icXX_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Like <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_str" title="neutcurve.hillcurve.HillCurve.ic50_str"><code class="xref py py-meth docutils literal notranslate"><span class="pre">HillCurve.ic50_str()</span></code></a> for arbitrary frac neutralized.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="neutcurve.hillcurve.HillCurve.plot">
-<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">concentrations='auto'</em>, <em class="sig-param">ax=None</em>, <em class="sig-param">xlabel='concentration'</em>, <em class="sig-param">ylabel='fraction infectivity'</em>, <em class="sig-param">color='black'</em>, <em class="sig-param">marker='o'</em>, <em class="sig-param">markersize=6</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">yticklocs=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.plot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">concentrations</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xlabel</span><span class="o">=</span><span class="default_value">'concentration'</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'fraction infectivity'</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'black'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">'o'</span></em>, <em class="sig-param"><span class="n">markersize</span><span class="o">=</span><span class="default_value">6</span></em>, <em class="sig-param"><span class="n">linewidth</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">linestyle</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">yticklocs</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the neutralization curve.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
@@ -451,9 +452,9 @@ axis, do <strong>not</strong> re-scale the axis limits to the data.</p>
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="neutcurve.hillcurve.concentrationRange">
-<code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">concentrationRange</code><span class="sig-paren">(</span><em class="sig-param">bottom</em>, <em class="sig-param">top</em>, <em class="sig-param">npoints=200</em>, <em class="sig-param">extend=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#concentrationRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.concentrationRange" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">neutcurve.hillcurve.</code><code class="sig-name descname">concentrationRange</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">bottom</span></em>, <em class="sig-param"><span class="n">top</span></em>, <em class="sig-param"><span class="n">npoints</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">extend</span><span class="o">=</span><span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#concentrationRange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.concentrationRange" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logarithmically spaced concentrations for plotting.</p>
 <p>Useful if you want to plot a curve by fitting values to densely
 sampled points and need the concentrations at which to compute
@@ -474,7 +475,7 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
 <dt>Returns:</dt><dd><p>A numpy array of <cite>npoints</cite> concentrations.</p>
 </dd>
 </dl>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">concentrationRange</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">extend</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
 <span class="gp">... </span>               <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.15</span><span class="p">,</span> <span class="mf">4.64</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">21.54</span><span class="p">,</span> <span class="mf">46.42</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
 <span class="gp">... </span>               <span class="n">atol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
 <span class="go">True</span>
@@ -571,7 +572,7 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -588,7 +589,7 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
       &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

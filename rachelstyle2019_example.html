@@ -1,18 +1,19 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>Bloom lab “Rachel-style 2019” flu neutralization assays &#8212; neutcurve 0.4.2 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bloom lab “Rachel-style 2019” flu neutralization assays &#8212; neutcurve 0.5.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="neutcurve package" href="neutcurve.html" />
@@ -97,7 +98,7 @@ here.</p>
 <a class="reference external" href="https://pandas.pydata.org">pandas</a> to hold the data and
 <a class="reference external" href="https://pyyaml.org/wiki/PyYAMLDocumentation">pyyaml</a> to parse the
 YAML configuration file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -108,7 +109,7 @@ YAML configuration file:</p>
 </pre></div>
 </div>
 <p>Set output format of pandas Data Frames:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:.3g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.float_format&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{:.3g}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -144,11 +145,11 @@ file. In this notebook, we parse the Excel data in the single Excel file
 which consists of eight sheets. So we have created a YAML file,
 <a class="reference download internal" download="" href="_downloads/f2b58f54286c4bb6ff05e4d67837835a/rachelstyle2019_config.yaml"><code class="xref download docutils literal notranslate"><span class="pre">example_data/rachelstyle2019_config.yaml</span></code></a>
 that specifies the information in that Excel file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config_file</span> <span class="o">=</span> <span class="s1">&#39;example_data/rachelstyle2019_config.yaml&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config_file</span> <span class="o">=</span> <span class="s1">&#39;example_data/rachelstyle2019_config.yaml&#39;</span>
 </pre></div>
 </div>
 <p>Here are the contents of the YAML configuration file.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
 <span class="go">- 22Feb19:</span>
 <span class="go">    excelfile: example_data/rachelstyle2019_22Feb19_neutdata.xlsx</span>
@@ -207,7 +208,7 @@ two columns from serum <em>HC060106</em>. In the plots below, you can see how
 the data points for those columns will be missing.</p>
 <p>We also need to specify the output directory where the results are
 written:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_example_analysis/rachelstyle2019/&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outdir</span> <span class="o">=</span> <span class="s1">&#39;_example_analysis/rachelstyle2019/&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -216,7 +217,7 @@ written:</p>
 <h2><a class="toc-backref" href="#id4">Read the data from the Excel files</a><a class="headerlink" href="#read-the-data-from-the-excel-files" title="Permalink to this headline">¶</a></h2>
 <p>Now we read in the configuration specified in our <em>config_file</em> into the
 variable <em>config</em>, which will be a list of dicts:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -226,25 +227,25 @@ data frame appropriate for passing to
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> as described in <a class="reference internal" href="curvefits_example.html#curvefits-example"><span class="std std-ref">Fitting curves to real data</span></a>.
 We then concatenate all the
 tidy data frame to get our neutralization data:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store all data frame, then concatenate at end</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># store all data frame, then concatenate at end</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">sampledict</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">sampledict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="gp">... </span>    <span class="n">sampleset</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sampledict</span><span class="o">.</span><span class="n">items</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing data for </span><span class="si">{sampleset}</span><span class="s2">...&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parsing data for </span><span class="si">{</span><span class="n">sampleset</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">neutdata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neutcurve</span><span class="o">.</span><span class="n">parse_excel</span><span class="o">.</span><span class="n">parseRachelStyle2019</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 <span class="go">Parsing data for 22Feb19...</span>
 <span class="go">&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">neutdata</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Read data for {len(neutdata.groupby(&#39;serum&#39;))} sera and &quot;</span>
-<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;{len(neutdata.groupby([&#39;serum&#39;, &#39;virus&#39;]))} serum / virus pairs.&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Read data for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">neutdata</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;serum&#39;</span><span class="p">))</span><span class="si">}</span><span class="s2"> sera and &quot;</span>
+<span class="gp">... </span>      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">neutdata</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">]))</span><span class="si">}</span><span class="s2"> serum / virus pairs.&quot;</span><span class="p">)</span>
 <span class="go">Read data for 8 sera and 8 serum / virus pairs.</span>
 </pre></div>
 </div>
 <p>We write the neutralization data to a CSV file in our output directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdatafile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;neutdata.csv&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">neutdatafile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;neutdata.csv&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">neutdata</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">neutdatafile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote neutralization data to </span><span class="si">{neutdatafile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote neutralization data to </span><span class="si">{</span><span class="n">neutdatafile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">Wrote neutralization data to _example_analysis/rachelstyle2019/neutdata.csv</span>
 </pre></div>
 </div>
@@ -253,12 +254,12 @@ tidy data frame to get our neutralization data:</p>
 <h2><a class="toc-backref" href="#id5">Fit and analyze the curves</a><a class="headerlink" href="#fit-and-analyze-the-curves" title="Permalink to this headline">¶</a></h2>
 <p>Now we can simply fit the data in <em>neutdata</em> with a
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a> as in <a class="reference internal" href="curvefits_example.html#curvefits-example"><span class="std std-ref">Fitting curves to real data</span></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span> <span class="o">=</span> <span class="n">neutcurve</span><span class="o">.</span><span class="n">CurveFits</span><span class="p">(</span><span class="n">neutdata</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span> <span class="o">=</span> <span class="n">neutcurve</span><span class="o">.</span><span class="n">CurveFits</span><span class="p">(</span><span class="n">neutdata</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Make plots that show the curves for all replicates for each serum /
 virus combination:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_reps</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotReplicates</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">,</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_reps</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotReplicates</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                                  <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -268,7 +269,7 @@ virus combination:</p>
 </div>
 <p>Make plots that just show the across-replicate averages for each serum /
 virus combination:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_avgs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotAverages</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_avgs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotAverages</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//rachelstyle2019_example-13.png">png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.hires.png">hires.png</a>, <a class="reference external" href=".//rachelstyle2019_example-13.pdf">pdf</a>)</p>
@@ -279,7 +280,7 @@ virus combination:</p>
 particular dataset, this plot isn’t really any different than the one
 above–but we make it here because it will be different for datasets that
 involve multiple different viruses:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_sera</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;virus&#39;</span><span class="p">,</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_sera</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;virus&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                            <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;serum dilution&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -288,11 +289,11 @@ involve multiple different viruses:</p>
 <img alt="_images/rachelstyle2019_example-14.png" src="_images/rachelstyle2019_example-14.png" />
 </div>
 <p>Now we write all of the plots to PDF files:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">plotname</span><span class="p">,</span> <span class="n">fig</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;replicates_plot&#39;</span><span class="p">,</span> <span class="n">fig_reps</span><span class="p">),</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">plotname</span><span class="p">,</span> <span class="n">fig</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;replicates_plot&#39;</span><span class="p">,</span> <span class="n">fig_reps</span><span class="p">),</span>
 <span class="gp">... </span>                      <span class="p">(</span><span class="s1">&#39;average_plot&#39;</span><span class="p">,</span> <span class="n">fig_avgs</span><span class="p">),</span>
 <span class="gp">... </span>                      <span class="p">(</span><span class="s1">&#39;sera_plot&#39;</span><span class="p">,</span> <span class="n">fig_sera</span><span class="p">)]:</span>
 <span class="gp">... </span>    <span class="n">plotfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="n">plotname</span> <span class="o">+</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating plot </span><span class="si">{plotfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Creating plot </span><span class="si">{</span><span class="n">plotfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plotfile</span><span class="p">)</span>
 <span class="go">Creating plot _example_analysis/rachelstyle2019/replicates_plot.pdf</span>
 <span class="go">Creating plot _example_analysis/rachelstyle2019/average_plot.pdf</span>
@@ -301,7 +302,7 @@ involve multiple different viruses:</p>
 </div>
 <p>We also look at the numerical values of the fit parameters, including
 the IC50s:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
 <span class="go">      serum virus replicate  nreplicates     ic50    ic50_bound  ic50_str  midpoint  slope  top  bottom</span>
 <span class="go">0  HC080048    wt   average            3   0.0016  interpolated    0.0016    0.0016   2.71    1       0</span>
 <span class="go">1  HC080043    wt   average            3 0.000684  interpolated  0.000684  0.000684   1.35    1       0</span>
@@ -314,15 +315,15 @@ the IC50s:</p>
 </pre></div>
 </div>
 <p>We write these fit parameters to a CSV file:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fitfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;fitparams.csv&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fitfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s1">&#39;fitparams.csv&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">fitfile</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote fit parameters to </span><span class="si">{fitfile}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote fit parameters to </span><span class="si">{</span><span class="n">fitfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="go">Wrote fit parameters to _example_analysis/rachelstyle2019/fitparams.csv</span>
 </pre></div>
 </div>
 <p>So overall, this analysis has created several plots and CSV files in
 <em>outdir</em>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Here are the created files in </span><span class="si">{outdir}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">  &quot;</span> <span class="o">+</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Here are the created files in </span><span class="si">{</span><span class="n">outdir</span><span class="si">}</span><span class="s2">:</span><span class="se">\n</span><span class="s2">  &quot;</span> <span class="o">+</span>
 <span class="gp">... </span>      <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">outdir</span><span class="p">))))</span>
 <span class="go">Here are the created files in _example_analysis/rachelstyle2019/:</span>
 <span class="go">  average_plot.pdf</span>
@@ -422,7 +423,7 @@ To run the same analysis in your own data, download this document as a Jupyter n
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -439,7 +440,7 @@ To run the same analysis in your own data, download this document as a Jupyter n
       &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,18 +1,19 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>neutcurve.curvefits &#8212; neutcurve 0.4.2 documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>neutcurve.curvefits &#8212; neutcurve 0.5.0 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -98,8 +99,6 @@
 <span class="sd">            that serum and virus in the order they occur in `data`.</span>
 <span class="sd">        `allviruses` (list)</span>
 <span class="sd">            List of all viruses.</span>
-<span class="sd">        `allreplicates` (list)</span>
-<span class="sd">            List of all replicates.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -151,11 +150,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">replicates</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
-            <span class="n">serum_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.serum_col}</span><span class="s2"> == @serum&quot;</span><span class="p">)</span>
+            <span class="n">serum_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">serum_col</span><span class="si">}</span><span class="s2"> == @serum&quot;</span><span class="p">)</span>
             <span class="n">serum_viruses</span> <span class="o">=</span> <span class="n">serum_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">virus_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]</span> <span class="o">=</span> <span class="n">serum_viruses</span>
             <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">serum_viruses</span><span class="p">:</span>
-                <span class="n">virus_data</span> <span class="o">=</span> <span class="n">serum_data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.virus_col}</span><span class="s2"> == @virus&quot;</span><span class="p">)</span>
+                <span class="n">virus_data</span> <span class="o">=</span> <span class="n">serum_data</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">virus_col</span><span class="si">}</span><span class="s2"> == @virus&quot;</span><span class="p">)</span>
                 <span class="n">virus_reps</span> <span class="o">=</span> <span class="n">virus_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">replicate_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                 <span class="k">if</span> <span class="s1">&#39;average&#39;</span> <span class="ow">in</span> <span class="n">virus_reps</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;A replicate is named &quot;average&quot;. This is &#39;</span>
@@ -164,25 +163,30 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]</span> <span class="o">=</span> <span class="n">virus_reps</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rep1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">virus_reps</span><span class="p">):</span>
                     <span class="n">conc1</span> <span class="o">=</span> <span class="p">(</span><span class="n">virus_data</span>
-                             <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.replicate_col}</span><span class="s2"> == @rep1&quot;</span><span class="p">)</span>
+                             <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">replicate_col</span><span class="si">}</span><span class="s2"> == @rep1&quot;</span><span class="p">)</span>
                              <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">conc_col</span><span class="p">]</span>
                              <span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
                              <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                              <span class="p">)</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conc1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">conc1</span><span class="p">)):</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;duplicate concentrations for &#39;</span>
-                                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{serum}</span><span class="s2">, </span><span class="si">{virus}</span><span class="s2">, </span><span class="si">{rep1}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">rep1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">rep2</span> <span class="ow">in</span> <span class="n">virus_reps</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
                         <span class="n">conc2</span> <span class="o">=</span> <span class="p">(</span><span class="n">virus_data</span>
-                                 <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.replicate_col}</span><span class="s2"> == @rep1&quot;</span><span class="p">)</span>
+                                 <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">replicate_col</span><span class="si">}</span><span class="s2"> == @rep1&quot;</span><span class="p">)</span>
                                  <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">conc_col</span><span class="p">]</span>
                                  <span class="o">.</span><span class="n">sort_values</span><span class="p">()</span>
                                  <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                                  <span class="p">)</span>
                         <span class="k">if</span> <span class="n">conc1</span> <span class="o">!=</span> <span class="n">conc2</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;replicates </span><span class="si">{rep1}</span><span class="s2"> and </span><span class="si">{rep2}</span><span class="s2"> &quot;</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;replicates </span><span class="si">{</span><span class="n">rep1</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">rep2</span><span class="si">}</span><span class="s2"> &quot;</span>
                                              <span class="s1">&#39;have different concentrations &#39;</span>
-                                             <span class="sa">f</span><span class="s2">&quot;for </span><span class="si">{serum}</span><span class="s2">, </span><span class="si">{virus}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                             <span class="sa">f</span><span class="s2">&quot;for </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allviruses</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">allviruses</span><span class="p">[</span><span class="n">virus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allviruses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allviruses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="c1"># compute replicate average and add &#39;stderr&#39;</span>
         <span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -226,17 +230,17 @@
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hillcurves</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">serum</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `serum` of </span><span class="si">{serum}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `serum` of </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">virus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `virus` of </span><span class="si">{virus}</span><span class="s2"> for &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;`serum` of </span><span class="si">{serum}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `virus` of </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2"> for &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;`serum` of </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">replicate</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `replicate` of </span><span class="si">{replicate}</span><span class="s2"> for &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;`serum` of </span><span class="si">{serum}</span><span class="s2"> and `virus` of </span><span class="si">{virus}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid `replicate` of </span><span class="si">{</span><span class="n">replicate</span><span class="si">}</span><span class="s2"> for &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;`serum` of </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2"> and `virus` of </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="n">idata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{self.serum_col}</span><span class="s2"> == @serum) &amp; &quot;</span>
-                                  <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{self.virus_col}</span><span class="s2"> == @virus) &amp; &quot;</span>
-                                  <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{self.replicate_col}</span><span class="s2"> == @replicate)&quot;</span><span class="p">)</span>
+            <span class="n">idata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">serum_col</span><span class="si">}</span><span class="s2"> == @serum) &amp; &quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">virus_col</span><span class="si">}</span><span class="s2"> == @virus) &amp; &quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">replicate_col</span><span class="si">}</span><span class="s2"> == @replicate)&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">idata</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="n">fs_stderr</span> <span class="o">=</span> <span class="kc">None</span>
@@ -259,8 +263,8 @@
                 <span class="n">idata</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;temp.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
                 <span class="c1"># following here: https://stackoverflow.com/a/46091127</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Error while fitting HillCurve for &#39;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{serum}</span><span class="s2">, virus </span><span class="si">{virus}</span><span class="s2">, &quot;</span>
-                                   <span class="sa">f</span><span class="s2">&quot;replicate </span><span class="si">{replicate}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Data are:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
+                                   <span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2">, virus </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2">, &quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot;replicate </span><span class="si">{</span><span class="n">replicate</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2">Data are:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
                                    <span class="nb">str</span><span class="p">(</span><span class="n">idata</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_hillcurves</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">curve</span>
@@ -309,7 +313,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ics</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ics</span><span class="p">)</span>
-        <span class="n">ic_colprefixes</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ic{{:.</span><span class="si">{ics_precision}</span><span class="s2">f}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ic</span><span class="p">)</span> <span class="k">for</span> <span class="n">ic</span> <span class="ow">in</span> <span class="n">ics</span><span class="p">]</span>
+        <span class="n">ic_colprefixes</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ic</span><span class="se">{{</span><span class="s2">:.</span><span class="si">{</span><span class="n">ics_precision</span><span class="si">}</span><span class="s2">f</span><span class="se">}}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ic</span><span class="p">)</span> <span class="k">for</span> <span class="n">ic</span> <span class="ow">in</span> <span class="n">ics</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ic_colprefixes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ic_colprefixes</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;column names for ICXX not unique.</span><span class="se">\n</span><span class="s1">&#39;</span>
                              <span class="s1">&#39;Either you have duplicate entries in `ics` &#39;</span>
@@ -342,14 +346,14 @@
                         <span class="k">for</span> <span class="n">ic</span><span class="p">,</span> <span class="n">colprefix</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ics</span><span class="p">,</span> <span class="n">ic_colprefixes</span><span class="p">):</span>
                             <span class="n">f</span> <span class="o">=</span> <span class="n">ic</span> <span class="o">/</span> <span class="mi">100</span>
                             <span class="n">d</span><span class="p">[</span><span class="n">colprefix</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">))</span>
-                            <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{colprefix}</span><span class="s2">_bound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_bound</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
-                            <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{colprefix}</span><span class="s2">_str&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_str</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                            <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colprefix</span><span class="si">}</span><span class="s2">_bound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_bound</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                            <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colprefix</span><span class="si">}</span><span class="s2">_str&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_str</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
                         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                             <span class="n">d</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
 
             <span class="n">ic_cols</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">ic_colprefixes</span><span class="p">:</span>
-                <span class="n">ic_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">prefix</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">_bound&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{prefix}</span><span class="s2">_str&quot;</span><span class="p">]</span>
+                <span class="n">ic_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">prefix</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_bound&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_str&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
                     <span class="p">[[</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">,</span> <span class="s1">&#39;replicate&#39;</span><span class="p">,</span> <span class="s1">&#39;nreplicates&#39;</span><span class="p">]</span>
@@ -393,9 +397,9 @@
 <span class="sd">                Specific serum / virus combinations to ignore (not plot). Key</span>
 <span class="sd">                by serum, and then list viruses to ignore.</span>
 <span class="sd">            `colors` (iterable)</span>
-<span class="sd">                List of colors for different replicates.</span>
+<span class="sd">                List of colors for different viruses.</span>
 <span class="sd">            `markers` (iterable)</span>
-<span class="sd">                List of markers for different replicates.</span>
+<span class="sd">                List of markers for different viruses.</span>
 <span class="sd">            `virus_to_color_marker` (dict or `None`)</span>
 <span class="sd">                Optionally specify a specific color and for each virus as</span>
 <span class="sd">                2-tuples `(color, marker)`. If you use this option, `colors`</span>
@@ -428,7 +432,7 @@
         <span class="k">if</span> <span class="n">titles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">titles</span> <span class="o">=</span> <span class="n">sera</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sera</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">titles</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`titles`, `sera` != length:</span><span class="se">\n</span><span class="si">{titles}</span><span class="se">\n</span><span class="si">{sera}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`titles`, `sera` != length:</span><span class="se">\n</span><span class="si">{</span><span class="n">titles</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">sera</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">max_viruses_per_subplot</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`max_viruses_per_subplot` must be at least 1&#39;</span><span class="p">)</span>
@@ -473,11 +477,11 @@
                                       <span class="p">(</span><span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_virus</span><span class="p">)]</span>
             <span class="n">unshared</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">serum_unshared_viruses</span><span class="p">)))</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">serum_shared_viruses</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_viruses_per_subplot</span> <span class="o">-</span> <span class="n">unshared</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{serum}</span><span class="s2"> has too many subplot-shared &quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2"> has too many subplot-shared &quot;</span>
                                  <span class="s1">&#39;viruses (in `all_subplots`) relative to &#39;</span>
                                  <span class="s1">&#39;value of `max_viruses_per_subplot`:</span><span class="se">\n</span><span class="s1">&#39;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{serum_shared_viruses}</span><span class="s2"> is more than &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{max_viruses_per_subplot}</span><span class="s2"> viruses.&quot;</span><span class="p">)</span>
+                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">serum_shared_viruses</span><span class="si">}</span><span class="s2"> is more than &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">max_viruses_per_subplot</span><span class="si">}</span><span class="s2"> viruses.&quot;</span><span class="p">)</span>
             <span class="n">shared_curvelist</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">serum_shared_viruses</span> <span class="o">+</span> <span class="n">serum_unshared_viruses</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">ivirus</span> <span class="o">&gt;=</span> <span class="n">max_viruses_per_subplot</span><span class="p">:</span>
@@ -491,7 +495,7 @@
                         <span class="n">ivirus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">curvelist</span><span class="p">)</span>
                         <span class="k">assert</span> <span class="n">ivirus</span> <span class="o">&lt;</span> <span class="n">max_viruses_per_subplot</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{serum}</span><span class="s2"> has more than &quot;</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;serum </span><span class="si">{</span><span class="n">serum</span><span class="si">}</span><span class="s2"> has more than &quot;</span>
                                          <span class="s1">&#39;`max_viruses_per_subplot` viruses &#39;</span>
                                          <span class="s1">&#39;and `multi_serum_subplots` is False&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">virus_to_color_marker</span><span class="p">:</span>
@@ -539,6 +543,197 @@
 
         <span class="k">if</span> <span class="n">virus_to_color_marker</span> <span class="ow">and</span> <span class="s1">&#39;orderlegend&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">orderlegend</span> <span class="o">=</span> <span class="n">virus_to_color_marker</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">orderlegend</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotGrid</span><span class="p">(</span><span class="n">plots</span><span class="p">,</span>
+                             <span class="n">orderlegend</span><span class="o">=</span><span class="n">orderlegend</span><span class="p">,</span>
+                             <span class="n">vlines</span><span class="o">=</span><span class="n">vlines_axkey</span><span class="p">,</span>
+                             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                             <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CurveFits.plotViruses"><a class="viewcode-back" href="../../neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.plotViruses">[docs]</a>    <span class="k">def</span> <span class="nf">plotViruses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="o">*</span><span class="p">,</span>
+                    <span class="n">ncol</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                    <span class="n">nrow</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">sera</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                    <span class="n">viruses</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                    <span class="n">ignore_virus_serum</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">colors</span><span class="o">=</span><span class="n">CBPALETTE</span><span class="p">,</span>
+                    <span class="n">markers</span><span class="o">=</span><span class="n">CBMARKERS</span><span class="p">,</span>
+                    <span class="n">serum_to_color_marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">max_sera_per_subplot</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">multi_virus_subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">all_subplots</span><span class="o">=</span><span class="p">(),</span>
+                    <span class="n">titles</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">vlines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plot grid with replicate-average of sera for each virus.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            `ncol`, `nrow` (int or `None`)</span>
+<span class="sd">                Specify one of these to set number of columns or rows,</span>
+<span class="sd">                other should be `None`.</span>
+<span class="sd">            `sera` (&#39;all&#39; or list)</span>
+<span class="sd">                Sera to include on plot, in this order, unless one is</span>
+<span class="sd">                specified in `all_subplots`.</span>
+<span class="sd">            `viruses` (&#39;all&#39; or list)</span>
+<span class="sd">                Viruses to include on plot, in this order.</span>
+<span class="sd">            `ignore_virus_serum` (`None` or dict)</span>
+<span class="sd">                Specific virus / serum combinations to ignore (not plot). Key</span>
+<span class="sd">                by virus, and then list sera to ignore.</span>
+<span class="sd">            `colors` (iterable)</span>
+<span class="sd">                List of colors for different sera.</span>
+<span class="sd">            `markers` (iterable)</span>
+<span class="sd">                List of markers for different sera.</span>
+<span class="sd">            `serum_to_color_marker` (dict or `None`)</span>
+<span class="sd">                Optionally specify a specific color and for each serum as</span>
+<span class="sd">                2-tuples `(color, marker)`. If you use this option, `colors`</span>
+<span class="sd">                and `markers` are ignored.</span>
+<span class="sd">            `max_sera_per_subplot` (int)</span>
+<span class="sd">                Maximum number of sera to show on any subplot.</span>
+<span class="sd">            `multi_virus_subplots` (bool)</span>
+<span class="sd">                If a virus has more than `max_sera_per_subplot` sera,</span>
+<span class="sd">                do we make multiple subplots for it or raise an error?</span>
+<span class="sd">            `all_subplots` (iterable)</span>
+<span class="sd">                If making multiple subplots for virus, which sera</span>
+<span class="sd">                do we show on all subplots? These are also shown first.</span>
+<span class="sd">            `titles` (`None` or list)</span>
+<span class="sd">                Specify custom titles for each subplot different than</span>
+<span class="sd">                `viruses`.</span>
+<span class="sd">            `vlines` (`None` or dict)</span>
+<span class="sd">                Add vertical lines to plots. Keyed by virus name, values</span>
+<span class="sd">                are lists of dicts with a key &#39;x&#39; giving x-location of vertical</span>
+<span class="sd">                line, and optional keys &#39;linewidth&#39;, &#39;color&#39;, and &#39;linestyle&#39;.</span>
+<span class="sd">            `**kwargs`</span>
+<span class="sd">                Other keyword arguments that can be passed to</span>
+<span class="sd">                :meth:`CurveFits.plotGrid`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sera_viruses_lists</span><span class="p">(</span><span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span><span class="p">)</span>
+        <span class="n">viruses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">viruses</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">titles</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">titles</span> <span class="o">=</span> <span class="n">viruses</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">viruses</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">titles</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`titles`, `viruses` != length:</span><span class="se">\n</span><span class="s2">&quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">titles</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">viruses</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_sera_per_subplot</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`max_sera_per_subplot` must be at least 1&#39;</span><span class="p">)</span>
+
+        <span class="c1"># get color scheme for sera</span>
+        <span class="k">if</span> <span class="n">serum_to_color_marker</span><span class="p">:</span>
+            <span class="n">extra_sera</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sera</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">serum_to_color_marker</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">extra_sera</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sera not in `serum_to_color_marker`: &#39;</span> <span class="o">+</span>
+                                 <span class="nb">str</span><span class="p">(</span><span class="n">extra_sera</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">sera</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">markers</span><span class="p">)):</span>
+            <span class="c1"># can share scheme among subplots</span>
+            <span class="n">ordered_sera</span> <span class="o">=</span> <span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sera</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_subplots</span><span class="p">]</span> <span class="o">+</span>
+                            <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sera</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_subplots</span><span class="p">])</span>
+            <span class="n">serum_to_color_marker</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="ow">in</span>
+                                     <span class="nb">zip</span><span class="p">(</span><span class="n">ordered_sera</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">markers</span><span class="p">)}</span>
+        <span class="k">elif</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">markers</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">max_sera_per_subplot</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`max_sera_per_subplot` larger than &#39;</span>
+                             <span class="s1">&#39;number of colors or markers&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serum_to_color_marker</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Build a list of plots appropriate for `plotGrid`.</span>
+        <span class="c1"># Code is complicated because we could have several curve</span>
+        <span class="c1"># per virus, and in that case need to share sera in</span>
+        <span class="c1"># `all_subplots` among curves.</span>
+        <span class="n">virus_sera</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sera</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">s</span><span class="p">]]</span>
+                      <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allviruses</span><span class="p">}</span>
+        <span class="n">plotlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vlines_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">virus</span><span class="p">,</span> <span class="n">title</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">viruses</span><span class="p">,</span> <span class="n">titles</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ignore_virus_serum</span> <span class="ow">and</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">ignore_virus_serum</span><span class="p">:</span>
+                <span class="n">ignore_serum</span> <span class="o">=</span> <span class="n">ignore_virus_serum</span><span class="p">[</span><span class="n">virus</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ignore_serum</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">curvelist</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">iserum</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">virus_shared_sera</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">virus_sera</span><span class="p">[</span><span class="n">virus</span><span class="p">]</span> <span class="k">if</span>
+                                 <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">sera</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">all_subplots</span><span class="p">)</span> <span class="ow">and</span>
+                                 <span class="p">(</span><span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_serum</span><span class="p">)]</span>
+            <span class="n">virus_unshared_sera</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">virus_sera</span><span class="p">[</span><span class="n">virus</span><span class="p">]</span> <span class="k">if</span>
+                                   <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">sera</span><span class="p">)</span> <span class="ow">and</span>
+                                   <span class="p">(</span><span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_subplots</span><span class="p">)</span> <span class="ow">and</span>
+                                   <span class="p">(</span><span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_serum</span><span class="p">)]</span>
+            <span class="n">unshared</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">virus_unshared_sera</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">virus_shared_sera</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_sera_per_subplot</span> <span class="o">-</span> <span class="n">unshared</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;virus </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2"> has too many subplot-shared &quot;</span>
+                                 <span class="s1">&#39;sera (in `all_subplots`) relative to &#39;</span>
+                                 <span class="s1">&#39;value of `max_sera_per_subplot`:</span><span class="se">\n</span><span class="s1">&#39;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">virus_shared_sera</span><span class="si">}</span><span class="s2"> is more than &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">max_sera_per_subplot</span><span class="si">}</span><span class="s2"> viruses.&quot;</span><span class="p">)</span>
+            <span class="n">shared_curvelist</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">virus_shared_sera</span> <span class="o">+</span> <span class="n">virus_unshared_sera</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">iserum</span> <span class="o">&gt;=</span> <span class="n">max_sera_per_subplot</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">multi_virus_subplots</span><span class="p">:</span>
+                        <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">vlines</span> <span class="ow">and</span> <span class="p">(</span><span class="n">virus</span> <span class="ow">in</span> <span class="n">vlines</span><span class="p">):</span>
+                            <span class="n">vlines_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vlines</span><span class="p">[</span><span class="n">virus</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">vlines_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="n">curvelist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">shared_curvelist</span><span class="p">)</span>
+                        <span class="n">iserum</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">curvelist</span><span class="p">)</span>
+                        <span class="k">assert</span> <span class="n">iserum</span> <span class="o">&lt;</span> <span class="n">max_sera_per_subplot</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;virus </span><span class="si">{</span><span class="n">virus</span><span class="si">}</span><span class="s2"> has more than &quot;</span>
+                                         <span class="s1">&#39;`max_sera_per_subplot` viruses &#39;</span>
+                                         <span class="s1">&#39;and `multi_virus_subplots` is False&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">serum_to_color_marker</span><span class="p">:</span>
+                    <span class="n">color</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">serum_to_color_marker</span><span class="p">[</span><span class="n">serum</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="n">iserum</span><span class="p">]</span>
+                    <span class="n">marker</span> <span class="o">=</span> <span class="n">markers</span><span class="p">[</span><span class="n">iserum</span><span class="p">]</span>
+                <span class="n">curvelist</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;serum&#39;</span><span class="p">:</span> <span class="n">serum</span><span class="p">,</span>
+                                  <span class="s1">&#39;virus&#39;</span><span class="p">:</span> <span class="n">virus</span><span class="p">,</span>
+                                  <span class="s1">&#39;replicate&#39;</span><span class="p">:</span> <span class="s1">&#39;average&#39;</span><span class="p">,</span>
+                                  <span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="n">serum</span><span class="p">,</span>
+                                  <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span>
+                                  <span class="s1">&#39;marker&#39;</span><span class="p">:</span> <span class="n">marker</span><span class="p">,</span>
+                                  <span class="p">})</span>
+                <span class="k">if</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">virus_shared_sera</span><span class="p">:</span>
+                    <span class="n">shared_curvelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curvelist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">iserum</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">curvelist</span><span class="p">:</span>
+                <span class="n">plotlist</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">curvelist</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">vlines</span> <span class="ow">and</span> <span class="p">(</span><span class="n">virus</span> <span class="ow">in</span> <span class="n">vlines</span><span class="p">):</span>
+                    <span class="n">vlines_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vlines</span><span class="p">[</span><span class="n">virus</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">vlines_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">plotlist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;no curves for these viruses / sera&#39;</span><span class="p">)</span>
+
+        <span class="c1"># get number of columns</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">nrow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">ncol</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;either `ncol` or `nrow` must be `None`&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nrow</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">nrow</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ncol</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plotlist</span><span class="p">)</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ncol</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ncol</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`nrow` or `ncol` must be integer &gt; 0&#39;</span><span class="p">)</span>
+
+        <span class="c1"># convert plotlist to plots dict for `plotGrid`</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">vlines_axkey</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">plotlist</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vlines_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">iplot</span><span class="p">,</span> <span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">ivline</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">plotlist</span><span class="p">,</span> <span class="n">vlines_list</span><span class="p">)):</span>
+            <span class="n">irow</span> <span class="o">=</span> <span class="n">iplot</span> <span class="o">//</span> <span class="n">ncol</span>
+            <span class="n">icol</span> <span class="o">=</span> <span class="n">iplot</span> <span class="o">%</span> <span class="n">ncol</span>
+            <span class="n">plots</span><span class="p">[(</span><span class="n">irow</span><span class="p">,</span> <span class="n">icol</span><span class="p">)]</span> <span class="o">=</span> <span class="n">plot</span>
+            <span class="k">if</span> <span class="n">ivline</span><span class="p">:</span>
+                <span class="n">vlines_axkey</span><span class="p">[(</span><span class="n">irow</span><span class="p">,</span> <span class="n">icol</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ivline</span>
+
+        <span class="k">if</span> <span class="n">serum_to_color_marker</span> <span class="ow">and</span> <span class="s1">&#39;orderlegend&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">orderlegend</span> <span class="o">=</span> <span class="n">serum_to_color_marker</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">orderlegend</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -618,7 +813,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">subplot_titles</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">virus</span><span class="o">=</span><span class="s1">&#39;dummy&#39;</span><span class="p">,</span> <span class="n">serum</span><span class="o">=</span><span class="s1">&#39;dummy&#39;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`subplot_titles` </span><span class="si">{subplot_titles}</span><span class="s2"> invalid. &quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`subplot_titles` </span><span class="si">{</span><span class="n">subplot_titles</span><span class="si">}</span><span class="s2"> invalid. &quot;</span>
                              <span class="s1">&#39;Should have format keys only for virus &#39;</span>
                              <span class="s1">&#39;and serum&#39;</span><span class="p">)</span>
 
@@ -640,8 +835,8 @@
             <span class="n">replicates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nplottable</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Too many unique replicates. There are&#39;</span>
-                             <span class="sa">f</span><span class="s2">&quot;{len(replicates)} ({&#39;, &#39;.join(replicates)}) &quot;</span>
-                             <span class="sa">f</span><span class="s2">&quot;but only </span><span class="si">{nplottable}</span><span class="s2"> `colors` or `markers`.&quot;</span><span class="p">)</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span><span class="si">}</span><span class="s2">) &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;but only </span><span class="si">{</span><span class="n">nplottable</span><span class="si">}</span><span class="s2"> `colors` or `markers`.&quot;</span><span class="p">)</span>
 
         <span class="c1"># build list of plots appropriate for `plotGrid`</span>
         <span class="n">plotlist</span> <span class="o">=</span> <span class="p">[]</span>
@@ -695,20 +890,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">extra_sera</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sera</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sera</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">extra_sera</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unrecognized sera: </span><span class="si">{extra_sera}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;unrecognized sera: </span><span class="si">{</span><span class="n">extra_sera</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="n">allviruses</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">sera</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]:</span>
                 <span class="n">allviruses</span><span class="p">[</span><span class="n">virus</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">allviruses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allviruses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">viruses</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">viruses</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="n">viruses</span> <span class="o">=</span> <span class="n">allviruses</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">extra_viruses</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">viruses</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">allviruses</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">extra_viruses</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;unrecognized viruses for specified &#39;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;sera: </span><span class="si">{extra_viruses}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                 <span class="sa">f</span><span class="s2">&quot;sera: </span><span class="si">{</span><span class="n">extra_viruses</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span>
 
@@ -1006,7 +1202,7 @@
                 <span class="n">extra_hs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">h_labels</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">orderlegend</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">extra_hs</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;there are legend handles not in &#39;</span>
-                                     <span class="sa">f</span><span class="s2">&quot;`orderlegend`: </span><span class="si">{extra_hs}</span><span class="s2">&quot;</span><span class="p">)</span>
+                                     <span class="sa">f</span><span class="s2">&quot;`orderlegend`: </span><span class="si">{</span><span class="n">extra_hs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">h</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">h_labels</span><span class="p">,</span> <span class="n">hs</span><span class="p">),</span>
                                              <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">order_dict</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]])]</span>
 
@@ -1147,7 +1343,7 @@
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -1164,7 +1360,7 @@
       &copy;2019--2020, Bloom lab.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
