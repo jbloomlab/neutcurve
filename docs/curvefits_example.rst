@@ -347,6 +347,32 @@ There are various additional options to
 :meth:`neutcurve.curvefits.CurveFits.plotSera` that can further
 fine-tune the plots; see the docstring for that method for more details.
 
+Plotting each virus against multiple sera
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+It is also possible to plot each virus against multiple sera using
+:meth:`neutcurve.curvefits.CurveFits.plotViruses` as below:
+
+.. nbplot::
+
+    >>> fig, axes = fits.plotViruses(xlabel='concentration (ug/ml)')
+
+We can also make the plot for just certain viruses:
+
+.. nbplot::
+    >>> fig, axes = fits.plotViruses(
+    ...                    xlabel='concentration (ug/ml)',
+    ...                    viruses=['WT', 'V135T'],
+    ...                   serum_to_color_marker={'FI6v3': ('red', 'o'),
+    ...                                          'H17-L19': ('blue', 's')})
+
+and also for just certain sera:
+
+.. nbplot::
+    >>> fig, axes = fits.plotViruses(xlabel='concentration (ug/ml)',
+    ...                              viruses=['WT', 'V135T'],
+    ...                              sera=['H17-L19'])
+
+
 Plotting each replicate
 ~~~~~~~~~~~~~~~~~~~~~~~
 

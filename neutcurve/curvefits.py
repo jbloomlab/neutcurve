@@ -64,8 +64,6 @@ class CurveFits:
             that serum and virus in the order they occur in `data`.
         `allviruses` (list)
             List of all viruses.
-        `allreplicates` (list)
-            List of all replicates.
 
     """
 
@@ -149,6 +147,11 @@ class CurveFits:
                             raise ValueError(f"replicates {rep1} and {rep2} "
                                              'have different concentrations '
                                              f"for {serum}, {virus}")
+        self.allviruses = collections.OrderedDict()
+        for serum in self.sera:
+            for virus in self.viruses[serum]:
+                self.allviruses[virus] = True
+        self.allviruses = list(self.allviruses.keys())
 
         # compute replicate average and add 'stderr'
         if 'stderr' in self.df.columns:
@@ -359,9 +362,9 @@ class CurveFits:
                 Specific serum / virus combinations to ignore (not plot). Key
                 by serum, and then list viruses to ignore.
             `colors` (iterable)
-                List of colors for different replicates.
+                List of colors for different viruses.
             `markers` (iterable)
-                List of markers for different replicates.
+                List of markers for different viruses.
             `virus_to_color_marker` (dict or `None`)
                 Optionally specify a specific color and for each virus as
                 2-tuples `(color, marker)`. If you use this option, `colors`
@@ -505,6 +508,197 @@ class CurveFits:
 
         if virus_to_color_marker and 'orderlegend' not in kwargs:
             orderlegend = virus_to_color_marker.keys()
+        else:
+            orderlegend = None
+
+        return self.plotGrid(plots,
+                             orderlegend=orderlegend,
+                             vlines=vlines_axkey,
+                             **kwargs,
+                             )
+
+    def plotViruses(self,
+                    *,
+                    ncol=4,
+                    nrow=None,
+                    sera='all',
+                    viruses='all',
+                    ignore_virus_serum=None,
+                    colors=CBPALETTE,
+                    markers=CBMARKERS,
+                    serum_to_color_marker=None,
+                    max_sera_per_subplot=5,
+                    multi_virus_subplots=True,
+                    all_subplots=(),
+                    titles=None,
+                    vlines=None,
+                    **kwargs,
+                    ):
+        """Plot grid with replicate-average of sera for each virus.
+
+        Args:
+            `ncol`, `nrow` (int or `None`)
+                Specify one of these to set number of columns or rows,
+                other should be `None`.
+            `sera` ('all' or list)
+                Sera to include on plot, in this order, unless one is
+                specified in `all_subplots`.
+            `viruses` ('all' or list)
+                Viruses to include on plot, in this order.
+            `ignore_virus_serum` (`None` or dict)
+                Specific virus / serum combinations to ignore (not plot). Key
+                by virus, and then list sera to ignore.
+            `colors` (iterable)
+                List of colors for different sera.
+            `markers` (iterable)
+                List of markers for different sera.
+            `serum_to_color_marker` (dict or `None`)
+                Optionally specify a specific color and for each serum as
+                2-tuples `(color, marker)`. If you use this option, `colors`
+                and `markers` are ignored.
+            `max_sera_per_subplot` (int)
+                Maximum number of sera to show on any subplot.
+            `multi_virus_subplots` (bool)
+                If a virus has more than `max_sera_per_subplot` sera,
+                do we make multiple subplots for it or raise an error?
+            `all_subplots` (iterable)
+                If making multiple subplots for virus, which sera
+                do we show on all subplots? These are also shown first.
+            `titles` (`None` or list)
+                Specify custom titles for each subplot different than
+                `viruses`.
+            `vlines` (`None` or dict)
+                Add vertical lines to plots. Keyed by virus name, values
+                are lists of dicts with a key 'x' giving x-location of vertical
+                line, and optional keys 'linewidth', 'color', and 'linestyle'.
+            `**kwargs`
+                Other keyword arguments that can be passed to
+                :meth:`CurveFits.plotGrid`.
+
+        Returns:
+            The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
+
+        """
+        sera, viruses = self._sera_viruses_lists(sera, viruses)
+        viruses = list(collections.OrderedDict.fromkeys(viruses))
+
+        if titles is None:
+            titles = viruses
+        elif len(viruses) != len(titles):
+            raise ValueError(f"`titles`, `viruses` != length:\n"
+                             f"{titles}\n{viruses}")
+
+        if max_sera_per_subplot < 1:
+            raise ValueError('`max_sera_per_subplot` must be at least 1')
+
+        # get color scheme for sera
+        if serum_to_color_marker:
+            extra_sera = set(sera) - set(serum_to_color_marker.keys())
+            if extra_sera:
+                raise ValueError('sera not in `serum_to_color_marker`: ' +
+                                 str(extra_sera))
+        elif len(sera) <= min(len(colors), len(markers)):
+            # can share scheme among subplots
+            ordered_sera = ([s for s in sera if s in all_subplots] +
+                            [s for s in sera if s not in all_subplots])
+            serum_to_color_marker = {s: (c, m) for (s, c, m) in
+                                     zip(ordered_sera, colors, markers)}
+        elif min(len(colors), len(markers)) < max_sera_per_subplot:
+            raise ValueError('`max_sera_per_subplot` larger than '
+                             'number of colors or markers')
+        else:
+            serum_to_color_marker = None
+
+        # Build a list of plots appropriate for `plotGrid`.
+        # Code is complicated because we could have several curve
+        # per virus, and in that case need to share sera in
+        # `all_subplots` among curves.
+        virus_sera = {v: [s for s in self.sera if v in self.viruses[s]]
+                      for v in self.allviruses}
+        plotlist = []
+        vlines_list = []
+        for virus, title in zip(viruses, titles):
+            if ignore_virus_serum and virus in ignore_virus_serum:
+                ignore_serum = ignore_virus_serum[virus]
+            else:
+                ignore_serum = {}
+            curvelist = []
+            iserum = 0
+            virus_shared_sera = [s for s in virus_sera[virus] if
+                                 (s in sera) and (s in all_subplots) and
+                                 (s not in ignore_serum)]
+            virus_unshared_sera = [s for s in virus_sera[virus] if
+                                   (s in sera) and
+                                   (s not in all_subplots) and
+                                   (s not in ignore_serum)]
+            unshared = int(bool(len(virus_unshared_sera)))
+            if len(virus_shared_sera) > max_sera_per_subplot - unshared:
+                raise ValueError(f"virus {virus} has too many subplot-shared "
+                                 'sera (in `all_subplots`) relative to '
+                                 'value of `max_sera_per_subplot`:\n'
+                                 f"{virus_shared_sera} is more than "
+                                 f"{max_sera_per_subplot} viruses.")
+            shared_curvelist = []
+            for serum in virus_shared_sera + virus_unshared_sera:
+                if iserum >= max_sera_per_subplot:
+                    if multi_virus_subplots:
+                        plotlist.append((title, curvelist))
+                        if vlines and (virus in vlines):
+                            vlines_list.append(vlines[virus])
+                        else:
+                            vlines_list.append(None)
+                        curvelist = list(shared_curvelist)
+                        iserum = len(curvelist)
+                        assert iserum < max_sera_per_subplot
+                    else:
+                        raise ValueError(f"virus {virus} has more than "
+                                         '`max_sera_per_subplot` viruses '
+                                         'and `multi_virus_subplots` is False')
+                if serum_to_color_marker:
+                    color, marker = serum_to_color_marker[serum]
+                else:
+                    color = colors[iserum]
+                    marker = markers[iserum]
+                curvelist.append({'serum': serum,
+                                  'virus': virus,
+                                  'replicate': 'average',
+                                  'label': serum,
+                                  'color': color,
+                                  'marker': marker,
+                                  })
+                if serum in virus_shared_sera:
+                    shared_curvelist.append(curvelist[-1])
+                iserum += 1
+            if curvelist:
+                plotlist.append((title, curvelist))
+                if vlines and (virus in vlines):
+                    vlines_list.append(vlines[virus])
+                else:
+                    vlines_list.append(None)
+        if not plotlist:
+            raise ValueError('no curves for these viruses / sera')
+
+        # get number of columns
+        if (nrow is not None) and (ncol is not None):
+            raise ValueError('either `ncol` or `nrow` must be `None`')
+        elif isinstance(nrow, int) and nrow > 0:
+            ncol = math.ceil(len(plotlist) / nrow)
+        elif not (isinstance(ncol, int) and ncol > 0):
+            raise ValueError('`nrow` or `ncol` must be integer > 0')
+
+        # convert plotlist to plots dict for `plotGrid`
+        plots = {}
+        vlines_axkey = {}
+        assert len(plotlist) == len(vlines_list)
+        for iplot, (plot, ivline) in enumerate(zip(plotlist, vlines_list)):
+            irow = iplot // ncol
+            icol = iplot % ncol
+            plots[(irow, icol)] = plot
+            if ivline:
+                vlines_axkey[(irow, icol)] = ivline
+
+        if serum_to_color_marker and 'orderlegend' not in kwargs:
+            orderlegend = serum_to_color_marker.keys()
         else:
             orderlegend = None
 
@@ -668,6 +862,7 @@ class CurveFits:
             for virus in self.viruses[serum]:
                 allviruses[virus] = True
         allviruses = list(allviruses.keys())
+
         if isinstance(viruses, str) and viruses == 'all':
             viruses = allviruses
         else:
