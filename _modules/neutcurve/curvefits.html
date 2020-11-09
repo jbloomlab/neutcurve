@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.curvefits &#8212; neutcurve 0.5.0 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 0.5.1 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -192,7 +192,8 @@
         <span class="k">if</span> <span class="s1">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`data` has column &quot;stderr&quot;&#39;</span><span class="p">)</span>
         <span class="n">avg_df</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span>
-                  <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">virus_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conc_col</span><span class="p">])</span>
+                  <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">virus_col</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conc_col</span><span class="p">],</span>
+                           <span class="n">observed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                   <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fracinf_col</span><span class="p">]</span>
                   <span class="c1"># sem is sample stderr, evaluates to NaN when just 1 rep</span>
                   <span class="o">.</span><span class="n">aggregate</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;sem&#39;</span><span class="p">,</span> <span class="s1">&#39;count&#39;</span><span class="p">])</span>
@@ -245,7 +246,8 @@
             <span class="k">if</span> <span class="n">idata</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="n">fs_stderr</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">elif</span> <span class="n">idata</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;`stderr` has some but not all entries NaN&#39;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;`stderr` has only some entries NaN</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                                   <span class="nb">str</span><span class="p">(</span><span class="n">idata</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">fs_stderr</span> <span class="o">=</span> <span class="n">idata</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span>
 
