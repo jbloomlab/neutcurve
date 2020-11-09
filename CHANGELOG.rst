@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.5.1
+-----
+- `CurveFits` now works if `viruses` or `sera` are categorical.
+
 0.5.0
 ------
 

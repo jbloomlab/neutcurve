@@ -157,7 +157,8 @@ class CurveFits:
         if 'stderr' in self.df.columns:
             raise ValueError('`data` has column "stderr"')
         avg_df = (self.df
-                  .groupby([self.serum_col, self.virus_col, self.conc_col])
+                  .groupby([self.serum_col, self.virus_col, self.conc_col],
+                           observed=True)
                   [self.fracinf_col]
                   # sem is sample stderr, evaluates to NaN when just 1 rep
                   .aggregate(['mean', 'sem', 'count'])
@@ -210,7 +211,8 @@ class CurveFits:
             if idata['stderr'].isna().all():
                 fs_stderr = None
             elif idata['stderr'].isna().any():
-                raise RuntimeError('`stderr` has some but not all entries NaN')
+                raise RuntimeError('`stderr` has only some entries NaN\n' +
+                                   str(idata))
             else:
                 fs_stderr = idata['stderr']
 
