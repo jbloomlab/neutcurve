@@ -153,6 +153,11 @@ class CurveFits:
                 self.allviruses[virus] = True
         self.allviruses = list(self.allviruses.keys())
 
+        if pd.isnull(self.allviruses).any():
+            raise ValueError(f"a virus has name NaN:\n{self.allviruses}")
+        if pd.isnull(self.sera).any():
+            raise ValueError(f"a serum has name NaN:\n{self.sera}")
+
         # compute replicate average and add 'stderr'
         if 'stderr' in self.df.columns:
             raise ValueError('`data` has column "stderr"')
@@ -207,6 +212,8 @@ class CurveFits:
             idata = self.df.query(f"({self.serum_col} == @serum) & "
                                   f"({self.virus_col} == @virus) & "
                                   f"({self.replicate_col} == @replicate)")
+            if len(idata) < 1:
+                raise RuntimeError(f"no data for serum {serum} virus {virus}")
 
             if idata['stderr'].isna().all():
                 fs_stderr = None
