@@ -328,7 +328,7 @@ class HillCurve:
                                       use_stderr_for_fit=use_stderr_for_fit)
         except RuntimeError:
             # curve_fit failed, try using minimize
-            for method in ['TNC', 'L-BFGS-B', 'SLSQP']:
+            for method in ['TNC', 'L-BFGS-B', 'SLSQP', 'Powell']:
                 fit_tup = self._minimize_fit(
                                     fixtop=fixtop,
                                     fixbottom=fixbottom,
@@ -534,7 +534,7 @@ class HillCurve:
         res = scipy.optimize.minimize(min_func,
                                       initguess,
                                       bounds=bounds,
-                                      method='TNC')
+                                      method=method)
 
         if not res.success:
             return False
