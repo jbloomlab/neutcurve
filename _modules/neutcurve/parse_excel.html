@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.parse_excel &#8212; neutcurve 0.5.1 documentation</title>
+    <title>neutcurve.parse_excel &#8212; neutcurve 0.5.4 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -80,9 +80,16 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">excelfile</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cannot find `excelfile` </span><span class="si">{</span><span class="n">excelfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="c1"># choose engine: https://stackoverflow.com/a/65266270/4191652</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">excelfile</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.xls&#39;</span><span class="p">:</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;xlrd&#39;</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">excelfile</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;.xlsx&#39;</span><span class="p">:</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="s1">&#39;openpyxl&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid extension in `excelfile` </span><span class="si">{</span><span class="n">excelfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">sheet_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">excelfile</span><span class="p">,</span>
                                <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># read all sheets</span>
-                               <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;xlrd&#39;</span><span class="p">,</span>
+                               <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span>
                                <span class="n">skiprows</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
                                <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                                <span class="n">nrows</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
@@ -298,7 +305,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2020, Bloom lab.
+      &copy;2019--2021, Bloom lab.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>

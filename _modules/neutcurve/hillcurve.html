@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.hillcurve &#8212; neutcurve 0.5.1 documentation</title>
+    <title>neutcurve.hillcurve &#8212; neutcurve 0.5.4 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -363,7 +363,7 @@
                                       <span class="n">use_stderr_for_fit</span><span class="o">=</span><span class="n">use_stderr_for_fit</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
             <span class="c1"># curve_fit failed, try using minimize</span>
-            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="s1">&#39;Powell&#39;</span><span class="p">]:</span>
                 <span class="n">fit_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_fit</span><span class="p">(</span>
                                     <span class="n">fixtop</span><span class="o">=</span><span class="n">fixtop</span><span class="p">,</span>
                                     <span class="n">fixbottom</span><span class="o">=</span><span class="n">fixbottom</span><span class="p">,</span>
@@ -569,7 +569,7 @@
         <span class="n">res</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">min_func</span><span class="p">,</span>
                                       <span class="n">initguess</span><span class="p">,</span>
                                       <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
-                                      <span class="n">method</span><span class="o">=</span><span class="s1">&#39;TNC&#39;</span><span class="p">)</span>
+                                      <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -1026,7 +1026,7 @@
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2020, Bloom lab.
+      &copy;2019--2021, Bloom lab.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>

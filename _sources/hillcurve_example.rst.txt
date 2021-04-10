@@ -234,3 +234,12 @@ method, possibly calling
 `tight_layout <https://matplotlib.org/users/tight_layout_guide.html>`__
 command first if there is clipping.
 
+If you want to adjust the x-axis tick locations / labels, you can do it on the
+``ax`` object returned as part of the plot:
+
+.. nbplot::
+
+    >>> fig2, ax2 = curve.plot(xlabel='concentration (ug/ml)')
+    >>> _ = ax2.set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
+    >>> _ = ax2.set_xticklabels(['-3', '-2', '-1', '0', '1'])
+    >>> _ = ax2.set_xlabel('log10 concentration')

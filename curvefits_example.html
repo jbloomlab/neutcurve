@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fitting curves to real data &#8212; neutcurve 0.5.1 documentation</title>
+    <title>Fitting curves to real data &#8212; neutcurve 0.5.4 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -56,6 +56,7 @@
 </li>
 <li><p><a class="reference internal" href="#fitting-some-problematic-curves" id="id13">Fitting some problematic curves</a></p></li>
 <li><p><a class="reference internal" href="#drawing-vertical-lines" id="id14">Drawing vertical lines</a></p></li>
+<li><p><a class="reference internal" href="#additional-plot-customization" id="id15">Additional plot customization</a></p></li>
 </ul>
 </div>
 <a class="reference download internal" href="curvefits_example_full.ipynb">Download this page as a Jupyter notebook (with outputs)</a><div class="section" id="overview">
@@ -607,6 +608,32 @@ a highly customized way using the <cite>vlines</cite> option to
 <img alt="_images/curvefits_example-31.png" src="_images/curvefits_example-31.png" />
 </div>
 </div>
+<div class="section" id="additional-plot-customization">
+<h2><a class="toc-backref" href="#id15">Additional plot customization</a><a class="headerlink" href="#additional-plot-customization" title="Permalink to this headline">¶</a></h2>
+<p>The plots are returned as <cite>matplotlib</cite> figures / axes, so can be customized
+just like any other <cite>matplotlib</cite> generated plot. For instance, to customize
+axis ticks and labels, you can do the below:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig2</span><span class="p">,</span> <span class="n">axes2</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span>
+<span class="gp">... </span>                <span class="n">max_viruses_per_subplot</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">ncol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;log10 concentration (ug/ml)&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">vlines</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;FI6v3&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;magenta&#39;</span><span class="p">}],</span>
+<span class="gp">... </span>                        <span class="s1">&#39;H17-L19&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;linestyle&#39;</span><span class="p">:</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span><span class="p">}],</span>
+<span class="gp">... </span>                        <span class="p">},</span>
+<span class="gp">... </span>                <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">axes2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">axes2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;-3&#39;</span><span class="p">,</span> <span class="s1">&#39;-2&#39;</span><span class="p">,</span> <span class="s1">&#39;-1&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//curvefits_example-32.png">png</a>, <a class="reference external" href=".//curvefits_example-32.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-32.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="_images/curvefits_example-32.png" src="_images/curvefits_example-32.png" />
+</div>
+<p>This assumes the plotting was done using <cite>sharex=True</cite> (on by default), which
+makes all axes share the same x-ticks so they can be set for just the last
+plot. Otherwise you need to set for each axis separately.</p>
+</div>
 </div>
 
 
@@ -670,6 +697,7 @@ a highly customized way using the <cite>vlines</cite> option to
 <li class="toctree-l2"><a class="reference internal" href="#plotting-the-curves">Plotting the curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fitting-some-problematic-curves">Fitting some problematic curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#drawing-vertical-lines">Drawing vertical lines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-plot-customization">Additional plot customization</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="raw_examples.html">Raw data from plate reader</a></li>
@@ -710,7 +738,7 @@ a highly customized way using the <cite>vlines</cite> option to
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019--2020, Bloom lab.
+      &copy;2019--2021, Bloom lab.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
