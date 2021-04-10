@@ -51,7 +51,8 @@ setup(
     install_requires=[
         'dmslogo>=0.2.1',
         'matplotlib>=3.0.0',
-        'pandas>=0.24',
+        'openpyxl>=3.0',
+        'pandas>=1.0.1',
         'pyyaml>=3.13',
         'scipy>=1.1.0',
         'xlrd>=1.2',
