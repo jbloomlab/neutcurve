@@ -572,3 +572,27 @@ a highly customized way using the `vlines` option to
     ...                         'H17-L19': [{'x': 5, 'linestyle': '--', 'color': 'red'}],
     ...                         },
     ...                 )
+
+Additional plot customization
+-----------------------------
+The plots are returned as `matplotlib` figures / axes, so can be customized
+just like any other `matplotlib` generated plot. For instance, to customize
+axis ticks and labels, you can do the below:
+
+.. nbplot::
+
+    >>> fig2, axes2 = fits.plotSera(
+    ...                 max_viruses_per_subplot=6,
+    ...                 nrow=1,
+    ...                 ncol=None,
+    ...                 xlabel='log10 concentration (ug/ml)',
+    ...                 vlines={'FI6v3': [{'x': 0.5}, {'x': 10, 'color': 'magenta'}],
+    ...                         'H17-L19': [{'x': 5, 'linestyle': '--', 'color': 'red'}],
+    ...                         },
+    ...                 )
+    >>> axes2.ravel()[-1].set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
+    >>> axes2.ravel()[-1].set_xticklabels(['-3', '-2', '-1', '0', '1'])
+
+This assumes the plotting was done using `sharex=True` (on by default), which
+makes all axes share the same x-ticks so they can be set for just the last
+plot. Otherwise you need to set for each axis separately.
