@@ -240,6 +240,6 @@ If you want to adjust the x-axis tick locations / labels, you can do it on the
 .. nbplot::
 
     >>> fig2, ax2 = curve.plot(xlabel='concentration (ug/ml)')
-    >>> ax2.set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
-    >>> ax2.set_xticklabels(['-3', '-2', '-1', '0', '1'])
-    >>> ax2.set_xlabel('log10 concentration')
+    >>> _ = ax2.set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
+    >>> _ = ax2.set_xticklabels(['-3', '-2', '-1', '0', '1'])
+    >>> _ = ax2.set_xlabel('log10 concentration')

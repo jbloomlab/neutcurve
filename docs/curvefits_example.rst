@@ -590,8 +590,8 @@ axis ticks and labels, you can do the below:
     ...                         'H17-L19': [{'x': 5, 'linestyle': '--', 'color': 'red'}],
     ...                         },
     ...                 )
-    >>> axes2.ravel()[-1].set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
-    >>> axes2.ravel()[-1].set_xticklabels(['-3', '-2', '-1', '0', '1'])
+    >>> _ = axes2.ravel()[-1].set_xticks([1e-3, 1e-2, 1e-1, 1, 10])
+    >>> _ = axes2.ravel()[-1].set_xticklabels(['-3', '-2', '-1', '0', '1'])
 
 This assumes the plotting was done using `sharex=True` (on by default), which
 makes all axes share the same x-ticks so they can be set for just the last
