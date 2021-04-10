@@ -45,9 +45,16 @@ def parseRachelStyle2019(*,
     if not os.path.isfile(excelfile):
         raise ValueError(f"cannot find `excelfile` {excelfile}")
 
+    # choose engine: https://stackoverflow.com/a/65266270/4191652
+    if os.path.splitext(excelfile)[-1] == '.xls':
+        engine = 'xlrd'
+    elif os.path.splitext(excelfile)[-1] == '.xlsx':
+        engine = 'openpyxl'
+    else:
+        raise ValueError(f"invalid extension in `excelfile` {excelfile}")
     sheet_data = pd.read_excel(excelfile,
                                sheet_name=None,  # read all sheets
-                               engine='xlrd',
+                               engine=engine,
                                skiprows=range(0, 30),
                                index_col=0,
                                nrows=8,
