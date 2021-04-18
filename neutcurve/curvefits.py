@@ -9,9 +9,6 @@ import collections
 import itertools
 import math
 
-import dmslogo.facet
-import dmslogo.utils
-
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
@@ -1065,6 +1062,7 @@ class CurveFits:
                                              xextent * extend_lim)
 
         if align_to_dmslogo_facet:
+            import dmslogo.facet
             hparams = dmslogo.facet.height_params(
                                 nrows,
                                 align_to_dmslogo_facet['height_per_ax'],
@@ -1140,6 +1138,7 @@ class CurveFits:
             ax.tick_params('both', labelsize=ticksize, bottom=True, left=True,
                            right=False, top=False)
             if despine:
+                import dmslogo.utils
                 dmslogo.utils.despine(ax=ax)
             if vlines and ((irow, icol) in vlines):
                 for vline in vlines[(irow, icol)]:
