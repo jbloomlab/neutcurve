@@ -514,11 +514,9 @@ class CurveFits:
 
         if virus_to_color_marker and 'orderlegend' not in kwargs:
             orderlegend = virus_to_color_marker.keys()
-        else:
-            orderlegend = None
+            kwargs['orderlegend'] = orderlegend
 
         return self.plotGrid(plots,
-                             orderlegend=orderlegend,
                              vlines=vlines_axkey,
                              **kwargs,
                              )
