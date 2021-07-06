@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.curvefits &#8212; neutcurve 0.5.6 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 0.5.7 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -282,6 +282,7 @@
                   <span class="n">average_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                   <span class="n">ics</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,),</span>
                   <span class="n">ics_precision</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">ic50_error</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get data frame with curve fitting parameters.</span>
 
@@ -295,6 +296,10 @@
 <span class="sd">            `ics_precision` (int)</span>
 <span class="sd">                Include this many digits after decimal when creating the</span>
 <span class="sd">                ICXX columns.</span>
+<span class="sd">            ic50_error {`None`, &#39;fit_stdev&#39;}</span>
+<span class="sd">                Include estimated error on IC50 as standard deviation of fit</span>
+<span class="sd">                parameter; note that we recommend instead just taking standard</span>
+<span class="sd">                error of replicate IC50s.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A pandas DataFrame with fit parameters for each serum / virus /</span>
@@ -318,6 +323,9 @@
 <span class="sd">              - &#39;bottom&#39;: bottom of curve.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ic50_error</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;fit_stdev&#39;</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid ic50_error of </span><span class="si">{</span><span class="n">ic50_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="n">ics</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ics</span><span class="p">)</span>
         <span class="n">ic_colprefixes</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ic</span><span class="se">{{</span><span class="s2">:.</span><span class="si">{</span><span class="n">ics_precision</span><span class="si">}</span><span class="s2">f</span><span class="se">}}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ic</span><span class="p">)</span> <span class="k">for</span> <span class="n">ic</span> <span class="ow">in</span> <span class="n">ics</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ic_colprefixes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ic_colprefixes</span><span class="p">)):</span>
@@ -325,7 +333,7 @@
                              <span class="s1">&#39;Either you have duplicate entries in `ics` &#39;</span>
                              <span class="s1">&#39;or you need to increase `ics_precision`.&#39;</span><span class="p">)</span>
 
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">average_only</span><span class="p">,</span> <span class="n">ics</span><span class="p">,</span> <span class="n">ics_precision</span><span class="p">)</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">average_only</span><span class="p">,</span> <span class="n">ics</span><span class="p">,</span> <span class="n">ics_precision</span><span class="p">,</span> <span class="n">ic50_error</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitparams</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -354,12 +362,16 @@
                             <span class="n">d</span><span class="p">[</span><span class="n">colprefix</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;bound&#39;</span><span class="p">))</span>
                             <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colprefix</span><span class="si">}</span><span class="s2">_bound&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_bound</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
                             <span class="n">d</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colprefix</span><span class="si">}</span><span class="s2">_str&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">icXX_str</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="n">ic50_error</span> <span class="o">==</span> <span class="s1">&#39;fit_stdev&#39;</span><span class="p">:</span>
+                            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;ic50_error&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">ic50_stdev</span><span class="p">())</span>
                         <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                             <span class="n">d</span><span class="p">[</span><span class="n">param</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">param</span><span class="p">))</span>
 
             <span class="n">ic_cols</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">ic_colprefixes</span><span class="p">:</span>
                 <span class="n">ic_cols</span> <span class="o">+=</span> <span class="p">[</span><span class="n">prefix</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_bound&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_str&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ic50_error</span> <span class="o">==</span> <span class="s1">&#39;fit_stdev&#39;</span><span class="p">:</span>
+                <span class="n">ic_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ic50_error&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fitparams</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
                     <span class="p">[[</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">,</span> <span class="s1">&#39;replicate&#39;</span><span class="p">,</span> <span class="s1">&#39;nreplicates&#39;</span><span class="p">]</span>

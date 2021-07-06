@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>curvefits &#8212; neutcurve 0.5.6 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -89,7 +89,7 @@ that serum and virus in the order they occur in <cite>data</cite>.</p>
 </dl>
 <dl class="py method">
 <dt id="neutcurve.curvefits.CurveFits.fitParams">
-<code class="sig-name descname">fitParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">average_only</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ics</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">ics_precision</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fitParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">average_only</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">ics</span><span class="o">=</span><span class="default_value">50</span></em>, <em class="sig-param"><span class="n">ics_precision</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">ic50_error</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get data frame with curve fitting parameters.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
@@ -101,6 +101,10 @@ we include the IC50. If it includes 95, we include the IC95.</p>
 </dd>
 <dt><cite>ics_precision</cite> (int)</dt><dd><p>Include this many digits after decimal when creating the
 ICXX columns.</p>
+</dd>
+<dt>ic50_error {<cite>None</cite>, ‘fit_stdev’}</dt><dd><p>Include estimated error on IC50 as standard deviation of fit
+parameter; note that we recommend instead just taking standard
+error of replicate IC50s.</p>
 </dd>
 </dl>
 </dd>

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>hillcurve &#8212; neutcurve 0.5.6 documentation</title>
+    <title>hillcurve &#8212; neutcurve 0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -107,10 +107,20 @@ if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class=
 </dd>
 <dt><cite>slope</cite> (float)</dt><dd><p>Hill slope of curve, <span class="math notranslate nohighlight">\(s\)</span> in equation above.</p>
 </dd>
+<dt><cite>params_stdev</cite> (dict or <cite>None</cite>)</dt><dd><p>If standard deviations can be estimated on the fit
+parameters, keyed by ‘bottom’, ‘top’, ‘midpoint’,
+and ‘slope’ and gives standard erorr on each. Note if
+you have replicates we recommend fitting those separately
+and taking standard error rather than using fit stdev.</p>
+</dd>
 </dl>
 </dd>
 </dl>
-<p>Use the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a> method to get the fitted IC50.</p>
+<p>Use the <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50" title="neutcurve.hillcurve.HillCurve.ic50"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50()</span></code></a> method to get the fitted IC50.
+You can use <a class="reference internal" href="#neutcurve.hillcurve.HillCurve.ic50_stdev" title="neutcurve.hillcurve.HillCurve.ic50_stdev"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ic50_stdev()</span></code></a> to get the estimated standard
+deviation on the IC50, although if you have multiple replicates
+you may be better off just fitting to each separately and
+then taking standard error of the individual IC50s.</p>
 <p>Here are some examples. First, we import the necessary modules:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="go">&gt;&gt;&gt;</span>
@@ -138,6 +148,14 @@ are close to the ones used for the simulation:</p>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 <span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">neut</span><span class="o">.</span><span class="n">params_stdev</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">.2g</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">midpoint = 0.062</span>
+<span class="go">slope = 6.3</span>
+<span class="go">top = 0</span>
+<span class="go">bottom = 0.73</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;IC50: </span><span class="si">{</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> +/- </span><span class="si">{</span><span class="n">neut</span><span class="o">.</span><span class="n">ic50_stdev</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">IC50: 0.034 +/- 0.070</span>
 </pre></div>
 </div>
 <p>Since we fit the curve to simulated data where the bottom was
@@ -359,6 +377,21 @@ Assumes infectivity decreases with concentration.</p></li>
 <dt id="neutcurve.hillcurve.HillCurve.ic50_bound">
 <code class="sig-name descname">ic50_bound</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_bound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_bound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Is IC50 ‘interpolated’, or an ‘upper’ or ‘lower’ bound.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="neutcurve.hillcurve.HillCurve.ic50_stdev">
+<code class="sig-name descname">ic50_stdev</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve.ic50_stdev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve.ic50_stdev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get standard deviation of fit IC50 parameter.</p>
+<p>Calculated just from estimated standard deviation on <cite>midpoint</cite>.
+Note if you have replicates, we recommend fitting separately
+and calculating standard error from those fits rather than
+using this value.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>A number giving the standard deviation, or <cite>None</cite> if cannot
+be estimated or if IC50 is at bound.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

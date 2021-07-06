@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.hillcurve &#8212; neutcurve 0.5.6 documentation</title>
+    <title>neutcurve.hillcurve &#8212; neutcurve 0.5.7 documentation</title>
     <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -123,8 +123,18 @@
 <span class="sd">            if :math:`t \ne 1` or :math:`b \ne 0`.</span>
 <span class="sd">        `slope` (float)</span>
 <span class="sd">            Hill slope of curve, :math:`s` in equation above.</span>
+<span class="sd">        `params_stdev` (dict or `None`)</span>
+<span class="sd">            If standard deviations can be estimated on the fit</span>
+<span class="sd">            parameters, keyed by &#39;bottom&#39;, &#39;top&#39;, &#39;midpoint&#39;,</span>
+<span class="sd">            and &#39;slope&#39; and gives standard erorr on each. Note if</span>
+<span class="sd">            you have replicates we recommend fitting those separately</span>
+<span class="sd">            and taking standard error rather than using fit stdev.</span>
 
 <span class="sd">    Use the :meth:`ic50` method to get the fitted IC50.</span>
+<span class="sd">    You can use :meth:`ic50_stdev` to get the estimated standard</span>
+<span class="sd">    deviation on the IC50, although if you have multiple replicates</span>
+<span class="sd">    you may be better off just fitting to each separately and</span>
+<span class="sd">    then taking standard error of the individual IC50s.</span>
 
 <span class="sd">    Here are some examples. First, we import the necessary modules:</span>
 
@@ -160,6 +170,14 @@
 <span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; numpy.allclose(neut.bottom, b)</span>
 <span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; for key, val in neut.params_stdev.items():</span>
+<span class="sd">        ...     print(f&quot;{key} = {val:.2g}&quot;)</span>
+<span class="sd">        midpoint = 0.062</span>
+<span class="sd">        slope = 6.3</span>
+<span class="sd">        top = 0</span>
+<span class="sd">        bottom = 0.73</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;IC50: {neut.ic50():.3f} +/- {neut.ic50_stdev():.3f}&quot;)</span>
+<span class="sd">        IC50: 0.034 +/- 0.070</span>
 
 <span class="sd">    Since we fit the curve to simulated data where the bottom was</span>
 <span class="sd">    0.1 rather than 0, the midpoint and IC50 are different. Specifically,</span>
@@ -357,7 +375,8 @@
 
         <span class="c1"># first try to fit using curve_fit</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">fit_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_curve</span><span class="p">(</span><span class="n">fixtop</span><span class="o">=</span><span class="n">fixtop</span><span class="p">,</span>
+            <span class="n">fit_tup</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_stdev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_curve</span><span class="p">(</span>
+                                      <span class="n">fixtop</span><span class="o">=</span><span class="n">fixtop</span><span class="p">,</span>
                                       <span class="n">fixbottom</span><span class="o">=</span><span class="n">fixbottom</span><span class="p">,</span>
                                       <span class="n">fitlogc</span><span class="o">=</span><span class="n">fitlogc</span><span class="p">,</span>
                                       <span class="n">use_stderr_for_fit</span><span class="o">=</span><span class="n">use_stderr_for_fit</span><span class="p">)</span>
@@ -371,6 +390,7 @@
                                     <span class="n">use_stderr_for_fit</span><span class="o">=</span><span class="n">use_stderr_for_fit</span><span class="p">,</span>
                                     <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
                                     <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params_stdev</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># can&#39;t estimate errors</span>
                 <span class="k">if</span> <span class="n">fit_tup</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
@@ -380,7 +400,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">fit_tup</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">_fit_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">fixtop</span><span class="p">,</span> <span class="n">fixbottom</span><span class="p">,</span> <span class="n">fitlogc</span><span class="p">,</span> <span class="n">use_stderr_for_fit</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit via curve_fit, and return `(midpoint, slope, bottom, top)`.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;curve_fit, return `(midpoint, slope, bottom, top), params_stdev`.&quot;&quot;&quot;</span>
         <span class="c1"># make initial guess for slope to have the right sign</span>
         <span class="n">slope</span> <span class="o">=</span> <span class="mf">1.5</span>
 
@@ -463,20 +483,30 @@
                 <span class="n">maxfev</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                 <span class="p">)</span>
 
+        <span class="n">perr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))</span>
+
         <span class="k">if</span> <span class="n">fitlogc</span><span class="p">:</span>
             <span class="n">midpoint</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span>
 
         <span class="n">midpoint</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">slope</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">params_stderr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;midpoint&#39;</span><span class="p">:</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                         <span class="s1">&#39;slope&#39;</span><span class="p">:</span> <span class="n">perr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                         <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                         <span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">fixbottom</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">fixtop</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">bottom</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">params_stderr</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
             <span class="n">top</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">params_stderr</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">fixbottom</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">bottom</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">params_stderr</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">fixtop</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">top</span> <span class="o">=</span> <span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">params_stderr</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">top</span><span class="p">),</span> <span class="n">params_stderr</span>
 
     <span class="k">def</span> <span class="nf">_minimize_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">fixtop</span><span class="p">,</span> <span class="n">fixbottom</span><span class="p">,</span> <span class="n">fitlogc</span><span class="p">,</span> <span class="n">use_stderr_for_fit</span><span class="p">,</span>
                       <span class="n">method</span><span class="p">):</span>
@@ -668,6 +698,28 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HillCurve.ic50_stdev"><a class="viewcode-back" href="../../neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve.ic50_stdev">[docs]</a>    <span class="k">def</span> <span class="nf">ic50_stdev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Get standard deviation of fit IC50 parameter.</span>
+
+<span class="sd">        Calculated just from estimated standard deviation on `midpoint`.</span>
+<span class="sd">        Note if you have replicates, we recommend fitting separately</span>
+<span class="sd">        and calculating standard error from those fits rather than</span>
+<span class="sd">        using this value.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A number giving the standard deviation, or `None` if cannot</span>
+<span class="sd">            be estimated or if IC50 is at bound.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ic50</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ic50</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ic50</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">midpoint_stdev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_stdev</span><span class="p">[</span><span class="s1">&#39;midpoint&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">midpoint_stdev</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">midpoint_stdev</span> <span class="o">*</span> <span class="n">ic50</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">midpoint</span></div>
 
 <div class="viewcode-block" id="HillCurve.icXX_bound"><a class="viewcode-back" href="../../neutcurve.hillcurve.html#neutcurve.hillcurve.HillCurve.icXX_bound">[docs]</a>    <span class="k">def</span> <span class="nf">icXX_bound</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fracneut</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Like :meth:`HillCurve.ic50_bound` for arbitrary frac neutralized.&quot;&quot;&quot;</span>

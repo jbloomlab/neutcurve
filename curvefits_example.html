@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fitting curves to real data &#8212; neutcurve 0.5.6 documentation</title>
+    <title>Fitting curves to real data &#8212; neutcurve 0.5.7 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -284,6 +284,52 @@ For instance:</p>
 <span class="go">11  H17-L19     V135T   average            3   11.4         lower    &gt;11.4   11.4         lower    &gt;11.4      15.5   2.76    1       0</span>
 </pre></div>
 </div>
+<p>Include standard deviations on IC50s calculated from estimated errors on parameters during fitting.
+Note that although this method is implemented, we <strong>strongly</strong> recommend instead fitting each replicate separately and computing errors that way instead (see immediately below):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">(</span><span class="n">ic50_error</span><span class="o">=</span><span class="s1">&#39;fit_stdev&#39;</span><span class="p">)</span>
+<span class="go">      serum     virus replicate  nreplicates   ic50    ic50_bound ic50_str  ic50_error  midpoint  slope  top  bottom</span>
+<span class="go">0     FI6v3        WT   average            3  0.017  interpolated    0.017      0.0254     0.017   2.28    1       0</span>
+<span class="go">1     FI6v3    K(-8T)   average            3 0.0283  interpolated   0.0283      0.0411    0.0283    2.4    1       0</span>
+<span class="go">2     FI6v3      P80D   average            3 0.0123  interpolated   0.0123      0.0193    0.0123   2.05    1       0</span>
+<span class="go">3     FI6v3     V135T   average            3 0.0229  interpolated   0.0229      0.0382    0.0229   1.83    1       0</span>
+<span class="go">4     FI6v3     K280A   average            3 0.0106  interpolated   0.0106      0.0176    0.0106   1.86    1       0</span>
+<span class="go">5     FI6v3     K280S   average            3 0.0428  interpolated   0.0428      0.0683    0.0428      2    1       0</span>
+<span class="go">6     FI6v3     K280T   average            3 0.0348  interpolated   0.0348      0.0582    0.0348   1.82    1       0</span>
+<span class="go">7     FI6v3     N291S   average            3 0.0845  interpolated   0.0845       0.142    0.0845    1.8    1       0</span>
+<span class="go">8     FI6v3  M17L-HA2   average            3 0.0198  interpolated   0.0198      0.0313    0.0198   2.06    1       0</span>
+<span class="go">9     FI6v3  G47R-HA2   average            3 0.0348  interpolated   0.0348      0.0477    0.0348    2.6    1       0</span>
+<span class="go">10  H17-L19        WT   average            3  0.107  interpolated    0.107       0.144     0.107   3.94    1       0</span>
+<span class="go">11  H17-L19     V135T   average            3   11.4         lower    &gt;11.4         nan      15.5   2.76    1       0</span>
+</pre></div>
+</div>
+<p>Here is the recommended way to get error estimates by just taking the average of fits for each replicate:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params_avg_fit</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()[[</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">,</span> <span class="s1">&#39;ic50&#39;</span><span class="p">,</span> <span class="s1">&#39;ic50_bound&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="s1">&#39;nreplicates&#39;</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params_avg_reps</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">fits</span><span class="o">.</span><span class="n">fitParams</span><span class="p">(</span><span class="n">average_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;replicate != &quot;average&quot;&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">ic50_replicate_avg</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">NamedAgg</span><span class="p">(</span><span class="s1">&#39;ic50&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">),</span>
+<span class="gp">... </span>               <span class="n">ic50_replicate_stderr</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">NamedAgg</span><span class="p">(</span><span class="s1">&#39;ic50&#39;</span><span class="p">,</span> <span class="s1">&#39;sem&#39;</span><span class="p">),</span>
+<span class="gp">... </span>               <span class="p">)</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params_avg_fit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">params_avg_reps</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;serum&#39;</span><span class="p">,</span> <span class="s1">&#39;virus&#39;</span><span class="p">])</span>
+<span class="go">      serum     virus   ic50    ic50_bound  nreplicates  ic50_replicate_avg  ic50_replicate_stderr</span>
+<span class="go">0     FI6v3        WT  0.017  interpolated            3               0.017                0.00112</span>
+<span class="go">1     FI6v3    K(-8T) 0.0283  interpolated            3              0.0283                 0.0015</span>
+<span class="go">2     FI6v3      P80D 0.0123  interpolated            3              0.0123               0.000271</span>
+<span class="go">3     FI6v3     V135T 0.0229  interpolated            3              0.0229               0.000201</span>
+<span class="go">4     FI6v3     K280A 0.0106  interpolated            3              0.0106               0.000819</span>
+<span class="go">5     FI6v3     K280S 0.0428  interpolated            3              0.0428               0.000821</span>
+<span class="go">6     FI6v3     K280T 0.0348  interpolated            3              0.0349                0.00155</span>
+<span class="go">7     FI6v3     N291S 0.0845  interpolated            3              0.0844                0.00448</span>
+<span class="go">8     FI6v3  M17L-HA2 0.0198  interpolated            3              0.0197               0.000986</span>
+<span class="go">9     FI6v3  G47R-HA2 0.0348  interpolated            3              0.0347               0.000766</span>
+<span class="go">10  H17-L19        WT  0.107  interpolated            3               0.108                0.00698</span>
+<span class="go">11  H17-L19     V135T   11.4         lower            3                11.4                      0</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="plotting-the-curves">
 <h2><a class="toc-backref" href="#id7">Plotting the curves</a><a class="headerlink" href="#plotting-the-curves" title="Permalink to this headline">¶</a></h2>
@@ -298,9 +344,9 @@ variants. You can then plot these curves using
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-17.png">png</a>, <a class="reference external" href=".//curvefits_example-17.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-17.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-19.png">png</a>, <a class="reference external" href=".//curvefits_example-19.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-19.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-17.png" src="_images/curvefits_example-17.png" />
+<img alt="_images/curvefits_example-19.png" src="_images/curvefits_example-19.png" />
 </div>
 <p>The above plot attempts to put all the viruses measured against each
 serum on the same subplot, but is cognizant of the fact that it becomes
@@ -316,9 +362,9 @@ want two columns:</p>
 <span class="gp">... </span>                          <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-18.png">png</a>, <a class="reference external" href=".//curvefits_example-18.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-18.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-20.png">png</a>, <a class="reference external" href=".//curvefits_example-20.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-20.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-18.png" src="_images/curvefits_example-18.png" />
+<img alt="_images/curvefits_example-20.png" src="_images/curvefits_example-20.png" />
 </div>
 <p>The above plots all have a different legend for each subplot. This is
 necessary because the number of different viruses being plotted exceeds
@@ -333,9 +379,9 @@ specify that we just show some of the viruses:</p>
 <span class="gp">... </span>                          <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-19.png">png</a>, <a class="reference external" href=".//curvefits_example-19.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-19.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-21.png">png</a>, <a class="reference external" href=".//curvefits_example-21.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-21.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-19.png" src="_images/curvefits_example-19.png" />
+<img alt="_images/curvefits_example-21.png" src="_images/curvefits_example-21.png" />
 </div>
 <p>Similar to how the above plot uses the <cite>viruses</cite> argument to plot just
 some viruses, we can also use the <cite>sera</cite> argument to plot just some of
@@ -344,9 +390,9 @@ the sera (in this case, just H17-L19):</p>
 <span class="gp">... </span>                          <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-20.png">png</a>, <a class="reference external" href=".//curvefits_example-20.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-20.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-22.png">png</a>, <a class="reference external" href=".//curvefits_example-22.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-22.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-20.png" src="_images/curvefits_example-20.png" />
+<img alt="_images/curvefits_example-22.png" src="_images/curvefits_example-22.png" />
 </div>
 <p>We can also use the <cite>virus_to_color_marker</cite> argument to specify a particular
 color scheme:</p>
@@ -359,9 +405,9 @@ color scheme:</p>
 <span class="gp">... </span>                          <span class="n">legendfontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-21.png">png</a>, <a class="reference external" href=".//curvefits_example-21.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-21.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-23.png">png</a>, <a class="reference external" href=".//curvefits_example-23.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-23.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-21.png" src="_images/curvefits_example-21.png" />
+<img alt="_images/curvefits_example-23.png" src="_images/curvefits_example-23.png" />
 </div>
 <p>There are various additional options to
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.plotSera" title="neutcurve.curvefits.CurveFits.plotSera"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits.plotSera()</span></code></a> that can further
@@ -374,9 +420,9 @@ fine-tune the plots; see the docstring for that method for more details.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotViruses</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-22.png">png</a>, <a class="reference external" href=".//curvefits_example-22.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-22.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-24.png">png</a>, <a class="reference external" href=".//curvefits_example-24.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-24.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-22.png" src="_images/curvefits_example-22.png" />
+<img alt="_images/curvefits_example-24.png" src="_images/curvefits_example-24.png" />
 </div>
 <p>We can also make the plot for just certain viruses:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotViruses</span><span class="p">(</span>
@@ -386,9 +432,9 @@ fine-tune the plots; see the docstring for that method for more details.</p>
 <span class="gp">... </span>                                         <span class="s1">&#39;H17-L19&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">)})</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-23.png">png</a>, <a class="reference external" href=".//curvefits_example-23.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-23.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-25.png">png</a>, <a class="reference external" href=".//curvefits_example-25.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-25.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-23.png" src="_images/curvefits_example-23.png" />
+<img alt="_images/curvefits_example-25.png" src="_images/curvefits_example-25.png" />
 </div>
 <p>and also for just certain sera:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotViruses</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">,</span>
@@ -396,9 +442,9 @@ fine-tune the plots; see the docstring for that method for more details.</p>
 <span class="gp">... </span>                             <span class="n">sera</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;H17-L19&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-24.png">png</a>, <a class="reference external" href=".//curvefits_example-24.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-24.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-26.png">png</a>, <a class="reference external" href=".//curvefits_example-26.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-26.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-24.png" src="_images/curvefits_example-24.png" />
+<img alt="_images/curvefits_example-26.png" src="_images/curvefits_example-26.png" />
 </div>
 </div>
 <div class="section" id="plotting-each-replicate">
@@ -411,9 +457,9 @@ as below:</p>
 <span class="gp">... </span>                                <span class="n">legendtitle</span><span class="o">=</span><span class="s1">&#39;replicate&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-25.png">png</a>, <a class="reference external" href=".//curvefits_example-25.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-25.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-27.png">png</a>, <a class="reference external" href=".//curvefits_example-27.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-27.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-25.png" src="_images/curvefits_example-25.png" />
+<img alt="_images/curvefits_example-27.png" src="_images/curvefits_example-27.png" />
 </div>
 <p>See the method docstring for
 <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.plotReplicates" title="neutcurve.curvefits.CurveFits.plotReplicates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits.plotReplicates()</span></code></a> for ways to
@@ -428,9 +474,9 @@ be generated with
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">plotAverages</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-26.png">png</a>, <a class="reference external" href=".//curvefits_example-26.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-26.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-28.png">png</a>, <a class="reference external" href=".//curvefits_example-28.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-28.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-26.png" src="_images/curvefits_example-26.png" />
+<img alt="_images/curvefits_example-28.png" src="_images/curvefits_example-28.png" />
 </div>
 </div>
 <div class="section" id="customized-plot-arrangements">
@@ -532,9 +578,9 @@ Note that in doing this below, we use the colors and markers defined by
 <span class="gp">... </span>                <span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-27.png">png</a>, <a class="reference external" href=".//curvefits_example-27.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-27.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-29.png">png</a>, <a class="reference external" href=".//curvefits_example-29.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-29.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-27.png" src="_images/curvefits_example-27.png" />
+<img alt="_images/curvefits_example-29.png" src="_images/curvefits_example-29.png" />
 </div>
 </div>
 </div>
@@ -576,9 +622,9 @@ that never reaches the IC50.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">hiv_fit</span><span class="o">.</span><span class="n">plotSera</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;concentration (ug/ml)&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-29.png">png</a>, <a class="reference external" href=".//curvefits_example-29.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-29.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-31.png">png</a>, <a class="reference external" href=".//curvefits_example-31.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-31.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-29.png" src="_images/curvefits_example-29.png" />
+<img alt="_images/curvefits_example-31.png" src="_images/curvefits_example-31.png" />
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hiv_fit</span><span class="o">.</span><span class="n">fitParams</span><span class="p">()</span>
 <span class="go">     serum  virus replicate  nreplicates  ic50 ic50_bound ic50_str  midpoint  slope  top  bottom</span>
@@ -603,9 +649,9 @@ a highly customized way using the <cite>vlines</cite> option to
 <span class="gp">... </span>                <span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-31.png">png</a>, <a class="reference external" href=".//curvefits_example-31.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-31.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-33.png">png</a>, <a class="reference external" href=".//curvefits_example-33.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-33.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-31.png" src="_images/curvefits_example-31.png" />
+<img alt="_images/curvefits_example-33.png" src="_images/curvefits_example-33.png" />
 </div>
 </div>
 <div class="section" id="additional-plot-customization">
@@ -626,9 +672,9 @@ axis ticks and labels, you can do the below:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">axes2</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;-3&#39;</span><span class="p">,</span> <span class="s1">&#39;-2&#39;</span><span class="p">,</span> <span class="s1">&#39;-1&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href=".//curvefits_example-32.png">png</a>, <a class="reference external" href=".//curvefits_example-32.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-32.pdf">pdf</a>)</p>
+<p>(<a class="reference external" href=".//curvefits_example-34.png">png</a>, <a class="reference external" href=".//curvefits_example-34.hires.png">hires.png</a>, <a class="reference external" href=".//curvefits_example-34.pdf">pdf</a>)</p>
 <div class="figure align-default">
-<img alt="_images/curvefits_example-32.png" src="_images/curvefits_example-32.png" />
+<img alt="_images/curvefits_example-34.png" src="_images/curvefits_example-34.png" />
 </div>
 <p>This assumes the plotting was done using <cite>sharex=True</cite> (on by default), which
 makes all axes share the same x-ticks so they can be set for just the last
