@@ -16,7 +16,7 @@ and classes into the package namespace:
 
 __author__ = 'Jesse Bloom'
 __email__ = 'jbloom@fredhutch.org'
-__version__ = '0.6.0'
+__version__ = '0.5.7'
 __url__ = 'https://github.com/jbloomlab/neutcurve'
 
 from neutcurve.curvefits import CurveFits  # noqa: F401
