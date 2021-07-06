@@ -88,8 +88,18 @@ class HillCurve:
             if :math:`t \ne 1` or :math:`b \ne 0`.
         `slope` (float)
             Hill slope of curve, :math:`s` in equation above.
+        `params_stdev` (dict or `None`)
+            If standard deviations can be estimated on the fit
+            parameters, keyed by 'bottom', 'top', 'midpoint',
+            and 'slope' and gives standard erorr on each. Note if
+            you have replicates we recommend fitting those separately
+            and taking standard error rather than using fit stdev.
 
     Use the :meth:`ic50` method to get the fitted IC50.
+    You can use :meth:`ic50_stdev` to get the estimated standard
+    deviation on the IC50, although if you have multiple replicates
+    you may be better off just fitting to each separately and
+    then taking standard error of the individual IC50s.
 
     Here are some examples. First, we import the necessary modules:
 
@@ -125,6 +135,14 @@ class HillCurve:
         True
         >>> numpy.allclose(neut.bottom, b)
         True
+        >>> for key, val in neut.params_stdev.items():
+        ...     print(f"{key} = {val:.2g}")
+        midpoint = 0.062
+        slope = 6.3
+        top = 0
+        bottom = 0.73
+        >>> print(f"IC50: {neut.ic50():.3f} +/- {neut.ic50_stdev():.3f}")
+        IC50: 0.034 +/- 0.070
 
     Since we fit the curve to simulated data where the bottom was
     0.1 rather than 0, the midpoint and IC50 are different. Specifically,
@@ -322,7 +340,8 @@ class HillCurve:
 
         # first try to fit using curve_fit
         try:
-            fit_tup = self._fit_curve(fixtop=fixtop,
+            fit_tup, self.params_stdev = self._fit_curve(
+                                      fixtop=fixtop,
                                       fixbottom=fixbottom,
                                       fitlogc=fitlogc,
                                       use_stderr_for_fit=use_stderr_for_fit)
@@ -336,6 +355,7 @@ class HillCurve:
                                     use_stderr_for_fit=use_stderr_for_fit,
                                     method=method,
                                     )
+                self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
                     break
             else:
@@ -345,7 +365,7 @@ class HillCurve:
             setattr(self, param, fit_tup[i])
 
     def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit):
-        """Fit via curve_fit, and return `(midpoint, slope, bottom, top)`."""
+        """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
         # make initial guess for slope to have the right sign
         slope = 1.5
 
@@ -428,20 +448,30 @@ class HillCurve:
                 maxfev=1000,
                 )
 
+        perr = numpy.sqrt(numpy.diag(pcov))
+
         if fitlogc:
             midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
         slope = popt[1]
+        params_stderr = {'midpoint': perr[0],
+                         'slope': perr[1],
+                         'top': 0,
+                         'bottom': 0}
         if fixbottom is False and fixtop is False:
             bottom = popt[2]
+            params_stderr['bottom'] = perr[2]
             top = popt[3]
+            params_stderr['top'] = perr[3]
         elif fixbottom is False:
             bottom = popt[2]
+            params_stderr['bottom'] = perr[2]
         elif fixtop is False:
             top = popt[2]
+            params_stderr['top'] = perr[2]
 
-        return (midpoint, slope, bottom, top)
+        return (midpoint, slope, bottom, top), params_stderr
 
     def _minimize_fit(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit,
                       method):
@@ -633,6 +663,28 @@ class HillCurve:
 
         """
         return self.icXX(0.5, method=method)
+
+    def ic50_stdev(self):
+        r"""Get standard deviation of fit IC50 parameter.
+
+        Calculated just from estimated standard deviation on `midpoint`.
+        Note if you have replicates, we recommend fitting separately
+        and calculating standard error from those fits rather than
+        using this value.
+
+        Returns:
+            A number giving the standard deviation, or `None` if cannot
+            be estimated or if IC50 is at bound.
+
+        """
+        ic50 = self.ic50()
+        if ic50 is None:
+            return None
+        midpoint_stdev = self.params_stdev['midpoint']
+        if midpoint_stdev is None:
+            return None
+        else:
+            return midpoint_stdev * ic50 / self.midpoint
 
     def icXX_bound(self, fracneut):
         """Like :meth:`HillCurve.ic50_bound` for arbitrary frac neutralized."""

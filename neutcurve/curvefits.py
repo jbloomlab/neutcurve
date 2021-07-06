@@ -247,6 +247,7 @@ class CurveFits:
                   average_only=True,
                   ics=(50,),
                   ics_precision=0,
+                  ic50_error=None,
                   ):
         """Get data frame with curve fitting parameters.
 
@@ -260,6 +261,10 @@ class CurveFits:
             `ics_precision` (int)
                 Include this many digits after decimal when creating the
                 ICXX columns.
+            ic50_error {`None`, 'fit_stdev'}
+                Include estimated error on IC50 as standard deviation of fit
+                parameter; note that we recommend instead just taking standard
+                error of replicate IC50s.
 
         Returns:
             A pandas DataFrame with fit parameters for each serum / virus /
@@ -283,6 +288,9 @@ class CurveFits:
               - 'bottom': bottom of curve.
 
         """
+        if ic50_error not in {None, 'fit_stdev'}:
+            raise ValueError(f"invalid ic50_error of {ic50_error}")
+
         ics = tuple(ics)
         ic_colprefixes = [f"ic{{:.{ics_precision}f}}".format(ic) for ic in ics]
         if len(ic_colprefixes) != len(set(ic_colprefixes)):
@@ -290,7 +298,7 @@ class CurveFits:
                              'Either you have duplicate entries in `ics` '
                              'or you need to increase `ics_precision`.')
 
-        key = (average_only, ics, ics_precision)
+        key = (average_only, ics, ics_precision, ic50_error)
 
         if key not in self._fitparams:
             d = collections.defaultdict(list)
@@ -319,12 +327,16 @@ class CurveFits:
                             d[colprefix].append(curve.icXX(f, method='bound'))
                             d[f"{colprefix}_bound"].append(curve.icXX_bound(f))
                             d[f"{colprefix}_str"].append(curve.icXX_str(f))
+                        if ic50_error == 'fit_stdev':
+                            d['ic50_error'].append(curve.ic50_stdev())
                         for param in params:
                             d[param].append(getattr(curve, param))
 
             ic_cols = []
             for prefix in ic_colprefixes:
                 ic_cols += [prefix, f"{prefix}_bound", f"{prefix}_str"]
+            if ic50_error == 'fit_stdev':
+                ic_cols.append('ic50_error')
             self._fitparams[key] = (
                     pd.DataFrame(d)
                     [['serum', 'virus', 'replicate', 'nreplicates']

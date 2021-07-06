@@ -270,6 +270,56 @@ For instance:
     10  H17-L19        WT   average            3  0.107  interpolated    0.107  0.227  interpolated    0.227     0.107   3.94    1       0
     11  H17-L19     V135T   average            3   11.4         lower    >11.4   11.4         lower    >11.4      15.5   2.76    1       0
 
+Include standard deviations on IC50s calculated from estimated errors on parameters during fitting.
+Note that although this method is implemented, we **strongly** recommend instead fitting each replicate separately and computing errors that way instead (see immediately below):
+
+.. nbplot::
+
+    >>> fits.fitParams(ic50_error='fit_stdev')
+          serum     virus replicate  nreplicates   ic50    ic50_bound ic50_str  ic50_error  midpoint  slope  top  bottom
+    0     FI6v3        WT   average            3  0.017  interpolated    0.017      0.0254     0.017   2.28    1       0
+    1     FI6v3    K(-8T)   average            3 0.0283  interpolated   0.0283      0.0411    0.0283    2.4    1       0
+    2     FI6v3      P80D   average            3 0.0123  interpolated   0.0123      0.0193    0.0123   2.05    1       0
+    3     FI6v3     V135T   average            3 0.0229  interpolated   0.0229      0.0382    0.0229   1.83    1       0
+    4     FI6v3     K280A   average            3 0.0106  interpolated   0.0106      0.0176    0.0106   1.86    1       0
+    5     FI6v3     K280S   average            3 0.0428  interpolated   0.0428      0.0683    0.0428      2    1       0
+    6     FI6v3     K280T   average            3 0.0348  interpolated   0.0348      0.0582    0.0348   1.82    1       0
+    7     FI6v3     N291S   average            3 0.0845  interpolated   0.0845       0.142    0.0845    1.8    1       0
+    8     FI6v3  M17L-HA2   average            3 0.0198  interpolated   0.0198      0.0313    0.0198   2.06    1       0
+    9     FI6v3  G47R-HA2   average            3 0.0348  interpolated   0.0348      0.0477    0.0348    2.6    1       0
+    10  H17-L19        WT   average            3  0.107  interpolated    0.107       0.144     0.107   3.94    1       0
+    11  H17-L19     V135T   average            3   11.4         lower    >11.4         nan      15.5   2.76    1       0
+
+Here is the recommended way to get error estimates by just taking the average of fits for each replicate:
+
+.. nbplot::
+
+   >>> params_avg_fit = fits.fitParams()[['serum', 'virus', 'ic50', 'ic50_bound',
+   ...                                    'nreplicates']]
+   >>> params_avg_reps = (
+   ...     fits.fitParams(average_only=False)
+   ...     .query('replicate != "average"')
+   ...     .groupby(['serum', 'virus'])
+   ...     .aggregate(ic50_replicate_avg=pd.NamedAgg('ic50', 'mean'),
+   ...                ic50_replicate_stderr=pd.NamedAgg('ic50', 'sem'),
+   ...                )
+   ...     .reset_index()
+   ...     )
+   >>> params_avg_fit.merge(params_avg_reps, on=['serum', 'virus'])
+         serum     virus   ic50    ic50_bound  nreplicates  ic50_replicate_avg  ic50_replicate_stderr
+   0     FI6v3        WT  0.017  interpolated            3               0.017                0.00112
+   1     FI6v3    K(-8T) 0.0283  interpolated            3              0.0283                 0.0015
+   2     FI6v3      P80D 0.0123  interpolated            3              0.0123               0.000271
+   3     FI6v3     V135T 0.0229  interpolated            3              0.0229               0.000201
+   4     FI6v3     K280A 0.0106  interpolated            3              0.0106               0.000819
+   5     FI6v3     K280S 0.0428  interpolated            3              0.0428               0.000821
+   6     FI6v3     K280T 0.0348  interpolated            3              0.0349                0.00155
+   7     FI6v3     N291S 0.0845  interpolated            3              0.0844                0.00448
+   8     FI6v3  M17L-HA2 0.0198  interpolated            3              0.0197               0.000986
+   9     FI6v3  G47R-HA2 0.0348  interpolated            3              0.0347               0.000766
+   10  H17-L19        WT  0.107  interpolated            3               0.108                0.00698
+   11  H17-L19     V135T   11.4         lower            3                11.4                      0
+
 Plotting the curves
 -------------------
 
