@@ -290,7 +290,7 @@ Note that although this method is implemented, we **strongly** recommend instead
     10  H17-L19        WT   average            3  0.107  interpolated    0.107       0.144     0.107   3.94    1       0
     11  H17-L19     V135T   average            3   11.4         lower    >11.4         nan      15.5   2.76    1       0
 
-Here is the recommended way to get error estimaaets by just taking the average of fits for each replicate:
+Here is the recommended way to get error estimates by just taking the average of fits for each replicate:
 
 .. nbplot::
 

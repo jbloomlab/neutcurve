@@ -91,7 +91,9 @@ class HillCurve:
         `params_stdev` (dict or `None`)
             If standard deviations can be estimated on the fit
             parameters, keyed by 'bottom', 'top', 'midpoint',
-            and 'slope' and gives standard eerrorr on each.
+            and 'slope' and gives standard erorr on each. Note if
+            you have replicates we recommend fitting those separately
+            and taking standard error rather than using fit stdev.
 
     Use the :meth:`ic50` method to get the fitted IC50.
     You can use :meth:`ic50_stdev` to get the estimated standard
@@ -663,9 +665,12 @@ class HillCurve:
         return self.icXX(0.5, method=method)
 
     def ic50_stdev(self):
-        r"""Get standard deviation of estimated IC50.
+        r"""Get standard deviation of fit IC50 parameter.
 
         Calculated just from estimated standard deviation on `midpoint`.
+        Note if you have replicates, we recommend fitting separately
+        and calculating standard error from those fits rather than
+        using this value.
 
         Returns:
             A number giving the standard deviation, or `None` if cannot
