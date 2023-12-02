@@ -47,7 +47,7 @@ extensions = [
 # avoid cropping of plots included using nbplot
 # directive along lines described here:
 # https://github.com/matplotlib/matplotlib/issues/4563#issuecomment-381366101
-nbplot_rcparams = {'savefig.bbox': 'tight'}
+nbplot_rcparams = {"savefig.bbox": "tight"}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
