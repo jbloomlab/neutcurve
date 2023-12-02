@@ -14,10 +14,10 @@ and classes into the package namespace:
  - :class:`neutcurve.hillcurve.HillCurve`: class to fit a single Hill curve.
 """
 
-__author__ = 'Jesse Bloom'
-__email__ = 'jbloom@fredhutch.org'
-__version__ = '0.5.7'
-__url__ = 'https://github.com/jbloomlab/neutcurve'
+__author__ = "Jesse Bloom"
+__email__ = "jbloom@fredhutch.org"
+__version__ = "0.5.7"
+__url__ = "https://github.com/jbloomlab/neutcurve"
 
 from neutcurve.curvefits import CurveFits  # noqa: F401
 from neutcurve.hillcurve import HillCurve  # noqa: F401

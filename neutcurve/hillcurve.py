@@ -298,17 +298,18 @@ class HillCurve:
 
     """
 
-    def __init__(self,
-                 cs,
-                 fs,
-                 *,
-                 infectivity_or_neutralized='infectivity',
-                 fs_stderr=None,
-                 fixbottom=0,
-                 fixtop=1,
-                 fitlogc=False,
-                 use_stderr_for_fit=False,
-                 ):
+    def __init__(
+        self,
+        cs,
+        fs,
+        *,
+        infectivity_or_neutralized="infectivity",
+        fs_stderr=None,
+        fixbottom=0,
+        fixtop=1,
+        fitlogc=False,
+        use_stderr_for_fit=False,
+    ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
         self.cs = numpy.array(cs)
@@ -321,47 +322,50 @@ class HillCurve:
         self.fs = self.fs[self.cs.argsort()]
         self.cs = self.cs[self.cs.argsort()]
 
-        if infectivity_or_neutralized == 'infectivity':
-            if self.fs[0] < self.fs[-1] and (self.fs[0] < 0.3 and
-                                             self.fs[-1] > 0.7):
-                warnings.warn('`f` increases with concentration, consider '
-                              '`infectivity_or_neutralized="neutralized"')
-        elif infectivity_or_neutralized == 'neutralized':
-            if self.fs[0] > self.fs[-1] and (self.fs[0] > 0.7 and
-                                             self.fs[-1] < 0.3):
-                warnings.warn('`f` decreases with concentration, consider '
-                              '`infectivity_or_neutralized="infectivity"')
+        if infectivity_or_neutralized == "infectivity":
+            if self.fs[0] < self.fs[-1] and (self.fs[0] < 0.3 and self.fs[-1] > 0.7):
+                warnings.warn(
+                    "`f` increases with concentration, consider "
+                    '`infectivity_or_neutralized="neutralized"'
+                )
+        elif infectivity_or_neutralized == "neutralized":
+            if self.fs[0] > self.fs[-1] and (self.fs[0] > 0.7 and self.fs[-1] < 0.3):
+                warnings.warn(
+                    "`f` decreases with concentration, consider "
+                    '`infectivity_or_neutralized="infectivity"'
+                )
         else:
-            raise ValueError('invalid `infectivity_or_neutralized`')
+            raise ValueError("invalid `infectivity_or_neutralized`")
         self._infectivity_or_neutralized = infectivity_or_neutralized
 
         if any(self.cs <= 0):
-            raise ValueError('concentrations in `cs` must all be > 0')
+            raise ValueError("concentrations in `cs` must all be > 0")
 
         # first try to fit using curve_fit
         try:
             fit_tup, self.params_stdev = self._fit_curve(
-                                      fixtop=fixtop,
-                                      fixbottom=fixbottom,
-                                      fitlogc=fitlogc,
-                                      use_stderr_for_fit=use_stderr_for_fit)
+                fixtop=fixtop,
+                fixbottom=fixbottom,
+                fitlogc=fitlogc,
+                use_stderr_for_fit=use_stderr_for_fit,
+            )
         except RuntimeError:
             # curve_fit failed, try using minimize
-            for method in ['TNC', 'L-BFGS-B', 'SLSQP', 'Powell']:
+            for method in ["TNC", "L-BFGS-B", "SLSQP", "Powell"]:
                 fit_tup = self._minimize_fit(
-                                    fixtop=fixtop,
-                                    fixbottom=fixbottom,
-                                    fitlogc=fitlogc,
-                                    use_stderr_for_fit=use_stderr_for_fit,
-                                    method=method,
-                                    )
+                    fixtop=fixtop,
+                    fixbottom=fixbottom,
+                    fitlogc=fitlogc,
+                    use_stderr_for_fit=use_stderr_for_fit,
+                    method=method,
+                )
                 self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
                     break
             else:
                 raise RuntimeError(f"fit failed:\ncs={self.cs}\nfs={self.fs}")
 
-        for i, param in enumerate(['midpoint', 'slope', 'bottom', 'top']):
+        for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
 
     def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit):
@@ -374,13 +378,13 @@ class HillCurve:
             top = max(1, self.fs.max())
         else:
             if not isinstance(fixtop, (int, float)):
-                raise ValueError('`fixtop` is not `False` or a number')
+                raise ValueError("`fixtop` is not `False` or a number")
             top = fixtop
         if fixbottom is False:
             bottom = min(0, self.fs.min())
         else:
             if not isinstance(fixbottom, (int, float)):
-                raise ValueError('`fixbottom` is not `False` or a number')
+                raise ValueError("`fixbottom` is not `False` or a number")
             bottom = fixbottom
 
         # make initial guess for midpoint
@@ -388,17 +392,18 @@ class HillCurve:
         # equal to spacing of last two points
         midval = (top - bottom) / 2.0
         if (self.fs > midval).all():
-            midpoint = {'infectivity': self.cs[-1]**2 / self.cs[-2],
-                        'neutralized': self.cs[0] / (self.cs[-1] / self.cs[-2])
-                        }[self._infectivity_or_neutralized]
+            midpoint = {
+                "infectivity": self.cs[-1] ** 2 / self.cs[-2],
+                "neutralized": self.cs[0] / (self.cs[-1] / self.cs[-2]),
+            }[self._infectivity_or_neutralized]
         elif (self.fs <= midval).all():
-            midpoint = {'neutralized': self.cs[-1]**2 / self.cs[-2],
-                        'infectivity': self.cs[0] / (self.cs[-1] / self.cs[-2])
-                        }[self._infectivity_or_neutralized]
+            midpoint = {
+                "neutralized": self.cs[-1] ** 2 / self.cs[-2],
+                "infectivity": self.cs[0] / (self.cs[-1] / self.cs[-2]),
+            }[self._infectivity_or_neutralized]
         else:
             # get first index where f crosses midpoint
-            i = numpy.argmax((self.fs > midval)[:-1] !=
-                             (self.fs > midval)[1:])
+            i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
 
@@ -415,38 +420,35 @@ class HillCurve:
             initguess = [midpoint, slope, bottom, top]
 
             def func(c, m, s, b, t):
-                return evalfunc(c, m, s, b, t,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
 
         elif fixtop is False:
             initguess = [midpoint, slope, top]
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, bottom, t, self._infectivity_or_neutralized)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, bottom, top, self._infectivity_or_neutralized)
 
         (popt, pcov) = scipy.optimize.curve_fit(
-                f=func,
-                xdata=xdata,
-                ydata=self.fs,
-                p0=initguess,
-                sigma=self.fs_stderr if use_stderr_for_fit else None,
-                absolute_sigma=True,
-                maxfev=1000,
-                )
+            f=func,
+            xdata=xdata,
+            ydata=self.fs,
+            p0=initguess,
+            sigma=self.fs_stderr if use_stderr_for_fit else None,
+            absolute_sigma=True,
+            maxfev=1000,
+        )
 
         perr = numpy.sqrt(numpy.diag(pcov))
 
@@ -455,26 +457,22 @@ class HillCurve:
 
         midpoint = popt[0]
         slope = popt[1]
-        params_stderr = {'midpoint': perr[0],
-                         'slope': perr[1],
-                         'top': 0,
-                         'bottom': 0}
+        params_stderr = {"midpoint": perr[0], "slope": perr[1], "top": 0, "bottom": 0}
         if fixbottom is False and fixtop is False:
             bottom = popt[2]
-            params_stderr['bottom'] = perr[2]
+            params_stderr["bottom"] = perr[2]
             top = popt[3]
-            params_stderr['top'] = perr[3]
+            params_stderr["top"] = perr[3]
         elif fixbottom is False:
             bottom = popt[2]
-            params_stderr['bottom'] = perr[2]
+            params_stderr["bottom"] = perr[2]
         elif fixtop is False:
             top = popt[2]
-            params_stderr['top'] = perr[2]
+            params_stderr["top"] = perr[2]
 
         return (midpoint, slope, bottom, top), params_stderr
 
-    def _minimize_fit(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit,
-                      method):
+    def _minimize_fit(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit, method):
         """Fit via minimization, return `(midpoint, slope, bottom, top)`."""
         # make initial guess for slope to have the right sign
         slope = 1.5
@@ -484,13 +482,13 @@ class HillCurve:
             top = max(1, self.fs.max())
         else:
             if not isinstance(fixtop, (int, float)):
-                raise ValueError('`fixtop` is not `False` or a number')
+                raise ValueError("`fixtop` is not `False` or a number")
             top = fixtop
         if fixbottom is False:
             bottom = min(0, self.fs.min())
         else:
             if not isinstance(fixbottom, (int, float)):
-                raise ValueError('`fixbottom` is not `False` or a number')
+                raise ValueError("`fixbottom` is not `False` or a number")
             bottom = fixbottom
 
         # make initial guess for midpoint
@@ -498,17 +496,18 @@ class HillCurve:
         # equal to spacing of last two points
         midval = (top - bottom) / 2.0
         if (self.fs > midval).all():
-            midpoint = {'infectivity': self.cs[-1]**2 / self.cs[-2],
-                        'neutralized': self.cs[0] / (self.cs[-1] / self.cs[-2])
-                        }[self._infectivity_or_neutralized]
+            midpoint = {
+                "infectivity": self.cs[-1] ** 2 / self.cs[-2],
+                "neutralized": self.cs[0] / (self.cs[-1] / self.cs[-2]),
+            }[self._infectivity_or_neutralized]
         elif (self.fs <= midval).all():
-            midpoint = {'neutralized': self.cs[-1]**2 / self.cs[-2],
-                        'infectivity': self.cs[0] / (self.cs[-1] / self.cs[-2])
-                        }[self._infectivity_or_neutralized]
+            midpoint = {
+                "neutralized": self.cs[-1] ** 2 / self.cs[-2],
+                "infectivity": self.cs[0] / (self.cs[-1] / self.cs[-2]),
+            }[self._infectivity_or_neutralized]
         else:
             # get first index where f crosses midpoint
-            i = numpy.argmax((self.fs > midval)[:-1] !=
-                             (self.fs > midval)[1:])
+            i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
 
@@ -528,43 +527,37 @@ class HillCurve:
             bounds = bounds + [(None, None), (None, None)]
 
             def func(c, m, s, b, t):
-                return evalfunc(c, m, s, b, t,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
 
         elif fixtop is False:
             initguess = [midpoint, slope, top]
             bounds.append((bottom, None))
 
             def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, bottom, t, self._infectivity_or_neutralized)
 
         elif fixbottom is False:
             initguess = [midpoint, slope, bottom]
             bounds.append((None, top))
 
             def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+
         else:
             initguess = [midpoint, slope]
 
             def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top,
-                                self._infectivity_or_neutralized)
+                return evalfunc(c, m, s, bottom, top, self._infectivity_or_neutralized)
 
         def min_func(p):
             """Evaluate to zero when perfect fit."""
             if (use_stderr_for_fit is None) or (self.fs_stderr is None):
-                return sum((func(xdata, *p) - self.fs)**2)
+                return sum((func(xdata, *p) - self.fs) ** 2)
             else:
-                return sum((func(xdata, *p) - self.fs / self.fs_stderr)**2)
+                return sum((func(xdata, *p) - self.fs / self.fs_stderr) ** 2)
 
-        initguess = numpy.array(initguess, dtype='float')
-        res = scipy.optimize.minimize(min_func,
-                                      initguess,
-                                      bounds=bounds,
-                                      method=method)
+        initguess = numpy.array(initguess, dtype="float")
+        res = scipy.optimize.minimize(min_func, initguess, bounds=bounds, method=method)
 
         if not res.success:
             return False
@@ -584,7 +577,7 @@ class HillCurve:
 
         return (midpoint, slope, bottom, top)
 
-    def icXX(self, fracneut, *, method='interpolate'):
+    def icXX(self, fracneut, *, method="interpolate"):
         """Generalizes :meth:`HillCurve.ic50` to arbitrary frac neutralized.
 
         For instance, set `fracneut` to 0.95 if you want the IC95, the
@@ -613,32 +606,33 @@ class HillCurve:
         """
         fracinf = 1 - fracneut
         if self.top < fracinf and self.bottom < fracinf:
-            bound = 'lower'
+            bound = "lower"
         elif self.top >= fracinf and self.bottom >= fracinf:
-            bound = 'upper'
+            bound = "upper"
         else:
-            icXX = (self.midpoint * ((self.top - fracinf) /
-                    (fracinf - self.bottom))**(1.0 / self.slope))
-            if (self.cs[0] <= icXX <= self.cs[-1]):
+            icXX = self.midpoint * ((self.top - fracinf) / (fracinf - self.bottom)) ** (
+                1.0 / self.slope
+            )
+            if self.cs[0] <= icXX <= self.cs[-1]:
                 return icXX
             elif icXX < self.cs[0]:
-                bound = 'lower'
+                bound = "lower"
             else:
-                bound = 'upper'
+                bound = "upper"
 
-        if method == 'bound':
-            if bound == 'upper':
+        if method == "bound":
+            if bound == "upper":
                 return self.cs[-1]
-            elif bound == 'lower':
+            elif bound == "lower":
                 return self.cs[0]
             else:
                 raise ValueError(f"invalid `bound` {bound}")
-        elif method == 'interpolate':
+        elif method == "interpolate":
             return None
         else:
             raise ValueError(f"invalid `method` of {method}")
 
-    def ic50(self, method='interpolate'):
+    def ic50(self, method="interpolate"):
         r"""IC50 value.
 
         Concentration where infectivity remaining is 0.5. Equals
@@ -680,7 +674,7 @@ class HillCurve:
         ic50 = self.ic50()
         if ic50 is None:
             return None
-        midpoint_stdev = self.params_stdev['midpoint']
+        midpoint_stdev = self.params_stdev["midpoint"]
         if midpoint_stdev is None:
             return None
         else:
@@ -688,14 +682,14 @@ class HillCurve:
 
     def icXX_bound(self, fracneut):
         """Like :meth:`HillCurve.ic50_bound` for arbitrary frac neutralized."""
-        if self.icXX(fracneut, method='interpolate') is not None:
-            return 'interpolated'
+        if self.icXX(fracneut, method="interpolate") is not None:
+            return "interpolated"
         else:
-            icXX = self.icXX(fracneut, method='bound')
+            icXX = self.icXX(fracneut, method="bound")
             if icXX == self.cs[0]:
-                return 'upper'
+                return "upper"
             elif icXX == self.cs[-1]:
-                return 'lower'
+                return "lower"
             else:
                 raise RuntimeError(f"icXX not bound for {fracneut}")
 
@@ -705,11 +699,10 @@ class HillCurve:
 
     def icXX_str(self, fracneut, *, precision=3):
         """Like :meth:`HillCurve.ic50_str` for arbitrary frac neutralized."""
-        icXX = f"{{:.{precision}g}}".format(self.icXX(fracneut,
-                                                      method='bound'))
-        prefix = {'interpolated': '',
-                  'upper': '<',
-                  'lower': '>'}[self.icXX_bound(fracneut)]
+        icXX = f"{{:.{precision}g}}".format(self.icXX(fracneut, method="bound"))
+        prefix = {"interpolated": "", "upper": "<", "lower": ">"}[
+            self.icXX_bound(fracneut)
+        ]
         return f"{prefix}{icXX}"
 
     def ic50_str(self, precision=3):
@@ -723,13 +716,17 @@ class HillCurve:
 
     def fracinfectivity(self, c):
         """Fraction infectivity at `c` for fitted parameters."""
-        return self.evaluate(c, self.midpoint, self.slope,
-                             self.bottom, self.top,
-                             self._infectivity_or_neutralized)
+        return self.evaluate(
+            c,
+            self.midpoint,
+            self.slope,
+            self.bottom,
+            self.top,
+            self._infectivity_or_neutralized,
+        )
 
     @staticmethod
-    def evaluate(c, m, s, b, t,
-                 infectivity_or_neutralized='infectivity'):
+    def evaluate(c, m, s, b, t, infectivity_or_neutralized="infectivity"):
         r""":math:`f\left(c\right) = b + \frac{t-b}{1+\left(c/m\right)^s}`.
 
         If `infectivity_or_neutralized` is 'neutralized' rather than
@@ -737,37 +734,37 @@ class HillCurve:
         :math:`f\left(c\right) = t + \frac{b-t}{1+\left(c/m\right)^s}`.
 
         """
-        if infectivity_or_neutralized == 'infectivity':
-            return b + (t - b) / (1 + (c / m)**s)
-        elif infectivity_or_neutralized == 'neutralized':
-            return t + (b - t) / (1 + (c / m)**s)
+        if infectivity_or_neutralized == "infectivity":
+            return b + (t - b) / (1 + (c / m) ** s)
+        elif infectivity_or_neutralized == "neutralized":
+            return t + (b - t) / (1 + (c / m) ** s)
         else:
-            raise ValueError('invalid `infectivity_or_neutralized`')
+            raise ValueError("invalid `infectivity_or_neutralized`")
 
     @staticmethod
-    def _evaluate_log(logc, logm, s, b, t,
-                      infectivity_or_neutralized='infectivity'):
+    def _evaluate_log(logc, logm, s, b, t, infectivity_or_neutralized="infectivity"):
         """Like :class:`HillCurve.evaluate` but on log concentration scale."""
-        if infectivity_or_neutralized == 'infectivity':
+        if infectivity_or_neutralized == "infectivity":
             return b + (t - b) / (1 + numpy.exp(s * (logc - logm)))
-        elif infectivity_or_neutralized == 'neutralized':
+        elif infectivity_or_neutralized == "neutralized":
             return t + (b - t) / (1 + numpy.exp(s * (logc - logm)))
         else:
-            raise ValueError('invalid `infectivity_or_neutralized`')
+            raise ValueError("invalid `infectivity_or_neutralized`")
 
-    def plot(self,
-             *,
-             concentrations='auto',
-             ax=None,
-             xlabel='concentration',
-             ylabel='fraction infectivity',
-             color='black',
-             marker='o',
-             markersize=6,
-             linewidth=1,
-             linestyle='-',
-             yticklocs=None,
-             ):
+    def plot(
+        self,
+        *,
+        concentrations="auto",
+        ax=None,
+        xlabel="concentration",
+        ylabel="fraction infectivity",
+        color="black",
+        marker="o",
+        markersize=6,
+        linewidth=1,
+        linestyle="-",
+        yticklocs=None,
+    ):
         """Plot the neutralization curve.
 
         Args:
@@ -806,34 +803,36 @@ class HillCurve:
             check_ybounds = True
             ylowerbound = -0.05
             yupperbound = 1.05
-            ax.autoscale(True, 'both')
+            ax.autoscale(True, "both")
         else:
             fig = ax.get_figure()
-            ax.autoscale(False, 'both')
+            ax.autoscale(False, "both")
             check_ybounds = False
 
-        ax.plot('concentration',
-                'fit',
-                data=data,
-                linestyle=linestyle,
-                linewidth=linewidth,
-                color=color,
-                )
+        ax.plot(
+            "concentration",
+            "fit",
+            data=data,
+            linestyle=linestyle,
+            linewidth=linewidth,
+            color=color,
+        )
 
-        ax.errorbar(x='concentration',
-                    y='measurement',
-                    yerr='stderr',
-                    data=data,
-                    fmt=marker,
-                    color=color,
-                    markersize=markersize,
-                    capsize=markersize / 1.5,
-                    )
+        ax.errorbar(
+            x="concentration",
+            y="measurement",
+            yerr="stderr",
+            data=data,
+            fmt=marker,
+            color=color,
+            markersize=markersize,
+            capsize=markersize / 1.5,
+        )
 
-        ax.set_xscale('log')
+        ax.set_xscale("log")
         ax.set_xlabel(xlabel, fontsize=15)
         ax.set_ylabel(ylabel, fontsize=15)
-        ax.tick_params('both', labelsize=12, length=5, width=1)
+        ax.tick_params("both", labelsize=12, length=5, width=1)
         ax.minorticks_off()
         if yticklocs is not None:
             ax.set_yticks(yticklocs)
@@ -844,7 +843,7 @@ class HillCurve:
 
         return fig, ax
 
-    def dataframe(self, concentrations='auto'):
+    def dataframe(self, concentrations="auto"):
         """Get data frame with curve data for plotting.
 
         Useful if you want to get both the points and the fit
@@ -867,37 +866,38 @@ class HillCurve:
               - 'stderr': standard error of measurement if provided.
 
         """
-        if concentrations == 'auto':
+        if concentrations == "auto":
             concentrations = concentrationRange(self.cs[0], self.cs[-1])
-        elif concentrations == 'measured':
+        elif concentrations == "measured":
             concentrations = []
         concentrations = numpy.concatenate([self.cs, concentrations])
         n = len(concentrations)
 
-        points = numpy.concatenate([self.fs,
-                                    numpy.full(n - len(self.fs), numpy.nan)
-                                    ])
+        points = numpy.concatenate([self.fs, numpy.full(n - len(self.fs), numpy.nan)])
 
         if self.fs_stderr is None:
             stderr = numpy.full(n, numpy.nan)
         else:
-            stderr = numpy.concatenate([self.fs_stderr,
-                                        numpy.full(n - len(self.fs), numpy.nan)
-                                        ])
+            stderr = numpy.concatenate(
+                [self.fs_stderr, numpy.full(n - len(self.fs), numpy.nan)]
+            )
 
         fit = numpy.array([self.fracinfectivity(c) for c in concentrations])
 
-        return (pd.DataFrame.from_dict(
-                    collections.OrderedDict(
-                        [('concentration', concentrations),
-                         ('measurement', points),
-                         ('fit', fit),
-                         ('stderr', stderr),
-                         ])
-                    )
-                .sort_values('concentration')
-                .reset_index(drop=True)
+        return (
+            pd.DataFrame.from_dict(
+                collections.OrderedDict(
+                    [
+                        ("concentration", concentrations),
+                        ("measurement", points),
+                        ("fit", fit),
+                        ("stderr", stderr),
+                    ]
                 )
+            )
+            .sort_values("concentration")
+            .reset_index(drop=True)
+        )
 
 
 def concentrationRange(bottom, top, npoints=200, extend=0.1):
@@ -933,11 +933,11 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
 
     """
     if top <= bottom:
-        raise ValueError('`bottom` must be less than `top`')
+        raise ValueError("`bottom` must be less than `top`")
     if bottom <= 0:
-        raise ValueError('`bottom` must be greater than zero')
+        raise ValueError("`bottom` must be greater than zero")
     if extend < 0:
-        raise ValueError('`extend` must be >= 0')
+        raise ValueError("`extend` must be >= 0")
 
     logbottom = math.log10(bottom)
     logtop = math.log10(top)
@@ -949,6 +949,7 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
     return numpy.logspace(bottom, top, npoints)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()
