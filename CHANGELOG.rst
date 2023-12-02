@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.6.0
+------
+
+Fixed
++++++
+- Code format with ``black``
+- Lint with ``ruff``
+- Test with GitHub Actions rather than Travis
+- Move examples in docs to notebooks so they can be tested with ``nbval`` and added to docs with ``nbsphinx``
+- Update minimum Python to 3.8 and test on 3.11
+
+Removed
++++++++
+- Stop document the "Rachel-style neutralization" and parsing from Excel as these may be deprecated eventually.
+
 0.5.7
 ------
 
