@@ -10,9 +10,9 @@ try:
 except ImportError:
     raise ImportError("You must install `setuptools`")
 
-if not (sys.version_info[0] == 3 and sys.version_info[1] >= 6):
+if not (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
     raise RuntimeError(
-                'neutcurve requires Python 3.6 or higher.\n'
+                'neutcurve requires Python 3.8 or higher.\n'
                 'You are using Python {0}.{1}'.format(
                     sys.version_info[0], sys.version_info[1])
                 )
