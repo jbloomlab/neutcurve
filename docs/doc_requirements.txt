@@ -1,0 +1,4 @@
+sphinx
+nbsphinx
+nbsphinx-link
+nb2plots

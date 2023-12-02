@@ -40,12 +40,14 @@ extensions = [
     "sphinx.ext.githubpages",
     "sphinx.ext.viewcode",
     "nb2plots",
+    "nbsphinx",
+    "nbsphinx_link",
 ]
 
 # avoid cropping of plots included using nbplot
 # directive along lines described here:
 # https://github.com/matplotlib/matplotlib/issues/4563#issuecomment-381366101
-nbplot_rcparams = {"savefig.bbox": "tight"}
+nbplot_rcparams = {'savefig.bbox': 'tight'}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -90,7 +92,7 @@ release = versionstring
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -129,7 +131,6 @@ html_theme_options = {
     "github_user": "jbloomlab",
     "github_repo": "neutcurve",
     "github_banner": "true",
-    "travis_button": "true",
     "sidebar_width": "250px",
 }
 
