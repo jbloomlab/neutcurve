@@ -11,10 +11,11 @@ import os
 import pandas as pd
 
 
-def parseRachelStyle2019(*,
-                         excelfile,
-                         sheet_mapping,
-                         ):
+def parseRachelStyle2019(
+    *,
+    excelfile,
+    sheet_mapping,
+):
     """Parse data from Rachel Eguia's 2019-style assays on Bloom lab Tecan.
 
     Args:
@@ -46,136 +47,152 @@ def parseRachelStyle2019(*,
         raise ValueError(f"cannot find `excelfile` {excelfile}")
 
     # choose engine: https://stackoverflow.com/a/65266270/4191652
-    if os.path.splitext(excelfile)[-1] == '.xls':
-        engine = 'xlrd'
-    elif os.path.splitext(excelfile)[-1] == '.xlsx':
-        engine = 'openpyxl'
+    if os.path.splitext(excelfile)[-1] == ".xls":
+        engine = "xlrd"
+    elif os.path.splitext(excelfile)[-1] == ".xlsx":
+        engine = "openpyxl"
     else:
         raise ValueError(f"invalid extension in `excelfile` {excelfile}")
-    sheet_data = pd.read_excel(excelfile,
-                               sheet_name=None,  # read all sheets
-                               engine=engine,
-                               skiprows=range(0, 30),
-                               index_col=0,
-                               nrows=8,
-                               )
+    sheet_data = pd.read_excel(
+        excelfile,
+        sheet_name=None,  # read all sheets
+        engine=engine,
+        skiprows=range(0, 30),
+        index_col=0,
+        nrows=8,
+    )
 
     # keys of sheet_mapping should be str
     sheet_mapping = {str(key): val for key, val in sheet_mapping.items()}
 
     extra_sheets = set(sheet_data) - set(sheet_mapping)
     if extra_sheets:
-        raise ValueError(f"`excelfile` {excelfile} has the following extra "
-                         f"sheets not in `sheet_mapping`: {extra_sheets}")
+        raise ValueError(
+            f"`excelfile` {excelfile} has the following extra "
+            f"sheets not in `sheet_mapping`: {extra_sheets}"
+        )
 
     neutdata = []
-    req_keys = ['dilution_factor', 'initial_concentration', 'serum', 'virus']
-    optional_keys = ['excluded_dilutions']
+    req_keys = ["dilution_factor", "initial_concentration", "serum", "virus"]
+    optional_keys = ["excluded_dilutions"]
     for sheet, sheet_info in sheet_mapping.items():
-
         if sheet not in sheet_data:
-            raise ValueError(f"sheet {sheet} specified in `sheet_mapping` "
-                             f"is not present in `excelfile` {excelfile}")
+            raise ValueError(
+                f"sheet {sheet} specified in `sheet_mapping` "
+                f"is not present in `excelfile` {excelfile}"
+            )
 
         extra_keys = set(sheet_info.keys()) - set(req_keys + optional_keys)
         if extra_keys:
-            raise ValueError(f"`sheet_mapping` has extra keys {extra_keys} "
-                             f"for sheet {sheet}. Allowed keys are {req_keys} "
-                             f"and optionally {optional_keys}.")
+            raise ValueError(
+                f"`sheet_mapping` has extra keys {extra_keys} "
+                f"for sheet {sheet}. Allowed keys are {req_keys} "
+                f"and optionally {optional_keys}."
+            )
 
-        kwargs = {'layout': 'RachelStyle2019'}
+        kwargs = {"layout": "RachelStyle2019"}
         for key in req_keys:
             try:
                 kwargs[key] = sheet_info[key]
             except KeyError:
-                raise ValueError(f"`sheet_mapping` does not specify {key} "
-                                 f"for sheet {sheet}")
+                raise ValueError(
+                    f"`sheet_mapping` does not specify {key} " f"for sheet {sheet}"
+                )
         for key in optional_keys:
             if key in sheet_info:
                 kwargs[key] = sheet_info[key]
 
-        neutdata.append(_parse_BloomLab_TecanPlate(
+        neutdata.append(
+            _parse_BloomLab_TecanPlate(
                 sheet_df=sheet_data[sheet],
                 sheet_name_for_err=f"sheet {sheet} of {excelfile}",
                 **kwargs,
-                ))
+            )
+        )
 
     return pd.concat(neutdata, ignore_index=True, sort=False)
 
 
-def _parse_BloomLab_TecanPlate(*,
-                               sheet_df,
-                               sheet_name_for_err,
-                               initial_concentration,
-                               dilution_factor,
-                               layout,
-                               serum,
-                               virus,
-                               excluded_dilutions=(),
-                               ):
+def _parse_BloomLab_TecanPlate(
+    *,
+    sheet_df,
+    sheet_name_for_err,
+    initial_concentration,
+    dilution_factor,
+    layout,
+    serum,
+    virus,
+    excluded_dilutions=(),
+):
     """Process data frame for one 96-well plate of Bloom lab Tecan."""
     # expected rows / columns
-    rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+    rows = ["A", "B", "C", "D", "E", "F", "G", "H"]
     ncols = 12
     all_cols = list(range(1, ncols + 1))
-    if layout == 'RachelStyle2019':
+    if layout == "RachelStyle2019":
         # reverse excluded dilution columns if assay dilutes columns in reverse
         exclude_cols = {ncols - col + 1 for col in excluded_dilutions}
     else:
         raise ValueError(f"invalid layout of {layout}")
     if exclude_cols > set(all_cols):
-        raise ValueError('invalid col to exclude')
+        raise ValueError("invalid col to exclude")
     retained_cols = [col for col in all_cols if col not in exclude_cols]
     if not retained_cols:
-        raise ValueError('no cols retained after `exclude_cols`')
+        raise ValueError("no cols retained after `exclude_cols`")
 
     # check for expected rows / columns
     if sheet_df.index.tolist() != rows:
-        raise ValueError(f"{sheet_name_for_err} does not have expected rows.\n"
-                         f"Expected: {rows}\nGot: {sheet_df.index.tolist()}")
+        raise ValueError(
+            f"{sheet_name_for_err} does not have expected rows.\n"
+            f"Expected: {rows}\nGot: {sheet_df.index.tolist()}"
+        )
     if sheet_df.columns.tolist() != all_cols:
-        raise ValueError(f"{sheet_name_for_err} does not have expected "
-                         f"columns.\nExpected: {all_cols}\n"
-                         f"Got: {sheet_df.columns.tolist()}")
+        raise ValueError(
+            f"{sheet_name_for_err} does not have expected "
+            f"columns.\nExpected: {all_cols}\n"
+            f"Got: {sheet_df.columns.tolist()}"
+        )
     if not all(pd.api.types.is_numeric_dtype(sheet_df[c]) for c in all_cols):
         raise ValueError(f"Entries in {sheet_name_for_err} not all numerical")
 
     sheet_df = sheet_df[retained_cols]
 
-    if layout == 'RachelStyle2019':
-        reps = {rep: sheet_df.loc[row] for rep, row in [('1', 'D'),
-                                                        ('2', 'E'),
-                                                        ('3', 'F')]}
-        no_serum = (sheet_df.loc['C'] + sheet_df.loc['G']) / 2
-        virus_only = sheet_df.loc['B']
-        media_only = (sheet_df.loc['A'] + sheet_df.loc['H']) / 2
+    if layout == "RachelStyle2019":
+        reps = {
+            rep: sheet_df.loc[row] for rep, row in [("1", "D"), ("2", "E"), ("3", "F")]
+        }
+        no_serum = (sheet_df.loc["C"] + sheet_df.loc["G"]) / 2
+        virus_only = sheet_df.loc["B"]
+        media_only = (sheet_df.loc["A"] + sheet_df.loc["H"]) / 2
         if any(media_only > virus_only):
-            raise ValueError(f"In {sheet_name_for_err}, the media-only "
-                             f"control has more signal than the virus-only "
-                             f"control, which is unexpected:\n{sheet_df}")
+            raise ValueError(
+                f"In {sheet_name_for_err}, the media-only "
+                f"control has more signal than the virus-only "
+                f"control, which is unexpected:\n{sheet_df}"
+            )
         # compute fraction infectivity for each replicate
-        data = {rep: (repval - virus_only) / (no_serum - virus_only)
-                for rep, repval in reps.items()}
-        data['concentration'] = [initial_concentration /
-                                 dilution_factor**(ncols - col)
-                                 for col in retained_cols]
-        df = (pd.DataFrame(data)
-              .melt(id_vars='concentration',
-                    var_name='replicate',
-                    value_name='fraction infectivity'
-                    )
-              )
+        data = {
+            rep: (repval - virus_only) / (no_serum - virus_only)
+            for rep, repval in reps.items()
+        }
+        data["concentration"] = [
+            initial_concentration / dilution_factor ** (ncols - col)
+            for col in retained_cols
+        ]
+        df = pd.DataFrame(data).melt(
+            id_vars="concentration",
+            var_name="replicate",
+            value_name="fraction infectivity",
+        )
     else:
         raise ValueError(f"invalid `layout` of {layout}")
 
-    return (df
-            .assign(serum=serum,
-                    virus=virus)
-            [['serum', 'virus', 'replicate', 'concentration',
-              'fraction infectivity']]
-            )
+    return df.assign(serum=serum, virus=virus)[
+        ["serum", "virus", "replicate", "concentration", "fraction infectivity"]
+    ]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

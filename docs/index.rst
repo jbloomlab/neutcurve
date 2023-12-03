@@ -18,7 +18,6 @@ Contents
    installation
    hillcurve_example
    curvefits_example
-   raw_examples
    neutcurve
    package_index
    acknowledgments
