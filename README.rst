@@ -5,8 +5,8 @@ neutcurve
 .. image:: https://img.shields.io/pypi/v/neutcurve.svg
         :target: https://pypi.python.org/pypi/neutcurve
 
-.. image:: https://github.com/jbloomlab/neutcurve/actions/workflows/test.yaml/badge.svg
-        :target: https://github.com/jbloomlab/neutcurve/actions/workflows/test.yaml
+.. image:: https://github.com/jbloomlab/neutcurve/actions/workflows/test.yml/badge.svg
+        :target: https://github.com/jbloomlab/neutcurve/actions/workflows/test.yml
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
         :target: https://github.com/psf/black
