@@ -232,10 +232,8 @@ class CurveFits:
             if len(idata) < 1:
                 raise RuntimeError(f"no data for serum {serum} virus {virus}")
 
-            if idata["stderr"].isna().all():
-                fs_stderr = None
-            elif idata["stderr"].isna().any():
-                raise RuntimeError("`stderr` has only some entries NaN\n" + str(idata))
+            if idata["stderr"].isna().any():
+                fs_stderr = None  # cannot use stderr if any concentrations lack it
             else:
                 fs_stderr = idata["stderr"]
 
