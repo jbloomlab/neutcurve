@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>curvefits &#8212; neutcurve 0.6.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <title>curvefits &#8212; neutcurve 0.7.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=44845c09" />
-    <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
+    <script src="_static/documentation_options.js?v=fe7df9b0"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -88,11 +88,14 @@ that serum and virus in the order they occur in <cite>data</cite>.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="neutcurve.curvefits.CurveFits.fitParams">
-<span class="sig-name descname"><span class="pre">fitParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(50,)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ics_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic50_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fitParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(50,)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ics_precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic50_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.fitParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.fitParams" title="Link to this definition">¶</a></dt>
 <dd><p>Get data frame with curve fitting parameters.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
 <dt><cite>average_only</cite> (bool)</dt><dd><p>If <cite>True</cite>, only get parameters for average across replicates.</p>
+</dd>
+<dt><cite>no_average</cite> (bool)</dt><dd><p>Do not include average across replicates. Mutually incompatible
+with <cite>average_only</cite>.</p>
 </dd>
 <dt><cite>ics</cite> (iterable)</dt><dd><p>Include ICXX for each number in this list, where the number
 is the percent neutralized. So if <cite>ics</cite> only contains 50,
