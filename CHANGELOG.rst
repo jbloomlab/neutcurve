@@ -9,6 +9,10 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 0.7.0
 -----
 
+Added
++++++
+- Added ``no_average`` option to ``CurveFits.fitParams``.
+
 Fixed
 +++++
 - Fixed problem in ``fitParams`` when only some concentrations have replicates.
