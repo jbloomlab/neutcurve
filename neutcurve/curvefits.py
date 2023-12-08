@@ -263,6 +263,7 @@ class CurveFits:
         self,
         *,
         average_only=True,
+        no_average=False,
         ics=(50,),
         ics_precision=0,
         ic50_error=None,
@@ -272,6 +273,9 @@ class CurveFits:
         Args:
             `average_only` (bool)
                 If `True`, only get parameters for average across replicates.
+            `no_average` (bool)
+                Do not include average across replicates. Mutually incompatible
+                with `average_only`.
             `ics` (iterable)
                 Include ICXX for each number in this list, where the number
                 is the percent neutralized. So if `ics` only contains 50,
@@ -318,7 +322,10 @@ class CurveFits:
                 "or you need to increase `ics_precision`."
             )
 
-        key = (average_only, ics, ics_precision, ic50_error)
+        if average_only and no_average:
+            raise ValueError("both `average_only` and `no_average` are `True`")
+
+        key = (average_only, no_average, ics, ics_precision, ic50_error)
 
         if key not in self._fitparams:
             d = collections.defaultdict(list)
@@ -328,6 +335,8 @@ class CurveFits:
                     replicates = self.replicates[(serum, virus)]
                     nreplicates = sum(r != "average" for r in replicates)
                     assert nreplicates == len(replicates) - 1
+                    if no_average:
+                        replicates = [r for r in replicates if r != "average"]
                     if average_only:
                         replicates = ["average"]
                     for replicate in replicates:
