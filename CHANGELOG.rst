@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.8.0
+-----
+
+Added
++++++
+- Added ``attempt_shared_legend`` parameter to ``CurveFits.plotReplicates`` to enable plotting many replicates that differ among sera/viruses.
+
 0.7.0
 -----
 
