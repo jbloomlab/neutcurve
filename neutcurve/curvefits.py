@@ -819,6 +819,7 @@ class CurveFits:
         subplot_titles="{serum} vs {virus}",
         show_average=False,
         average_only=False,
+        attempt_shared_legend=True,
         **kwargs,
     ):
         """Plot grid with replicates for each serum / virus on same plot.
@@ -841,6 +842,9 @@ class CurveFits:
             `average_only` (bool)
                 Show **only** the replicate-average on each plot. No
                 legend in this case.
+            `attempt_shared_legend` (bool)
+                Do we attempt to share the same replicate key for all panels or
+                give each its own?
             `**kwargs`
                 Other keyword arguments that can be passed to
                 :meth:`CurveFits.plotGrid`.
@@ -864,7 +868,8 @@ class CurveFits:
         nplottable = max(len(colors), len(markers))
         if average_only:
             replicates = ["average"]
-        else:
+            nreplicates = 1
+        elif attempt_shared_legend:
             replicates = collections.OrderedDict()
             if show_average:
                 replicates["average"] = True
@@ -874,11 +879,24 @@ class CurveFits:
                         if replicate != "average":
                             replicates[replicate] = True
             replicates = list(collections.OrderedDict(replicates).keys())
-        if len(replicates) > nplottable:
+            nreplicates = len(replicates)
+        else:
+            replicates_by_serum_virus = collections.defaultdict(list)
+            for serum, virus in itertools.product(sera, viruses):
+                key = (serum, virus)
+                if virus in self.viruses[serum]:
+                    assert len(self.replicates[key])
+                    if show_average:
+                        replicates_by_serum_virus[key].append("average")
+                    for replicate in self.replicates[(serum, virus)]:
+                        if replicate != "average":
+                            replicates_by_serum_virus[key].append(replicate)
+            nreplicates = max(len(reps) for reps in replicates_by_serum_virus.values())
+        if nreplicates > nplottable:
             raise ValueError(
-                "Too many unique replicates. There are"
-                f"{len(replicates)} ({', '.join(replicates)}) "
-                f"but only {nplottable} `colors` or `markers`."
+                f"Too many unique replicates. There are {nreplicates} on a single plot "
+                f"but only {nplottable} `colors` or `markers`. Either specify more "
+                "colors/markers, or try setting `attempt_shared_legend=False`"
             )
 
         # build list of plots appropriate for `plotGrid`
@@ -887,7 +905,12 @@ class CurveFits:
             if virus in self.viruses[serum]:
                 title = subplot_titles.format(serum=serum, virus=virus)
                 curvelist = []
-                for i, replicate in enumerate(replicates):
+                if attempt_shared_legend:
+                    rep_list = replicates
+                else:
+                    rep_list = replicates_by_serum_virus[(serum, virus)]
+                assert len(rep_list)
+                for i, replicate in enumerate(rep_list):
                     if replicate in self.replicates[(serum, virus)]:
                         curvelist.append(
                             {
@@ -917,7 +940,11 @@ class CurveFits:
         for iplot, plot in enumerate(plotlist):
             plots[(iplot // ncol, iplot % ncol)] = plot
 
-        return self.plotGrid(plots, **kwargs)
+        return self.plotGrid(
+            plots,
+            attempt_shared_legend=attempt_shared_legend,
+            **kwargs,
+        )
 
     def _sera_viruses_lists(self, sera, viruses):
         """Check and build lists of `sera` and their `viruses`.
