@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.9.0
+-----
+
+Added
++++++
+- Added the ``CurveFits.combineCurveFits`` static method to combine multiple ``CurveFits`` objects.
+
 0.8.0
 -----
 

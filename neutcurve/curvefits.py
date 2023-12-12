@@ -67,6 +67,21 @@ class CurveFits:
     # names commonly used for wildtype virus
     _WILDTYPE_NAMES = ("WT", "wt", "wildtype", "Wildtype", "wild type", "Wild type")
 
+    @staticmethod
+    def combineCurveFits(curvefits_list):
+        """
+        Args:
+            `curvesfit_list` (list)
+                List of :class:`CurveFits` objects that are identical other than the
+                data they contain and have unique virus/serum/replicate combinations.
+
+        Returns:
+            combined_fits (:class:`CurveFits`)
+                A `:class:`CurveFits` objec that combines all the virus/serum/replicate
+                combinations in `curvefits_list`.
+        """
+        raise NotImplementedError
+
     def __init__(
         self,
         data,
