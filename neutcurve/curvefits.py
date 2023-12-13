@@ -6,6 +6,7 @@ Defines :class:`CurveFits` to fit curves and display / plot results.
 """
 
 import collections
+import copy
 import itertools
 import math
 
@@ -74,13 +75,169 @@ class CurveFits:
             `curvesfit_list` (list)
                 List of :class:`CurveFits` objects that are identical other than the
                 data they contain and have unique virus/serum/replicate combinations.
+                They can differ in `fixtop` and `fixbottom`, but then those
+                will be set to `None` in the returned object.
 
         Returns:
             combined_fits (:class:`CurveFits`)
                 A `:class:`CurveFits` objec that combines all the virus/serum/replicate
                 combinations in `curvefits_list`.
         """
-        raise NotImplementedError
+        if not (
+            len(curvefits_list) >= 1
+            and all(isinstance(c, CurveFits) for c in curvefits_list)
+        ):
+            raise ValueError(f"{curvefits_list=} not list of at least one `CurveFits`")
+
+        if len(curvefits_list) == 1:
+            return curvefits_list[0]
+
+        attrs_must_be_same = [  # attributes that must be same among all objects
+            "conc_col",
+            "fracinf_col",
+            "serum_col",
+            "virus_col",
+            "replicate_col",
+            "_infectivity_or_neutralized",
+        ]
+        attrs_can_differ = [  # attributes that can differ among objects
+            "fixbottom",
+            "fixtop",
+            "df",
+            "sera",
+            "allviruses",
+            "viruses",
+            "replicates",
+            "_hillcurves",
+            "_fitparams",
+        ]
+        all_attrs = set(attrs_must_be_same + attrs_can_differ)
+        assert all(set(c.__dict__) == all_attrs for c in curvefits_list)
+
+        # make new object we will then adjust attributes
+        combined_fits = copy.deepcopy(curvefits_list[0])
+        for attr in attrs_must_be_same:
+            if any(
+                getattr(combined_fits, attr) != getattr(c, attr) for c in curvefits_list
+            ):
+                raise ValueError(f"objects in `curvefits_list` differ in {attr}")
+        for attr in attrs_can_differ:
+            delattr(combined_fits, attr)
+
+        # fixtop and fixbottom are kept at shared value or None
+        for attr in ["fixtop", "fixbottom"]:
+            if any(
+                getattr(curvefits_list[0], attr) != getattr(c, attr)
+                for c in curvefits_list
+            ):
+                setattr(combined_fits, attr, None)
+            else:
+                setattr(combined_fits, attr, getattr(curvefits_list[0], attr))
+
+        # combine df
+        assert all(
+            all(getattr(curvefits_list[0], "df").columns == getattr(c, "df").columns)
+            for c in curvefits_list
+        )
+        combined_fits.df = pd.concat(
+            [getattr(c, "df") for c in curvefits_list],
+            ignore_index=False,
+            sort=False,
+        ).drop(columns="stderr")
+        combined_fits.df = combined_fits.df[
+            combined_fits.df[combined_fits.replicate_col] != "average"
+        ]
+        combined_fits.df = combined_fits._get_avg_and_stderr_df(combined_fits.df)
+        if len(combined_fits.df) != len(
+            combined_fits.df.groupby(
+                [
+                    combined_fits.serum_col,
+                    combined_fits.virus_col,
+                    combined_fits.replicate_col,
+                    combined_fits.conc_col,
+                ]
+            )
+        ):
+            raise ValueError("duplicated sera/virus/replicate in `curvefits_list`")
+
+        # combine sera
+        combined_fits.sera = list(
+            dict.fromkeys([serum for f in curvefits_list for serum in f.sera])
+        )
+        assert set(combined_fits.sera) == set(combined_fits.df[combined_fits.serum_col])
+
+        # combine allviruses
+        combined_fits.allviruses = list(
+            dict.fromkeys([virus for f in curvefits_list for virus in f.allviruses])
+        )
+        assert set(combined_fits.allviruses) == set(
+            combined_fits.df[combined_fits.virus_col]
+        )
+
+        # combine viruses and replicates
+        combined_fits.viruses = {}
+        combined_fits.replicates = {}
+        for serum in combined_fits.sera:
+            combined_fits.viruses[serum] = []
+            for virus in combined_fits.allviruses:
+                for f in curvefits_list:
+                    if (
+                        (serum in f.viruses)
+                        and (virus in f.viruses[serum])
+                        and (virus not in combined_fits.viruses[serum])
+                    ):
+                        combined_fits.viruses[serum].append(virus)
+                    if (serum, virus) in f.replicates:
+                        if (serum, virus) not in combined_fits.replicates:
+                            combined_fits.replicates[(serum, virus)] = f.replicates[
+                                (serum, virus)
+                            ]
+                        else:
+                            combined_fits.replicates[(serum, virus)] += f.replicates[
+                                (serum, virus)
+                            ]
+        for key, val in combined_fits.replicates.items():
+            val = dict.fromkeys(val)
+            if "average" in val:
+                del val["average"]
+            if len(val) != len(set(val)):
+                raise ValueError(f"duplicate replicate for {key}")
+            combined_fits.replicates[key] = list(val)
+            combined_fits.replicates[key].append("average")
+        serum_virus_rep_tups = [
+            (serum, virus, rep)
+            for (serum, virus), reps in combined_fits.replicates.items()
+            for rep in reps
+        ]
+        assert len(serum_virus_rep_tups) == len(set(serum_virus_rep_tups))
+        assert set(serum_virus_rep_tups) == set(
+            combined_fits.df[
+                [
+                    combined_fits.serum_col,
+                    combined_fits.virus_col,
+                    combined_fits.replicate_col,
+                ]
+            ].itertuples(index=False, name=None)
+        )
+        assert set(combined_fits.allviruses) == set(
+            v for f in curvefits_list for s in f.viruses.values() for v in s
+        )
+
+        # get all the HillCurve objects that have been pre-computed from prior
+        # objects being concatenated, except any "average" ones
+        combined_fits._hillcurves = {}
+        for c in curvefits_list:
+            for (serum, virus, replicate), curve in c._hillcurves.items():
+                assert serum in combined_fits.sera
+                assert virus in combined_fits.allviruses
+                if replicate != "average":
+                    combined_fits._hillcurves[(serum, virus, replicate)] = curve
+
+        combined_fits._fitparams = {}  # clear this cache
+
+        assert set(combined_fits.__dict__) == all_attrs
+
+        return combined_fits
 
     def __init__(
         self,
@@ -182,14 +339,21 @@ class CurveFits:
             raise ValueError(f"a serum has name NaN:\n{self.sera}")
 
         # compute replicate average and add 'stderr'
-        if "stderr" in self.df.columns:
+        self.df = self._get_avg_and_stderr_df(self.df)
+
+        self._hillcurves = {}  # curves computed by `getCurve` cached here
+        self._fitparams = {}  # cache data frame computed by `fitParams`
+
+    def _get_avg_and_stderr_df(self, df):
+        """Adds average rows and stderr column."""
+        if "stderr" in df.columns:
             raise ValueError('`data` has column "stderr"')
         avg_df = (
-            self.df.groupby(
-                [self.serum_col, self.virus_col, self.conc_col], observed=True
-            )[self.fracinf_col]
+            df.groupby([self.serum_col, self.virus_col, self.conc_col], observed=True)[
+                self.fracinf_col
+            ]
             # sem is sample stderr, evaluates to NaN when just 1 rep
-            .aggregate(["mean", "sem", "count"])
+            .aggregate(["mean", "sem"])
             .rename(
                 columns={
                     "mean": self.fracinf_col,
@@ -197,16 +361,14 @@ class CurveFits:
                 }
             )
             .reset_index()
-            .assign(**{replicate_col: "average"})
+            .assign(**{self.replicate_col: "average"})
         )
-        self.df = pd.concat(
-            [self.df, avg_df],
+        df = pd.concat(
+            [df, avg_df],
             ignore_index=True,
             sort=False,
         )
-
-        self._hillcurves = {}  # curves computed by `getCurve` cached here
-        self._fitparams = {}  # cache data frame computed by `fitParams`
+        return df
 
     def getCurve(self, *, serum, virus, replicate):
         """Get the fitted curve for this sample.
