@@ -69,7 +69,13 @@ class CurveFits:
     _WILDTYPE_NAMES = ("WT", "wt", "wildtype", "Wildtype", "wild type", "Wild type")
 
     @staticmethod
-    def combineCurveFits(curvefits_list):
+    def combineCurveFits(
+        curvefits_list,
+        *,
+        sera=None,
+        viruses=None,
+        serum_virus_replicates_to_drop=None,
+    ):
         """
         Args:
             `curvesfit_list` (list)
@@ -77,6 +83,13 @@ class CurveFits:
                 data they contain and have unique virus/serum/replicate combinations.
                 They can differ in `fixtop` and `fixbottom`, but then those
                 will be set to `None` in the returned object.
+            `sera` (None or list)
+                Only keep fits for sera in this list, or keep all sera if `None`.
+            `viruses` (None or list)
+                Only keep fits for viruses in this list, or keep all sera if `None`.
+            `serum_virus_replicates_to_drop` (None or list)
+                If a list, should specify `(serum, virus, replicates)` tuples, and those
+                particular fits are dropped.
 
         Returns:
             combined_fits (:class:`CurveFits`)
@@ -148,6 +161,31 @@ class CurveFits:
             combined_fits.df[combined_fits.replicate_col] != "average"
         ]
         combined_fits.df = combined_fits._get_avg_and_stderr_df(combined_fits.df)
+        for col, keeplist in [
+            (combined_fits.serum_col, sera),
+            (combined_fits.virus_col, viruses),
+        ]:
+            if keeplist is not None:
+                combined_fits.df = combined_fits.df[
+                    combined_fits.df[col].isin(keeplist)
+                ]
+        if serum_virus_replicates_to_drop:
+            assert "tup" not in set(combined_fits.df.columns)
+            combined_fits.df = (
+                combined_fits.df.assign(
+                    tup=lambda x: list(
+                        x[
+                            [
+                                combined_fits.serum_col,
+                                combined_fits.virus_col,
+                                combined_fits.replicate_col,
+                            ]
+                        ].itertuples()
+                    ),
+                )
+                .query("tup not in @serum_virus_replicates_to_drop")
+                .drop(columns="tup")
+            )
         if len(combined_fits.df) != len(
             combined_fits.df.groupby(
                 [
@@ -161,49 +199,40 @@ class CurveFits:
             raise ValueError("duplicated sera/virus/replicate in `curvefits_list`")
 
         # combine sera
-        combined_fits.sera = list(
-            dict.fromkeys([serum for f in curvefits_list for serum in f.sera])
-        )
-        assert set(combined_fits.sera) == set(combined_fits.df[combined_fits.serum_col])
+        combined_fits.sera = combined_fits.df[combined_fits.serum_col].unique().tolist()
 
         # combine allviruses
-        combined_fits.allviruses = list(
-            dict.fromkeys([virus for f in curvefits_list for virus in f.allviruses])
-        )
-        assert set(combined_fits.allviruses) == set(
-            combined_fits.df[combined_fits.virus_col]
+        combined_fits.allviruses = (
+            combined_fits.df[combined_fits.virus_col].unique().tolist()
         )
 
         # combine viruses and replicates
-        combined_fits.viruses = {}
-        combined_fits.replicates = {}
-        for serum in combined_fits.sera:
-            combined_fits.viruses[serum] = []
-            for virus in combined_fits.allviruses:
-                for f in curvefits_list:
-                    if (
-                        (serum in f.viruses)
-                        and (virus in f.viruses[serum])
-                        and (virus not in combined_fits.viruses[serum])
-                    ):
-                        combined_fits.viruses[serum].append(virus)
-                    if (serum, virus) in f.replicates:
-                        if (serum, virus) not in combined_fits.replicates:
-                            combined_fits.replicates[(serum, virus)] = f.replicates[
-                                (serum, virus)
-                            ]
-                        else:
-                            combined_fits.replicates[(serum, virus)] += f.replicates[
-                                (serum, virus)
-                            ]
-        for key, val in combined_fits.replicates.items():
-            val = dict.fromkeys(val)
-            if "average" in val:
-                del val["average"]
-            if len(val) != len(set(val)):
-                raise ValueError(f"duplicate replicate for {key}")
-            combined_fits.replicates[key] = list(val)
-            combined_fits.replicates[key].append("average")
+        assert combined_fits.serum_col != "viruses"
+        combined_fits.viruses = (
+            combined_fits.df.groupby(combined_fits.serum_col, sort=False)
+            .aggregate(
+                viruses=pd.NamedAgg(
+                    combined_fits.virus_col,
+                    lambda s: s.unique().tolist(),
+                ),
+            )["viruses"]
+            .to_dict()
+        )
+        assert combined_fits.serum_col != "replicate"
+        assert combined_fits.virus_col != "replicate"
+        combined_fits.replicates = (
+            combined_fits.df[combined_fits.df[combined_fits.replicate_col] != "average"]
+            .groupby([combined_fits.serum_col, combined_fits.virus_col], sort=False)
+            .aggregate(
+                replicates=pd.NamedAgg(
+                    combined_fits.replicate_col,
+                    lambda s: s.unique().tolist(),
+                ),
+            )["replicates"]
+            .to_dict()
+        )
+        for serum, virus in combined_fits.replicates:
+            combined_fits.replicates[(serum, virus)].append("average")
         serum_virus_rep_tups = [
             (serum, virus, rep)
             for (serum, virus), reps in combined_fits.replicates.items()
@@ -228,9 +257,12 @@ class CurveFits:
         combined_fits._hillcurves = {}
         for c in curvefits_list:
             for (serum, virus, replicate), curve in c._hillcurves.items():
-                assert serum in combined_fits.sera
-                assert virus in combined_fits.allviruses
-                if replicate != "average":
+                if (
+                    (serum in combined_fits.sera)
+                    and (virus in combined_fits.allviruses)
+                    and (replicate in combined_fits.replicates[(serum, virus)])
+                    and (replicate != "average")
+                ):
                     combined_fits._hillcurves[(serum, virus, replicate)] = curve
 
         combined_fits._fitparams = {}  # clear this cache
