@@ -160,7 +160,6 @@ class CurveFits:
         combined_fits.df = combined_fits.df[
             combined_fits.df[combined_fits.replicate_col] != "average"
         ]
-        combined_fits.df = combined_fits._get_avg_and_stderr_df(combined_fits.df)
         for col, keeplist in [
             (combined_fits.serum_col, sera),
             (combined_fits.virus_col, viruses),
@@ -180,12 +179,13 @@ class CurveFits:
                                 combined_fits.virus_col,
                                 combined_fits.replicate_col,
                             ]
-                        ].itertuples()
+                        ].itertuples(index=False, name=None)
                     ),
                 )
                 .query("tup not in @serum_virus_replicates_to_drop")
                 .drop(columns="tup")
             )
+        combined_fits.df = combined_fits._get_avg_and_stderr_df(combined_fits.df)
         if len(combined_fits.df) != len(
             combined_fits.df.groupby(
                 [
@@ -239,7 +239,7 @@ class CurveFits:
             for rep in reps
         ]
         assert len(serum_virus_rep_tups) == len(set(serum_virus_rep_tups))
-        assert set(serum_virus_rep_tups) == set(
+        combined_fits_tups = set(
             combined_fits.df[
                 [
                     combined_fits.serum_col,
@@ -248,7 +248,10 @@ class CurveFits:
                 ]
             ].itertuples(index=False, name=None)
         )
-        assert set(combined_fits.allviruses) == set(
+        assert (
+            set(serum_virus_rep_tups) == combined_fits_tups
+        ), f"{combined_fits_tups=}\n\n{serum_virus_rep_tups=}"
+        assert set(combined_fits.allviruses).issubset(
             v for f in curvefits_list for s in f.viruses.values() for v in s
         )
 
