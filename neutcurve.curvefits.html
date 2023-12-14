@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>curvefits &#8212; neutcurve 0.9.0 documentation</title>
+    <title>curvefits &#8212; neutcurve 0.10.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=44845c09" />
-    <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="_static/documentation_options.js?v=82662543"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -88,13 +88,20 @@ that serum and virus in the order they occur in <cite>data</cite>.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="neutcurve.curvefits.CurveFits.combineCurveFits">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combineCurveFits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curvefits_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.combineCurveFits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.combineCurveFits" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">combineCurveFits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curvefits_list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sera</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viruses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serum_virus_replicates_to_drop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/curvefits.html#CurveFits.combineCurveFits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.curvefits.CurveFits.combineCurveFits" title="Link to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Args:</dt><dd><dl class="simple">
 <dt><cite>curvesfit_list</cite> (list)</dt><dd><p>List of <a class="reference internal" href="#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">CurveFits</span></code></a> objects that are identical other than the
 data they contain and have unique virus/serum/replicate combinations.
 They can differ in <cite>fixtop</cite> and <cite>fixbottom</cite>, but then those
 will be set to <cite>None</cite> in the returned object.</p>
+</dd>
+<dt><cite>sera</cite> (None or list)</dt><dd><p>Only keep fits for sera in this list, or keep all sera if <cite>None</cite>.</p>
+</dd>
+<dt><cite>viruses</cite> (None or list)</dt><dd><p>Only keep fits for viruses in this list, or keep all sera if <cite>None</cite>.</p>
+</dd>
+<dt><cite>serum_virus_replicates_to_drop</cite> (None or list)</dt><dd><p>If a list, should specify <cite>(serum, virus, replicates)</cite> tuples, and those
+particular fits are dropped.</p>
 </dd>
 </dl>
 </dd>

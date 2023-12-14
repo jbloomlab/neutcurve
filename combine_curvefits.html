@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Combining CurveFits objects &#8212; neutcurve 0.9.0 documentation</title>
+    <title>Combining CurveFits objects &#8212; neutcurve 0.10.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=44845c09" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="_static/documentation_options.js?v=82662543"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -134,9 +134,169 @@
   return b + (t - b) / (1 + (c / m) ** s)
 </pre></div></div>
 </div>
-<p>Make sure we cannot combine two fits with overlapping entries, this should give an error due to shared serum/virus/replicates:</p>
+<p>Combine fits only for certain sera:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span>
+    <span class="n">neutcurve</span><span class="o">.</span><span class="n">CurveFits</span><span class="o">.</span><span class="n">combineCurveFits</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">fit1</span><span class="p">,</span> <span class="n">fit2</span><span class="p">],</span>
+        <span class="n">sera</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FI6v3&quot;</span><span class="p">],</span>
+        <span class="n">viruses</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;WT&quot;</span><span class="p">,</span> <span class="s2">&quot;P80D&quot;</span><span class="p">,</span> <span class="s2">&quot;V135T&quot;</span><span class="p">],</span>
+        <span class="n">serum_virus_replicates_to_drop</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;FI6v3&quot;</span><span class="p">,</span> <span class="s2">&quot;P80D&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;FI6v3&quot;</span><span class="p">,</span> <span class="s2">&quot;V135T&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;FI6v3&quot;</span><span class="p">,</span> <span class="s2">&quot;V135T&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;FI6v3&quot;</span><span class="p">,</span> <span class="s2">&quot;V135T&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fitParams</span><span class="p">(</span><span class="n">average_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>serum</th>
+      <th>virus</th>
+      <th>replicate</th>
+      <th>nreplicates</th>
+      <th>ic50</th>
+      <th>ic50_bound</th>
+      <th>ic50_str</th>
+      <th>midpoint</th>
+      <th>slope</th>
+      <th>top</th>
+      <th>bottom</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>FI6v3</td>
+      <td>WT</td>
+      <td>1</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.016702</td>
+      <td>interpolated</td>
+      <td>0.0167</td>
+      <td>0.016702</td>
+      <td>2.504670</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>FI6v3</td>
+      <td>WT</td>
+      <td>2</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.019020</td>
+      <td>interpolated</td>
+      <td>0.019</td>
+      <td>0.019020</td>
+      <td>2.512733</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>FI6v3</td>
+      <td>WT</td>
+      <td>3</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.015167</td>
+      <td>interpolated</td>
+      <td>0.0152</td>
+      <td>0.015167</td>
+      <td>1.877995</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>FI6v3</td>
+      <td>WT</td>
+      <td>average</td>
+      <td>3</td>
+      <td>0.017029</td>
+      <td>interpolated</td>
+      <td>0.017</td>
+      <td>0.017029</td>
+      <td>2.279316</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>FI6v3</td>
+      <td>P80D</td>
+      <td>1</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.012115</td>
+      <td>interpolated</td>
+      <td>0.0121</td>
+      <td>0.012115</td>
+      <td>2.024698</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>FI6v3</td>
+      <td>P80D</td>
+      <td>3</td>
+      <td>&lt;NA&gt;</td>
+      <td>0.012835</td>
+      <td>interpolated</td>
+      <td>0.0128</td>
+      <td>0.012835</td>
+      <td>2.059061</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>FI6v3</td>
+      <td>P80D</td>
+      <td>average</td>
+      <td>2</td>
+      <td>0.012472</td>
+      <td>interpolated</td>
+      <td>0.0125</td>
+      <td>0.012472</td>
+      <td>2.035435</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Make sure we cannot combine two fits with overlapping entries, this should give an error due to shared serum/virus/replicates:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># NBVAL_RAISES_EXCEPTION</span>
@@ -152,34 +312,24 @@
 <div class="highlight"><pre>
 <span class="ansi-red-fg">---------------------------------------------------------------------------</span>
 <span class="ansi-red-fg">ValueError</span>                                Traceback (most recent call last)
-Cell <span class="ansi-green-fg">In[6], line 3</span>
+Cell <span class="ansi-green-fg">In[7], line 3</span>
 <span class="ansi-green-intense-fg ansi-bold">      1</span> <span style="color: rgb(95,135,135)"># NBVAL_RAISES_EXCEPTION</span>
 <span class="ansi-green-fg">----&gt; 3</span> <span class="ansi-yellow-bg">neutcurve</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">CurveFits</span><span class="ansi-yellow-bg" style="color: rgb(98,98,98)">.</span><span class="ansi-yellow-bg">combineCurveFits</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">[</span><span class="ansi-yellow-bg">fit1</span><span class="ansi-yellow-bg">,</span><span class="ansi-yellow-bg"> </span><span class="ansi-yellow-bg">fit2_invalid</span><span class="ansi-yellow-bg">]</span><span class="ansi-yellow-bg">)</span>
 
-File <span class="ansi-green-fg">~/neutcurve/neutcurve/curvefits.py:161</span>, in <span class="ansi-cyan-fg">CurveFits.combineCurveFits</span><span class="ansi-blue-fg">(curvefits_list)</span>
-<span class="ansi-green-intense-fg ansi-bold">    150</span> combined_fits<span style="color: rgb(98,98,98)">.</span>df <span style="color: rgb(98,98,98)">=</span> combined_fits<span style="color: rgb(98,98,98)">.</span>_get_avg_and_stderr_df(combined_fits<span style="color: rgb(98,98,98)">.</span>df)
-<span class="ansi-green-intense-fg ansi-bold">    151</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">len</span>(combined_fits<span style="color: rgb(98,98,98)">.</span>df) <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(0,135,0)">len</span>(
-<span class="ansi-green-intense-fg ansi-bold">    152</span>     combined_fits<span style="color: rgb(98,98,98)">.</span>df<span style="color: rgb(98,98,98)">.</span>groupby(
-<span class="ansi-green-intense-fg ansi-bold">    153</span>         [
+File <span class="ansi-green-fg">~/neutcurve/neutcurve/curvefits.py:199</span>, in <span class="ansi-cyan-fg">CurveFits.combineCurveFits</span><span class="ansi-blue-fg">(curvefits_list, sera, viruses, serum_virus_replicates_to_drop)</span>
+<span class="ansi-green-intense-fg ansi-bold">    188</span> combined_fits<span style="color: rgb(98,98,98)">.</span>df <span style="color: rgb(98,98,98)">=</span> combined_fits<span style="color: rgb(98,98,98)">.</span>_get_avg_and_stderr_df(combined_fits<span style="color: rgb(98,98,98)">.</span>df)
+<span class="ansi-green-intense-fg ansi-bold">    189</span> <span class="ansi-bold" style="color: rgb(0,135,0)">if</span> <span style="color: rgb(0,135,0)">len</span>(combined_fits<span style="color: rgb(98,98,98)">.</span>df) <span style="color: rgb(98,98,98)">!=</span> <span style="color: rgb(0,135,0)">len</span>(
+<span class="ansi-green-intense-fg ansi-bold">    190</span>     combined_fits<span style="color: rgb(98,98,98)">.</span>df<span style="color: rgb(98,98,98)">.</span>groupby(
+<span class="ansi-green-intense-fg ansi-bold">    191</span>         [
 <span class="ansi-green-fg">   (...)</span>
-<span class="ansi-green-intense-fg ansi-bold">    159</span>     )
-<span class="ansi-green-intense-fg ansi-bold">    160</span> ):
-<span class="ansi-green-fg">--&gt; 161</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">duplicated sera/virus/replicate in `curvefits_list`</span><span style="color: rgb(175,0,0)">&#34;</span>)
-<span class="ansi-green-intense-fg ansi-bold">    163</span> <span style="color: rgb(95,135,135)"># combine sera</span>
-<span class="ansi-green-intense-fg ansi-bold">    164</span> combined_fits<span style="color: rgb(98,98,98)">.</span>sera <span style="color: rgb(98,98,98)">=</span> <span style="color: rgb(0,135,0)">list</span>(
-<span class="ansi-green-intense-fg ansi-bold">    165</span>     <span style="color: rgb(0,135,0)">dict</span><span style="color: rgb(98,98,98)">.</span>fromkeys([serum <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> f <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> curvefits_list <span class="ansi-bold" style="color: rgb(0,135,0)">for</span> serum <span class="ansi-bold" style="color: rgb(175,0,255)">in</span> f<span style="color: rgb(98,98,98)">.</span>sera])
-<span class="ansi-green-intense-fg ansi-bold">    166</span> )
+<span class="ansi-green-intense-fg ansi-bold">    197</span>     )
+<span class="ansi-green-intense-fg ansi-bold">    198</span> ):
+<span class="ansi-green-fg">--&gt; 199</span>     <span class="ansi-bold" style="color: rgb(0,135,0)">raise</span> <span class="ansi-bold" style="color: rgb(215,95,95)">ValueError</span>(<span style="color: rgb(175,0,0)">&#34;</span><span style="color: rgb(175,0,0)">duplicated sera/virus/replicate in `curvefits_list`</span><span style="color: rgb(175,0,0)">&#34;</span>)
+<span class="ansi-green-intense-fg ansi-bold">    201</span> <span style="color: rgb(95,135,135)"># combine sera</span>
+<span class="ansi-green-intense-fg ansi-bold">    202</span> combined_fits<span style="color: rgb(98,98,98)">.</span>sera <span style="color: rgb(98,98,98)">=</span> combined_fits<span style="color: rgb(98,98,98)">.</span>df[combined_fits<span style="color: rgb(98,98,98)">.</span>serum_col]<span style="color: rgb(98,98,98)">.</span>unique()<span style="color: rgb(98,98,98)">.</span>tolist()
 
 <span class="ansi-red-fg">ValueError</span>: duplicated sera/virus/replicate in `curvefits_list`
 </pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
 </div>
 </section>
 

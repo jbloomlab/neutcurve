@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.curvefits &#8212; neutcurve 0.9.0 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 0.10.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=44845c09" />
-    <script src="../../_static/documentation_options.js?v=39bb1c6d"></script>
+    <script src="../../_static/documentation_options.js?v=82662543"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -105,7 +105,13 @@
 <div class="viewcode-block" id="CurveFits.combineCurveFits">
 <a class="viewcode-back" href="../../neutcurve.curvefits.html#neutcurve.curvefits.CurveFits.combineCurveFits">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">combineCurveFits</span><span class="p">(</span><span class="n">curvefits_list</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">combineCurveFits</span><span class="p">(</span>
+        <span class="n">curvefits_list</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">sera</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">viruses</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">serum_virus_replicates_to_drop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            `curvesfit_list` (list)</span>
@@ -113,6 +119,13 @@
 <span class="sd">                data they contain and have unique virus/serum/replicate combinations.</span>
 <span class="sd">                They can differ in `fixtop` and `fixbottom`, but then those</span>
 <span class="sd">                will be set to `None` in the returned object.</span>
+<span class="sd">            `sera` (None or list)</span>
+<span class="sd">                Only keep fits for sera in this list, or keep all sera if `None`.</span>
+<span class="sd">            `viruses` (None or list)</span>
+<span class="sd">                Only keep fits for viruses in this list, or keep all sera if `None`.</span>
+<span class="sd">            `serum_virus_replicates_to_drop` (None or list)</span>
+<span class="sd">                If a list, should specify `(serum, virus, replicates)` tuples, and those</span>
+<span class="sd">                particular fits are dropped.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            combined_fits (:class:`CurveFits`)</span>
@@ -183,6 +196,31 @@
         <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span>
             <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">replicate_col</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span>
         <span class="p">]</span>
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">keeplist</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span> <span class="n">sera</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">,</span> <span class="n">viruses</span><span class="p">),</span>
+        <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">keeplist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span>
+                    <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">keeplist</span><span class="p">)</span>
+                <span class="p">]</span>
+        <span class="k">if</span> <span class="n">serum_virus_replicates_to_drop</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="s2">&quot;tup&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+                    <span class="n">tup</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span>
+                        <span class="n">x</span><span class="p">[</span>
+                            <span class="p">[</span>
+                                <span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span>
+                                <span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">,</span>
+                                <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicate_col</span><span class="p">,</span>
+                            <span class="p">]</span>
+                        <span class="p">]</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;tup not in @serum_virus_replicates_to_drop&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s2">&quot;tup&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">_get_avg_and_stderr_df</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span>
             <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
@@ -197,56 +235,47 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;duplicated sera/virus/replicate in `curvefits_list`&quot;</span><span class="p">)</span>
 
         <span class="c1"># combine sera</span>
-        <span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">([</span><span class="n">serum</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">curvefits_list</span> <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">sera</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">])</span>
+        <span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span> <span class="o">=</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="c1"># combine allviruses</span>
-        <span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">([</span><span class="n">virus</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">curvefits_list</span> <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">allviruses</span><span class="p">])</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span>
-            <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">]</span>
+        <span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="c1"># combine viruses and replicates</span>
-        <span class="n">combined_fits</span><span class="o">.</span><span class="n">viruses</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
-            <span class="n">combined_fits</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">curvefits_list</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="p">(</span><span class="n">serum</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">viruses</span><span class="p">)</span>
-                        <span class="ow">and</span> <span class="p">(</span><span class="n">virus</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">])</span>
-                        <span class="ow">and</span> <span class="p">(</span><span class="n">virus</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">])</span>
-                    <span class="p">):</span>
-                        <span class="n">combined_fits</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">virus</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">replicates</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">:</span>
-                            <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">replicates</span><span class="p">[</span>
-                                <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)</span>
-                            <span class="p">]</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">replicates</span><span class="p">[</span>
-                                <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)</span>
-                            <span class="p">]</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;average&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">:</span>
-                <span class="k">del</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">val</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;duplicate replicate for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-            <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span> <span class="o">!=</span> <span class="s2">&quot;viruses&quot;</span>
+        <span class="n">combined_fits</span><span class="o">.</span><span class="n">viruses</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">aggregate</span><span class="p">(</span>
+                <span class="n">viruses</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">NamedAgg</span><span class="p">(</span>
+                    <span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="p">),</span>
+            <span class="p">)[</span><span class="s2">&quot;viruses&quot;</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span> <span class="o">!=</span> <span class="s2">&quot;replicate&quot;</span>
+        <span class="k">assert</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span> <span class="o">!=</span> <span class="s2">&quot;replicate&quot;</span>
+        <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">replicate_col</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">virus_col</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">aggregate</span><span class="p">(</span>
+                <span class="n">replicates</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">NamedAgg</span><span class="p">(</span>
+                    <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicate_col</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+                <span class="p">),</span>
+            <span class="p">)[</span><span class="s2">&quot;replicates&quot;</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">serum</span><span class="p">,</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">:</span>
+            <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">)</span>
         <span class="n">serum_virus_rep_tups</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">,</span> <span class="n">rep</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">),</span> <span class="n">reps</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">rep</span> <span class="ow">in</span> <span class="n">reps</span>
         <span class="p">]</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">serum_virus_rep_tups</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">serum_virus_rep_tups</span><span class="p">))</span>
-        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">serum_virus_rep_tups</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">combined_fits_tups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
             <span class="n">combined_fits</span><span class="o">.</span><span class="n">df</span><span class="p">[</span>
                 <span class="p">[</span>
                     <span class="n">combined_fits</span><span class="o">.</span><span class="n">serum_col</span><span class="p">,</span>
@@ -255,7 +284,10 @@
                 <span class="p">]</span>
             <span class="p">]</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">set</span><span class="p">(</span><span class="n">serum_virus_rep_tups</span><span class="p">)</span> <span class="o">==</span> <span class="n">combined_fits_tups</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">combined_fits_tups</span><span class="si">=}</span><span class="se">\n\n</span><span class="si">{</span><span class="n">serum_virus_rep_tups</span><span class="si">=}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
             <span class="n">v</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">curvefits_list</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">viruses</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s</span>
         <span class="p">)</span>
 
@@ -264,9 +296,12 @@
         <span class="n">combined_fits</span><span class="o">.</span><span class="n">_hillcurves</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">curvefits_list</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">,</span> <span class="n">replicate</span><span class="p">),</span> <span class="n">curve</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">_hillcurves</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">assert</span> <span class="n">serum</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span>
-                <span class="k">assert</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span>
-                <span class="k">if</span> <span class="n">replicate</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="p">(</span><span class="n">serum</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">sera</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">virus</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">allviruses</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">replicate</span> <span class="ow">in</span> <span class="n">combined_fits</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)])</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">replicate</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="n">combined_fits</span><span class="o">.</span><span class="n">_hillcurves</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">,</span> <span class="n">replicate</span><span class="p">)]</span> <span class="o">=</span> <span class="n">curve</span>
 
         <span class="n">combined_fits</span><span class="o">.</span><span class="n">_fitparams</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># clear this cache</span>
