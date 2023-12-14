@@ -102,9 +102,6 @@ class CurveFits:
         ):
             raise ValueError(f"{curvefits_list=} not list of at least one `CurveFits`")
 
-        if len(curvefits_list) == 1:
-            return curvefits_list[0]
-
         attrs_must_be_same = [  # attributes that must be same among all objects
             "conc_col",
             "fracinf_col",
