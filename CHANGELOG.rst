@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+0.10.1
+------
+
+Fixed
++++++
+- Fixed bug in ``CurveFits.combineCurveFits`` when using only one fit to combine and specifying one of ``sera``, ``viruses``, or ``serum_virus_replicates_to_drop``
+
 0.10.0
 ------
 
