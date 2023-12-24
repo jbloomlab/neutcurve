@@ -19,3 +19,6 @@ ignore = [
     "D415",
     "D416",
 ]
+builtins = [
+    "display",  # builtin of Jupyter notebooks
+]

@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+1.0.0
+-----
+
+Added
++++++
+- Add ``test_curves.ipynb`` example.
+
 0.10.1
 ------
 
