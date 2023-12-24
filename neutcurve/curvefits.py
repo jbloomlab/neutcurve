@@ -93,7 +93,7 @@ class CurveFits:
 
         Returns:
             combined_fits (:class:`CurveFits`)
-                A `:class:`CurveFits` objec that combines all the virus/serum/replicate
+                A :class:`CurveFits` object that combines all the virus/serum/replicate
                 combinations in `curvefits_list`.
         """
         if not (
