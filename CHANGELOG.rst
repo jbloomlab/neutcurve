@@ -20,6 +20,8 @@ Added
   - Add ``HillCurveFittingError``, and when fitting fails raise this exception rather than ``RuntimeError`` as was done previously.
   - Improve error messages for some exceptions and change a few exception types.
 
+- Add ``allow_reps_unequal_conc`` to ``CurveFits`` to all serum/virus replicates with different concentrations
+
 0.10.1
 ------
 

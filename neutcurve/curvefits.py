@@ -34,10 +34,8 @@ class CurveFits:
         `virus_col` (str)
             Column in `data` with name of virus being neutralized.
         `replicate_col` (str`)
-            Column in data with name of replicate of this measurement.
-            Replicates must all have the same concentrations for each
-            serum / virus combination. Replicates can **not** be named
-            'average' as we compute the average from the replicates.
+            Column in data with name of replicate of this measurement. Replicates can
+            **not** be named 'average' as we compute the average from the replicates.
         `fixbottom` (`False` or float)
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `fixtop` (`False` or float)
@@ -48,6 +46,10 @@ class CurveFits:
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `init_slope` (float)
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `allow_reps_unequal_conc` (bool)
+            Allow replicates for the same serum/virus to have unequal concentrations;
+            otherwise all replicates for a serum/virus must have measurements at same
+            concentrations.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
@@ -291,6 +293,7 @@ class CurveFits:
         init_slope=1.5,
         fixbottom=0,
         fixtop=1,
+        allow_reps_unequal_conc=False,
     ):
         """See main class docstring."""
         # make args into attributes
@@ -355,18 +358,21 @@ class CurveFits:
                         raise ValueError(
                             f"duplicate concentrations for {serum=}, {virus=}, {rep1=}"
                         )
-                    for rep2 in virus_reps[i + 1 :]:
-                        conc2 = (
-                            virus_data.query(f"{self.replicate_col} == @rep1")[
-                                self.conc_col
-                            ]
-                            .sort_values()
-                            .tolist()
-                        )
-                        if conc1 != conc2:
-                            raise ValueError(
-                                f"{rep1=}, {rep2=} differ conc {serum=} {virus=}"
+                    if not allow_reps_unequal_conc:
+                        for rep2 in virus_reps[i + 1 :]:
+                            conc2 = (
+                                virus_data.query(f"{self.replicate_col} == @rep1")[
+                                    self.conc_col
+                                ]
+                                .sort_values()
+                                .tolist()
                             )
+                            if conc1 != conc2:
+                                raise ValueError(
+                                    f"{rep1=}, {rep2=} differ conc {serum=} {virus=}\n"
+                                    "Replicates for serum/virus must have same "
+                                    "concentrations unless allow_reps_unequal_conc=True"
+                                )
         self.allviruses = collections.OrderedDict()
         for serum in self.sera:
             for virus in self.viruses[serum]:
