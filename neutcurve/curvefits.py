@@ -44,6 +44,10 @@ class CurveFits:
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `infectivity_or_neutralized` ({'infectivity', 'neutralized'})
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `fix_slope_first` (bool)
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `init_slope` (float)
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
@@ -93,7 +97,7 @@ class CurveFits:
 
         Returns:
             combined_fits (:class:`CurveFits`)
-                A `:class:`CurveFits` objec that combines all the virus/serum/replicate
+                A :class:`CurveFits` object that combines all the virus/serum/replicate
                 combinations in `curvefits_list`.
         """
         if not (
@@ -109,6 +113,8 @@ class CurveFits:
             "virus_col",
             "replicate_col",
             "_infectivity_or_neutralized",
+            "_fix_slope_first",
+            "_init_slope",
         ]
         attrs_can_differ = [  # attributes that can differ among objects
             "fixbottom",
@@ -281,6 +287,8 @@ class CurveFits:
         virus_col="virus",
         replicate_col="replicate",
         infectivity_or_neutralized="infectivity",
+        fix_slope_first=True,
+        init_slope=1.5,
         fixbottom=0,
         fixtop=1,
     ):
@@ -294,6 +302,8 @@ class CurveFits:
         self.fixbottom = fixbottom
         self.fixtop = fixtop
         self._infectivity_or_neutralized = infectivity_or_neutralized
+        self._fix_slope_first = fix_slope_first
+        self._init_slope = init_slope
 
         # check for required columns
         cols = [
@@ -453,7 +463,9 @@ class CurveFits:
                     fs_stderr=fs_stderr,
                     fixbottom=self.fixbottom,
                     fixtop=self.fixtop,
-                    infectivity_or_neutralized=(self._infectivity_or_neutralized),
+                    infectivity_or_neutralized=self._infectivity_or_neutralized,
+                    fix_slope_first=self._fix_slope_first,
+                    init_slope=self._init_slope,
                 )
             except RuntimeError as e:
                 idata.to_csv("temp.csv", index=False)

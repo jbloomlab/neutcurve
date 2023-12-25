@@ -19,6 +19,7 @@ Contents
    hillcurve_example
    curvefits_example
    combine_curvefits
+   test_curves
    neutcurve
    package_index
    acknowledgments
