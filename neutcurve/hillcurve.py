@@ -456,29 +456,85 @@ class HillCurve:
             evalfunc = self.evaluate
             xdata = self.cs
 
-        if fixtop is False and fixbottom is False:
-            initguess = [midpoint, slope, bottom, top]
+        if fix_slope:
+            if fixtop is False and fixbottom is False:
+                initguess = [midpoint, bottom, top]
 
-            def func(c, m, s, b, t):
-                return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
+                def func(c, m, b, t):
+                    return evalfunc(c, m, slope, b, t, self._infectivity_or_neutralized)
 
-        elif fixtop is False:
-            initguess = [midpoint, slope, top]
+            elif fixtop is False:
+                initguess = [midpoint, top]
 
-            def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t, self._infectivity_or_neutralized)
+                def func(c, m, t):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        bottom,
+                        t,
+                        self._infectivity_or_neutralized,
+                    )
 
-        elif fixbottom is False:
-            initguess = [midpoint, slope, bottom]
+            elif fixbottom is False:
+                initguess = [midpoint, bottom]
 
-            def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+                def func(c, m, b):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        b,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
+
+            else:
+                initguess = [midpoint]
+
+                def func(c, m):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        bottom,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
 
         else:
-            initguess = [midpoint, slope]
+            if fixtop is False and fixbottom is False:
+                initguess = [midpoint, slope, bottom, top]
 
-            def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top, self._infectivity_or_neutralized)
+                def func(c, m, s, b, t):
+                    return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
+
+            elif fixtop is False:
+                initguess = [midpoint, slope, top]
+
+                def func(c, m, s, t):
+                    return evalfunc(
+                        c, m, s, bottom, t, self._infectivity_or_neutralized
+                    )
+
+            elif fixbottom is False:
+                initguess = [midpoint, slope, bottom]
+
+                def func(c, m, s, b):
+                    return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+
+            else:
+                initguess = [midpoint, slope]
+
+                def func(c, m, s):
+                    return evalfunc(
+                        c,
+                        m,
+                        s,
+                        bottom,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
 
         (popt, pcov) = scipy.optimize.curve_fit(
             f=func,
@@ -496,19 +552,38 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
-        slope = popt[1]
-        params_stderr = {"midpoint": perr[0], "slope": perr[1], "top": 0, "bottom": 0}
-        if fixbottom is False and fixtop is False:
-            bottom = popt[2]
-            params_stderr["bottom"] = perr[2]
-            top = popt[3]
-            params_stderr["top"] = perr[3]
-        elif fixbottom is False:
-            bottom = popt[2]
-            params_stderr["bottom"] = perr[2]
-        elif fixtop is False:
-            top = popt[2]
-            params_stderr["top"] = perr[2]
+        if fix_slope:
+            params_stderr = {"midpoint": perr[0], "slope": 0, "top": 0, "bottom": 0}
+            if fixbottom is False and fixtop is False:
+                bottom = popt[1]
+                params_stderr["bottom"] = perr[1]
+                top = popt[2]
+                params_stderr["top"] = perr[2]
+            elif fixbottom is False:
+                bottom = popt[1]
+                params_stderr["bottom"] = perr[1]
+            elif fixtop is False:
+                top = popt[1]
+                params_stderr["top"] = perr[1]
+        else:
+            slope = popt[1]
+            params_stderr = {
+                "midpoint": perr[0],
+                "slope": perr[1],
+                "top": 0,
+                "bottom": 0,
+            }
+            if fixbottom is False and fixtop is False:
+                bottom = popt[2]
+                params_stderr["bottom"] = perr[2]
+                top = popt[3]
+                params_stderr["top"] = perr[3]
+            elif fixbottom is False:
+                bottom = popt[2]
+                params_stderr["bottom"] = perr[2]
+            elif fixtop is False:
+                top = popt[2]
+                params_stderr["top"] = perr[2]
 
         return (midpoint, slope, bottom, top), params_stderr
 
@@ -532,38 +607,99 @@ class HillCurve:
             evalfunc = self._evaluate_log
             xdata = numpy.log(self.cs)
             midpoint = numpy.log(midpoint)
-            bounds = [(None, None), (0, None)]
+            bounds = [(None, None)]
         else:
             evalfunc = self.evaluate
             xdata = self.cs
-            bounds = [(0, None), (0, None)]
+            bounds = [(0, None)]
 
-        if fixtop is False and fixbottom is False:
-            initguess = [midpoint, slope, bottom, top]
-            bounds = bounds + [(None, None), (None, None)]
+        if fix_slope:
+            if fixtop is False and fixbottom is False:
+                initguess = [midpoint, bottom, top]
+                bounds = bounds + [(None, None), (None, None)]
 
-            def func(c, m, s, b, t):
-                return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
+                def func(c, m, b, t):
+                    return evalfunc(c, m, slope, b, t, self._infectivity_or_neutralized)
 
-        elif fixtop is False:
-            initguess = [midpoint, slope, top]
-            bounds.append((bottom, None))
+            elif fixtop is False:
+                initguess = [midpoint, top]
+                bounds.append((bottom, None))
 
-            def func(c, m, s, t):
-                return evalfunc(c, m, s, bottom, t, self._infectivity_or_neutralized)
+                def func(c, m, t):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        bottom,
+                        t,
+                        self._infectivity_or_neutralized,
+                    )
 
-        elif fixbottom is False:
-            initguess = [midpoint, slope, bottom]
-            bounds.append((None, top))
+            elif fixbottom is False:
+                initguess = [midpoint, bottom]
+                bounds.append((None, top))
 
-            def func(c, m, s, b):
-                return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+                def func(c, m, b):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        b,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
+
+            else:
+                initguess = [midpoint]
+
+                def func(c, m):
+                    return evalfunc(
+                        c,
+                        m,
+                        slope,
+                        bottom,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
 
         else:
-            initguess = [midpoint, slope]
+            bounds.append((0, None))
 
-            def func(c, m, s):
-                return evalfunc(c, m, s, bottom, top, self._infectivity_or_neutralized)
+            if fixtop is False and fixbottom is False:
+                initguess = [midpoint, slope, bottom, top]
+                bounds = bounds + [(None, None), (None, None)]
+
+                def func(c, m, s, b, t):
+                    return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
+
+            elif fixtop is False:
+                initguess = [midpoint, slope, top]
+                bounds.append((bottom, None))
+
+                def func(c, m, s, t):
+                    return evalfunc(
+                        c, m, s, bottom, t, self._infectivity_or_neutralized
+                    )
+
+            elif fixbottom is False:
+                initguess = [midpoint, slope, bottom]
+                bounds.append((None, top))
+
+                def func(c, m, s, b):
+                    return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
+
+            else:
+                initguess = [midpoint, slope]
+
+                def func(c, m, s):
+                    return evalfunc(
+                        c,
+                        m,
+                        s,
+                        bottom,
+                        top,
+                        self._infectivity_or_neutralized,
+                    )
 
         def min_func(p):
             """Evaluate to zero when perfect fit."""
@@ -582,14 +718,23 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = res.x[0]
-        slope = res.x[1]
-        if fixbottom is False and fixtop is False:
-            bottom = res.x[2]
-            top = res.x[3]
-        elif fixbottom is False:
-            bottom = res.x[2]
-        elif fixtop is False:
-            top = res.x[2]
+        if fix_slope:
+            if fixbottom is False and fixtop is False:
+                bottom = res.x[1]
+                top = res.x[2]
+            elif fixbottom is False:
+                bottom = res.x[1]
+            elif fixtop is False:
+                top = res.x[1]
+        else:
+            slope = res.x[1]
+            if fixbottom is False and fixtop is False:
+                bottom = res.x[2]
+                top = res.x[3]
+            elif fixbottom is False:
+                bottom = res.x[2]
+            elif fixtop is False:
+                top = res.x[2]
 
         return (midpoint, slope, bottom, top)
 
