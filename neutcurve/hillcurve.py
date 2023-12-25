@@ -19,6 +19,12 @@ import pandas as pd
 import scipy.optimize
 
 
+class HillCurveFittingError(Exception):
+    """Error fitting a :class:`HillCurve`."""
+
+    pass
+
+
 class HillCurve:
     r"""A fitted Hill curve, optionally with free baselines.
 
@@ -342,11 +348,11 @@ class HillCurve:
                     '`infectivity_or_neutralized="infectivity"'
                 )
         else:
-            raise ValueError("invalid `infectivity_or_neutralized`")
+            raise ValueError(f"invalid {infectivity_or_neutralized=}")
         self._infectivity_or_neutralized = infectivity_or_neutralized
 
         if any(self.cs <= 0):
-            raise ValueError("concentrations in `cs` must all be > 0")
+            raise ValueError(f"concentrations must all be > 0\n{self.cs=}")
 
         # create initial guess of `(midpoint, slope, bottom, top)`
         # make initial guess for top and bottom
@@ -354,13 +360,13 @@ class HillCurve:
             top = max(1, self.fs.max())
         else:
             if not isinstance(fixtop, (int, float)):
-                raise ValueError("`fixtop` is not `False` or a number")
+                raise ValueError(f"{fixtop=} is not `False` or a number")
             top = fixtop
         if fixbottom is False:
             bottom = min(0, self.fs.min())
         else:
             if not isinstance(fixbottom, (int, float)):
-                raise ValueError("`fixbottom` is not `False` or a number")
+                raise ValueError(f"{fixbottom=} is not `False` or a number")
             bottom = fixbottom
         # make initial guess for midpoint
         # if midpoint guess outside range, guess outside range by amount
@@ -402,6 +408,8 @@ class HillCurve:
                 init_tup=init_tup,
                 fix_slope=False,
             )
+        # A RuntimeError is raised by scipy if curve_fit fails:
+        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
         except RuntimeError:
             # curve_fit failed, try using minimize
             for method in ["TNC", "L-BFGS-B", "SLSQP", "Powell"]:
@@ -428,7 +436,7 @@ class HillCurve:
                 if fit_tup is not False:
                     break
             else:
-                raise RuntimeError(f"fit failed:\ncs={self.cs}\nfs={self.fs}")
+                raise HillCurveFittingError(f"fit failed:\n{self.cs=}\n{self.fs=}")
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
@@ -787,11 +795,11 @@ class HillCurve:
             elif bound == "lower":
                 return self.cs[0]
             else:
-                raise ValueError(f"invalid `bound` {bound}")
+                raise ValueError(f"invalid {bound=}")
         elif method == "interpolate":
             return None
         else:
-            raise ValueError(f"invalid `method` of {method}")
+            raise ValueError(f"invalid {method=}")
 
     def ic50(self, method="interpolate"):
         r"""IC50 value.
@@ -852,7 +860,7 @@ class HillCurve:
             elif icXX == self.cs[-1]:
                 return "lower"
             else:
-                raise RuntimeError(f"icXX not bound for {fracneut}")
+                raise ValueError(f"icXX not bound for {fracneut=}")
 
     def ic50_bound(self):
         """Is IC50 'interpolated', or an 'upper' or 'lower' bound."""
@@ -900,7 +908,7 @@ class HillCurve:
         elif infectivity_or_neutralized == "neutralized":
             return t + (b - t) / (1 + (c / m) ** s)
         else:
-            raise ValueError("invalid `infectivity_or_neutralized`")
+            raise ValueError(f"invalid {infectivity_or_neutralized=}")
 
     @staticmethod
     def _evaluate_log(logc, logm, s, b, t, infectivity_or_neutralized="infectivity"):
@@ -910,7 +918,7 @@ class HillCurve:
         elif infectivity_or_neutralized == "neutralized":
             return t + (b - t) / (1 + numpy.exp(s * (logc - logm)))
         else:
-            raise ValueError("invalid `infectivity_or_neutralized`")
+            raise ValueError(f"invalid {infectivity_or_neutralized=}")
 
     def plot(
         self,
@@ -1094,11 +1102,11 @@ def concentrationRange(bottom, top, npoints=200, extend=0.1):
 
     """
     if top <= bottom:
-        raise ValueError("`bottom` must be less than `top`")
+        raise ValueError(f"{bottom=} must be less than {top=}")
     if bottom <= 0:
-        raise ValueError("`bottom` must be greater than zero")
+        raise ValueError("{bottom=} must be greater than zero")
     if extend < 0:
-        raise ValueError("`extend` must be >= 0")
+        raise ValueError("{extend=} must be >= 0")
 
     logbottom = math.log10(bottom)
     logtop = math.log10(top)

@@ -20,4 +20,4 @@ __version__ = "1.0.0"
 __url__ = "https://github.com/jbloomlab/neutcurve"
 
 from neutcurve.curvefits import CurveFits  # noqa: F401
-from neutcurve.hillcurve import HillCurve  # noqa: F401
+from neutcurve.hillcurve import HillCurve, HillCurveFittingError  # noqa: F401

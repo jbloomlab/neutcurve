@@ -353,7 +353,7 @@ class CurveFits:
                     )
                     if len(conc1) != len(set(conc1)):
                         raise ValueError(
-                            "duplicate concentrations for " f"{serum}, {virus}, {rep1}"
+                            f"duplicate concentrations for {serum=}, {virus=}, {rep1=}"
                         )
                     for rep2 in virus_reps[i + 1 :]:
                         conc2 = (
@@ -365,9 +365,7 @@ class CurveFits:
                         )
                         if conc1 != conc2:
                             raise ValueError(
-                                f"replicates {rep1} and {rep2} "
-                                "have different concentrations "
-                                f"for {serum}, {virus}"
+                                f"{rep1=}, {rep2=} differ conc {serum=} {virus=}"
                             )
         self.allviruses = collections.OrderedDict()
         for serum in self.sera:
@@ -432,16 +430,11 @@ class CurveFits:
 
         if key not in self._hillcurves:
             if serum not in self.sera:
-                raise ValueError(f"invalid `serum` of {serum}")
+                raise ValueError(f"invalid {serum=}")
             if virus not in self.viruses[serum]:
-                raise ValueError(
-                    f"invalid `virus` of {virus} for " f"`serum` of {serum}"
-                )
+                raise ValueError(f"invalid {virus=} for {serum=}")
             if replicate not in self.replicates[(serum, virus)]:
-                raise ValueError(
-                    f"invalid `replicate` of {replicate} for "
-                    f"`serum` of {serum} and `virus` of {virus}"
-                )
+                raise ValueError(f"invalid {replicate=} for {serum=} {virus=}")
 
             idata = self.df.query(
                 f"({self.serum_col} == @serum) & "
@@ -449,7 +442,7 @@ class CurveFits:
                 f"({self.replicate_col} == @replicate)"
             )
             if len(idata) < 1:
-                raise RuntimeError(f"no data for serum {serum} virus {virus}")
+                raise ValueError(f"no data for {serum=} {virus=}")
 
             if idata["stderr"].isna().any():
                 fs_stderr = None  # cannot use stderr if any concentrations lack it
@@ -467,13 +460,12 @@ class CurveFits:
                     fix_slope_first=self._fix_slope_first,
                     init_slope=self._init_slope,
                 )
-            except RuntimeError as e:
-                idata.to_csv("temp.csv", index=False)
+            except neutcurve.HillCurveFittingError as e:
+                idata.to_csv("_temp.csv", index=False)
                 # following here: https://stackoverflow.com/a/46091127
-                raise RuntimeError(
-                    "Error while fitting HillCurve for "
-                    f"serum {serum}, virus {virus}, "
-                    f"replicate {replicate}.\nData are:\n" + str(idata)
+                raise neutcurve.HillCurveFittingError(
+                    f"Error fitting HillCurve for {serum=} {virus=} {replicate=}\n"
+                    f"Data are:\n{idata}"
                 ) from e
 
             self._hillcurves[key] = curve
@@ -532,7 +524,7 @@ class CurveFits:
 
         """
         if ic50_error not in {None, "fit_stdev"}:
-            raise ValueError(f"invalid ic50_error of {ic50_error}")
+            raise ValueError(f"invalid {ic50_error=}")
 
         ics = tuple(ics)
         ic_colprefixes = [f"ic{{:.{ics_precision}f}}".format(ic) for ic in ics]
@@ -660,10 +652,10 @@ class CurveFits:
         if titles is None:
             titles = sera
         elif len(sera) != len(titles):
-            raise ValueError(f"`titles`, `sera` != length:\n{titles}\n{sera}")
+            raise ValueError(f"`titles`, `sera` != length:\n{titles=}\n{sera=}")
 
         if max_viruses_per_subplot < 1:
-            raise ValueError("`max_viruses_per_subplot` must be at least 1")
+            raise ValueError(f"{max_viruses_per_subplot=} must be at least 1")
 
         # get color scheme for viruses
         if virus_to_color_marker:
@@ -715,11 +707,11 @@ class CurveFits:
             unshared = int(bool(len(serum_unshared_viruses)))
             if len(serum_shared_viruses) > max_viruses_per_subplot - unshared:
                 raise ValueError(
-                    f"serum {serum} has too many subplot-shared "
+                    f"{serum=} has too many subplot-shared "
                     "viruses (in `all_subplots`) relative to "
                     "value of `max_viruses_per_subplot`:\n"
-                    f"{serum_shared_viruses} is more than "
-                    f"{max_viruses_per_subplot} viruses."
+                    f"{serum_shared_viruses=} is more than "
+                    f"{max_viruses_per_subplot=} viruses."
                 )
             shared_curvelist = []
             for virus in serum_shared_viruses + serum_unshared_viruses:
@@ -735,7 +727,7 @@ class CurveFits:
                         assert ivirus < max_viruses_per_subplot
                     else:
                         raise ValueError(
-                            f"serum {serum} has more than "
+                            f"{serum=} has more than "
                             "`max_viruses_per_subplot` viruses "
                             "and `multi_serum_subplots` is False"
                         )
@@ -768,11 +760,11 @@ class CurveFits:
 
         # get number of columns
         if (nrow is not None) and (ncol is not None):
-            raise ValueError("either `ncol` or `nrow` must be `None`")
+            raise ValueError(f"either {ncol=} or {nrow=} must be `None`")
         elif isinstance(nrow, int) and nrow > 0:
             ncol = math.ceil(len(plotlist) / nrow)
         elif not (isinstance(ncol, int) and ncol > 0):
-            raise ValueError("`nrow` or `ncol` must be integer > 0")
+            raise ValueError(f"{nrow=} or {ncol=} must be integer > 0")
 
         # convert plotlist to plots dict for `plotGrid`
         plots = {}
@@ -867,7 +859,7 @@ class CurveFits:
             raise ValueError(f"`titles`, `viruses` != length:\n" f"{titles}\n{viruses}")
 
         if max_sera_per_subplot < 1:
-            raise ValueError("`max_sera_per_subplot` must be at least 1")
+            raise ValueError(f"{max_sera_per_subplot=} must be at least 1")
 
         # get color scheme for sera
         if serum_to_color_marker:
@@ -920,11 +912,11 @@ class CurveFits:
             unshared = int(bool(len(virus_unshared_sera)))
             if len(virus_shared_sera) > max_sera_per_subplot - unshared:
                 raise ValueError(
-                    f"virus {virus} has too many subplot-shared "
+                    f"{virus=} has too many subplot-shared "
                     "sera (in `all_subplots`) relative to "
                     "value of `max_sera_per_subplot`:\n"
-                    f"{virus_shared_sera} is more than "
-                    f"{max_sera_per_subplot} viruses."
+                    f"{virus_shared_sera=} is more than "
+                    f"{max_sera_per_subplot=} viruses."
                 )
             shared_curvelist = []
             for serum in virus_shared_sera + virus_unshared_sera:
@@ -940,7 +932,7 @@ class CurveFits:
                         assert iserum < max_sera_per_subplot
                     else:
                         raise ValueError(
-                            f"virus {virus} has more than "
+                            f"{virus=} has more than "
                             "`max_sera_per_subplot` viruses "
                             "and `multi_virus_subplots` is False"
                         )
@@ -973,11 +965,11 @@ class CurveFits:
 
         # get number of columns
         if (nrow is not None) and (ncol is not None):
-            raise ValueError("either `ncol` or `nrow` must be `None`")
+            raise ValueError(f"either {ncol=} or {nrow=} must be `None`")
         elif isinstance(nrow, int) and nrow > 0:
             ncol = math.ceil(len(plotlist) / nrow)
         elif not (isinstance(ncol, int) and ncol > 0):
-            raise ValueError("`nrow` or `ncol` must be integer > 0")
+            raise ValueError(f"{nrow=} or {ncol=} must be integer > 0")
 
         # convert plotlist to plots dict for `plotGrid`
         plots = {}
@@ -1078,9 +1070,7 @@ class CurveFits:
             subplot_titles.format(virus="dummy", serum="dummy")
         except KeyError:
             raise ValueError(
-                f"`subplot_titles` {subplot_titles} invalid. "
-                "Should have format keys only for virus "
-                "and serum"
+                f"{subplot_titles=} invalid. Should have keys only for virus and serum"
             )
 
         sera, viruses = self._sera_viruses_lists(sera, viruses)
@@ -1154,7 +1144,7 @@ class CurveFits:
         elif isinstance(nrow, int) and nrow > 0:
             ncol = math.ceil(len(plotlist) / nrow)
         elif not (isinstance(ncol, int) and ncol > 0):
-            raise ValueError("`nrow` or `ncol` must be integer > 0")
+            raise ValueError(f"{nrow=} or {ncol=} must be integer > 0")
 
         # convert plotlist to plots dict for `plotGrid`
         plots = {}
