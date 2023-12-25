@@ -527,6 +527,7 @@ class CurveFits:
               - 'slope': Hill slope of curve.
               - 'top': top of curve.
               - 'bottom': bottom of curve.
+              - 'r2': coefficient of determination of fit
 
         """
         if ic50_error not in {None, "fit_stdev"}:
@@ -548,7 +549,7 @@ class CurveFits:
 
         if key not in self._fitparams:
             d = collections.defaultdict(list)
-            params = ["midpoint", "slope", "top", "bottom"]
+            params = ["midpoint", "slope", "top", "bottom", "r2"]
             for serum in self.sera:
                 for virus in self.viruses[serum]:
                     replicates = self.replicates[(serum, virus)]

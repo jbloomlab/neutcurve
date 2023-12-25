@@ -99,6 +99,9 @@ class HillCurve:
             if :math:`t \ne 1` or :math:`b \ne 0`.
         `slope` (float)
             Hill slope of curve, :math:`s` in equation above.
+        `r2` (float)
+            Coefficient of determination indicating how well the curve fits the
+            data (https://en.wikipedia.org/wiki/Coefficient_of_determination).
         `params_stdev` (dict or `None`)
             If standard deviations can be estimated on the fit
             parameters, keyed by 'bottom', 'top', 'midpoint',
@@ -287,6 +290,12 @@ class HillCurve:
     >>> numpy.allclose(0.2, neut.fracinfectivity(neut.icXX(0.8)))
     True
 
+    We can quantify the goodness of fit with :attr:`HillCurve.r2`. For these simulated
+    data the fit is perfect (coefficient of determination of 1):
+
+    >>> round(neut.r2, 3)
+    1.0
+
     Now fit with `infectivity_or_neutralized='neutralized'`, which is useful
     when the signal **increases** rather than decreases with increasing
     concentration (as would be the case if measuring fraction bound rather
@@ -440,6 +449,15 @@ class HillCurve:
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
+
+        # compute coefficient of determination
+        # https://en.wikipedia.org/wiki/Coefficient_of_determination
+        assert len(self.cs) == len(self.fs)
+        sstot = ((self.fs - numpy.average(self.fs)) ** 2).sum()
+        ssres = (
+            (numpy.array([self.fracinfectivity(c) for c in self.cs]) - self.fs) ** 2
+        ).sum()
+        self.r2 = 1 - ssres / sstot
 
     def _fit_curve(
         self,

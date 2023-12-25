@@ -16,6 +16,10 @@ Added
   - Add ``init_slope`` to ``HillCurve`` and ``CurveFits``
   - Add ``fix_slope_first`` to ``HillCurve`` and ``CurveFits`` and make it True by default.
 
+- Add calculation of coefficient of determination for fits (R2) to quantify how well curve fits data:
+  - Add ``HillCurve.r2`` attribute.
+  - Report coefficient of determination as "r2" in ``CurveFits.fitParams`` output.
+
 - Improve exception handling:
   - Add ``HillCurveFittingError``, and when fitting fails raise this exception rather than ``RuntimeError`` as was done previously.
   - Improve error messages for some exceptions and change a few exception types.
