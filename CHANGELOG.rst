@@ -11,7 +11,10 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
 Added
 +++++
-- Add ``test_curves.ipynb`` example.
+Changes to improve and change way fitting is done. Main conceptual difference is to first fit curves with fixed slope, then re-fit all parameters:
+  - Add ``test_curves.ipynb`` example.
+  - Add ``init_slope`` to ``HillCurve`` and ``CurveFits``
+  - Add ``fix_slope_first`` to ``HillCurve`` and ``CurveFits`` and make it True by default.
 
 0.10.1
 ------

@@ -53,6 +53,9 @@ class HillCurve:
             Fit the fraction infectivity (:math:`f\left(c\right)` decreases as
             :math:`c` increases) or neutralized (:math:`f\left(c\right)`
             increases as :math:`c` increases). See equations above.
+        `fix_slope_first` (bool)
+            If True, initially fit with fixed slope, and then start from those values
+            to re-fit all parameters including slope.
         `fs_stderr` (`None` or array-like)
             If not `None`, standard errors on `fs`.
         `fixbottom` (bool or a float)
@@ -70,6 +73,8 @@ class HillCurve:
             error is often not that accurate and so will weight some
             points much more than others in a way that may not be
             justified.
+        `init_slope` (float)
+            Initial value of slope used in fitting.
 
     Attributes:
         `cs` (numpy array)
@@ -304,11 +309,13 @@ class HillCurve:
         fs,
         *,
         infectivity_or_neutralized="infectivity",
+        fix_slope_first=True,
         fs_stderr=None,
         fixbottom=0,
         fixtop=1,
         fitlogc=False,
         use_stderr_for_fit=False,
+        init_slope=1.5,
     ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
@@ -348,6 +355,7 @@ class HillCurve:
                 fixbottom=fixbottom,
                 fitlogc=fitlogc,
                 use_stderr_for_fit=use_stderr_for_fit,
+                slope=init_slope,
             )
         except RuntimeError:
             # curve_fit failed, try using minimize
@@ -358,6 +366,7 @@ class HillCurve:
                     fitlogc=fitlogc,
                     use_stderr_for_fit=use_stderr_for_fit,
                     method=method,
+                    slope=init_slope,
                 )
                 self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
@@ -368,10 +377,8 @@ class HillCurve:
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
 
-    def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit):
+    def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit, slope):
         """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
-        # make initial guess for slope to have the right sign
-        slope = 1.5
 
         # make initial guess for top and bottom
         if fixtop is False:
@@ -472,10 +479,17 @@ class HillCurve:
 
         return (midpoint, slope, bottom, top), params_stderr
 
-    def _minimize_fit(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit, method):
+    def _minimize_fit(
+        self,
+        *,
+        fixtop,
+        fixbottom,
+        fitlogc,
+        use_stderr_for_fit,
+        method,
+        slope,
+    ):
         """Fit via minimization, return `(midpoint, slope, bottom, top)`."""
-        # make initial guess for slope to have the right sign
-        slope = 1.5
 
         # make initial guess for top and bottom
         if fixtop is False:

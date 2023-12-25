@@ -44,6 +44,8 @@ class CurveFits:
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `infectivity_or_neutralized` ({'infectivity', 'neutralized'})
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `init_slope` (float)
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
 
     Attributes of a :class:`CurveFits` include all args except `data` plus:
         `df` (pandas DataFrame)
@@ -109,6 +111,7 @@ class CurveFits:
             "virus_col",
             "replicate_col",
             "_infectivity_or_neutralized",
+            "_init_slope",
         ]
         attrs_can_differ = [  # attributes that can differ among objects
             "fixbottom",
@@ -281,6 +284,7 @@ class CurveFits:
         virus_col="virus",
         replicate_col="replicate",
         infectivity_or_neutralized="infectivity",
+        init_slope=1.5,
         fixbottom=0,
         fixtop=1,
     ):
@@ -294,6 +298,7 @@ class CurveFits:
         self.fixbottom = fixbottom
         self.fixtop = fixtop
         self._infectivity_or_neutralized = infectivity_or_neutralized
+        self._init_slope = init_slope
 
         # check for required columns
         cols = [
@@ -453,7 +458,8 @@ class CurveFits:
                     fs_stderr=fs_stderr,
                     fixbottom=self.fixbottom,
                     fixtop=self.fixtop,
-                    infectivity_or_neutralized=(self._infectivity_or_neutralized),
+                    infectivity_or_neutralized=self._infectivity_or_neutralized,
+                    init_slope=self._init_slope,
                 )
             except RuntimeError as e:
                 idata.to_csv("temp.csv", index=False)
