@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>hillcurve &#8212; neutcurve 0.10.1 documentation</title>
+    <title>hillcurve &#8212; neutcurve 1.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=44845c09" />
-    <script src="_static/documentation_options.js?v=261ea15a"></script>
+    <script src="_static/documentation_options.js?v=8d563738"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -40,7 +40,7 @@
 </section>
 <dl class="py class">
 <dt class="sig sig-object py" id="neutcurve.hillcurve.HillCurve">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neutcurve.hillcurve.</span></span><span class="sig-name descname"><span class="pre">HillCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infectivity_or_neutralized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infectivity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixbottom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixtop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitlogc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_stderr_for_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neutcurve.hillcurve.</span></span><span class="sig-name descname"><span class="pre">HillCurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infectivity_or_neutralized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'infectivity'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fix_slope_first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_stderr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixbottom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixtop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitlogc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_stderr_for_fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurve" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A fitted Hill curve, optionally with free baselines.</p>
 <p>Fits <span class="math notranslate nohighlight">\(f\left(c\right) = b + \frac{t - b}{1 + \left(c/m\right)^s}\)</span>
@@ -72,6 +72,9 @@ as <span class="math notranslate nohighlight">\(c\)</span> increases.</p>
 <span class="math notranslate nohighlight">\(c\)</span> increases) or neutralized (<span class="math notranslate nohighlight">\(f\left(c\right)\)</span>
 increases as <span class="math notranslate nohighlight">\(c\)</span> increases). See equations above.</p>
 </dd>
+<dt><cite>fix_slope_first</cite> (bool)</dt><dd><p>If True, initially fit with fixed slope, and then start from those values
+to re-fit all parameters including slope.</p>
+</dd>
 <dt><cite>fs_stderr</cite> (<cite>None</cite> or array-like)</dt><dd><p>If not <cite>None</cite>, standard errors on <cite>fs</cite>.</p>
 </dd>
 <dt><cite>fixbottom</cite> (bool or a float)</dt><dd><p>If <cite>True</cite>, fix bottom of curve to to this value; otherwise fit.</p>
@@ -88,6 +91,8 @@ for fitting if you only have a few replicates, and the standard
 error is often not that accurate and so will weight some
 points much more than others in a way that may not be
 justified.</p>
+</dd>
+<dt><cite>init_slope</cite> (float)</dt><dd><p>Initial value of slope used in fitting.</p>
 </dd>
 </dl>
 </dd>
@@ -107,6 +112,9 @@ that the midpoint may <strong>not</strong> be the same as the <a class="referenc
 if <span class="math notranslate nohighlight">\(t \ne 1\)</span> or <span class="math notranslate nohighlight">\(b \ne 0\)</span>.</p>
 </dd>
 <dt><cite>slope</cite> (float)</dt><dd><p>Hill slope of curve, <span class="math notranslate nohighlight">\(s\)</span> in equation above.</p>
+</dd>
+<dt><cite>r2</cite> (float)</dt><dd><p>Coefficient of determination indicating how well the curve fits the
+data (<a class="reference external" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">https://en.wikipedia.org/wiki/Coefficient_of_determination</a>).</p>
 </dd>
 <dt><cite>params_stdev</cite> (dict or <cite>None</cite>)</dt><dd><p>If standard deviations can be estimated on the fit
 parameters, keyed by ‘bottom’, ‘top’, ‘midpoint’,
@@ -277,6 +285,12 @@ log space:</p>
 <span class="go">&#39;0.0896&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">numpy</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">neut</span><span class="o">.</span><span class="n">fracinfectivity</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">icXX</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)))</span>
 <span class="go">True</span>
+</pre></div>
+</div>
+<p>We can quantify the goodness of fit with <code class="xref py py-attr docutils literal notranslate"><span class="pre">HillCurve.r2</span></code>. For these simulated
+data the fit is perfect (coefficient of determination of 1):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">round</span><span class="p">(</span><span class="n">neut</span><span class="o">.</span><span class="n">r2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">1.0</span>
 </pre></div>
 </div>
 <p>Now fit with <cite>infectivity_or_neutralized=’neutralized’</cite>, which is useful
@@ -486,6 +500,13 @@ axis, do <strong>not</strong> re-scale the axis limits to the data.</p>
 
 </dd></dl>
 
+<dl class="py exception">
+<dt class="sig sig-object py" id="neutcurve.hillcurve.HillCurveFittingError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">neutcurve.hillcurve.</span></span><span class="sig-name descname"><span class="pre">HillCurveFittingError</span></span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#HillCurveFittingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.hillcurve.HillCurveFittingError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error fitting a <a class="reference internal" href="#neutcurve.hillcurve.HillCurve" title="neutcurve.hillcurve.HillCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">HillCurve</span></code></a>.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="neutcurve.hillcurve.concentrationRange">
 <span class="sig-prename descclassname"><span class="pre">neutcurve.hillcurve.</span></span><span class="sig-name descname"><span class="pre">concentrationRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/hillcurve.html#concentrationRange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.hillcurve.concentrationRange" title="Link to this definition">¶</a></dt>
@@ -564,6 +585,7 @@ by this much below and above <cite>bottom</cite> and <cite>top</cite>.</p>
 <li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_curves.html">Test curve fitting on some real data</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="neutcurve.html">neutcurve package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="neutcurve.html#neutcurve">neutcurve</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="neutcurve.html#submodules">Submodules</a></li>
