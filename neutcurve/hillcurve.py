@@ -348,38 +348,7 @@ class HillCurve:
         if any(self.cs <= 0):
             raise ValueError("concentrations in `cs` must all be > 0")
 
-        # first try to fit using curve_fit
-        try:
-            fit_tup, self.params_stdev = self._fit_curve(
-                fixtop=fixtop,
-                fixbottom=fixbottom,
-                fitlogc=fitlogc,
-                use_stderr_for_fit=use_stderr_for_fit,
-                slope=init_slope,
-            )
-        except RuntimeError:
-            # curve_fit failed, try using minimize
-            for method in ["TNC", "L-BFGS-B", "SLSQP", "Powell"]:
-                fit_tup = self._minimize_fit(
-                    fixtop=fixtop,
-                    fixbottom=fixbottom,
-                    fitlogc=fitlogc,
-                    use_stderr_for_fit=use_stderr_for_fit,
-                    method=method,
-                    slope=init_slope,
-                )
-                self.params_stdev = None  # can't estimate errors
-                if fit_tup is not False:
-                    break
-            else:
-                raise RuntimeError(f"fit failed:\ncs={self.cs}\nfs={self.fs}")
-
-        for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
-            setattr(self, param, fit_tup[i])
-
-    def _fit_curve(self, *, fixtop, fixbottom, fitlogc, use_stderr_for_fit, slope):
-        """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
-
+        # create initial guess of `(midpoint, slope, bottom, top)`
         # make initial guess for top and bottom
         if fixtop is False:
             top = max(1, self.fs.max())
@@ -393,7 +362,6 @@ class HillCurve:
             if not isinstance(fixbottom, (int, float)):
                 raise ValueError("`fixbottom` is not `False` or a number")
             bottom = fixbottom
-
         # make initial guess for midpoint
         # if midpoint guess outside range, guess outside range by amount
         # equal to spacing of last two points
@@ -413,6 +381,56 @@ class HillCurve:
             i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
+        init_tup = (midpoint, init_slope, bottom, top)
+        fix_slope = False  # debugging
+
+        # first try to fit using curve_fit
+        try:
+            fit_tup, self.params_stdev = self._fit_curve(
+                fixtop=fixtop,
+                fixbottom=fixbottom,
+                fitlogc=fitlogc,
+                use_stderr_for_fit=use_stderr_for_fit,
+                init_tup=init_tup,
+                fix_slope=fix_slope,
+            )
+        except RuntimeError:
+            # curve_fit failed, try using minimize
+            for method in ["TNC", "L-BFGS-B", "SLSQP", "Powell"]:
+                fit_tup = self._minimize_fit(
+                    fixtop=fixtop,
+                    fixbottom=fixbottom,
+                    fitlogc=fitlogc,
+                    use_stderr_for_fit=use_stderr_for_fit,
+                    method=method,
+                    init_tup=init_tup,
+                    fix_slope=fix_slope,
+                )
+                self.params_stdev = None  # can't estimate errors
+                if fit_tup is not False:
+                    break
+            else:
+                raise RuntimeError(f"fit failed:\ncs={self.cs}\nfs={self.fs}")
+
+        for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
+            setattr(self, param, fit_tup[i])
+
+    def _fit_curve(
+        self,
+        *,
+        fixtop,
+        fixbottom,
+        fitlogc,
+        use_stderr_for_fit,
+        init_tup,
+        fix_slope,
+    ):
+        """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
+
+        midpoint, slope, bottom, top = init_tup
+
+        if fix_slope:
+            raise NotImplementedError(f"{fix_slope=}")
 
         # set up function and initial guesses
         if fitlogc:
@@ -487,43 +505,15 @@ class HillCurve:
         fitlogc,
         use_stderr_for_fit,
         method,
-        slope,
+        init_tup,
+        fix_slope,
     ):
         """Fit via minimization, return `(midpoint, slope, bottom, top)`."""
 
-        # make initial guess for top and bottom
-        if fixtop is False:
-            top = max(1, self.fs.max())
-        else:
-            if not isinstance(fixtop, (int, float)):
-                raise ValueError("`fixtop` is not `False` or a number")
-            top = fixtop
-        if fixbottom is False:
-            bottom = min(0, self.fs.min())
-        else:
-            if not isinstance(fixbottom, (int, float)):
-                raise ValueError("`fixbottom` is not `False` or a number")
-            bottom = fixbottom
+        midpoint, slope, bottom, top = init_tup
 
-        # make initial guess for midpoint
-        # if midpoint guess outside range, guess outside range by amount
-        # equal to spacing of last two points
-        midval = (top - bottom) / 2.0
-        if (self.fs > midval).all():
-            midpoint = {
-                "infectivity": self.cs[-1] ** 2 / self.cs[-2],
-                "neutralized": self.cs[0] / (self.cs[-1] / self.cs[-2]),
-            }[self._infectivity_or_neutralized]
-        elif (self.fs <= midval).all():
-            midpoint = {
-                "neutralized": self.cs[-1] ** 2 / self.cs[-2],
-                "infectivity": self.cs[0] / (self.cs[-1] / self.cs[-2]),
-            }[self._infectivity_or_neutralized]
-        else:
-            # get first index where f crosses midpoint
-            i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
-            assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
-            midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
+        if fix_slope:
+            raise NotImplementedError(f"{fix_slope=}")
 
         # set up function and initial guesses
         if fitlogc:
