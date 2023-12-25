@@ -382,21 +382,39 @@ class HillCurve:
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
         init_tup = (midpoint, init_slope, bottom, top)
-        fix_slope = False  # debugging
 
         # first try to fit using curve_fit
         try:
+            if fix_slope_first:
+                init_tup, _ = self._fit_curve(
+                    fixtop=fixtop,
+                    fixbottom=fixbottom,
+                    fitlogc=fitlogc,
+                    use_stderr_for_fit=use_stderr_for_fit,
+                    init_tup=init_tup,
+                    fix_slope=True,
+                )
             fit_tup, self.params_stdev = self._fit_curve(
                 fixtop=fixtop,
                 fixbottom=fixbottom,
                 fitlogc=fitlogc,
                 use_stderr_for_fit=use_stderr_for_fit,
                 init_tup=init_tup,
-                fix_slope=fix_slope,
+                fix_slope=False,
             )
         except RuntimeError:
             # curve_fit failed, try using minimize
             for method in ["TNC", "L-BFGS-B", "SLSQP", "Powell"]:
+                if fix_slope_first:
+                    init_tup = self._minimize_fit(
+                        fixtop=fixtop,
+                        fixbottom=fixbottom,
+                        fitlogc=fitlogc,
+                        use_stderr_for_fit=use_stderr_for_fit,
+                        method=method,
+                        init_tup=init_tup,
+                        fix_slope=True,
+                    )
                 fit_tup = self._minimize_fit(
                     fixtop=fixtop,
                     fixbottom=fixbottom,
@@ -404,7 +422,7 @@ class HillCurve:
                     use_stderr_for_fit=use_stderr_for_fit,
                     method=method,
                     init_tup=init_tup,
-                    fix_slope=fix_slope,
+                    fix_slope=False,
                 )
                 self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
@@ -428,9 +446,6 @@ class HillCurve:
         """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
 
         midpoint, slope, bottom, top = init_tup
-
-        if fix_slope:
-            raise NotImplementedError(f"{fix_slope=}")
 
         # set up function and initial guesses
         if fitlogc:
@@ -511,9 +526,6 @@ class HillCurve:
         """Fit via minimization, return `(midpoint, slope, bottom, top)`."""
 
         midpoint, slope, bottom, top = init_tup
-
-        if fix_slope:
-            raise NotImplementedError(f"{fix_slope=}")
 
         # set up function and initial guesses
         if fitlogc:
