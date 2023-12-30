@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.hillcurve &#8212; neutcurve 1.0.0 documentation</title>
+    <title>neutcurve.hillcurve &#8212; neutcurve 1.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=44845c09" />
-    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -134,6 +134,11 @@
 <span class="sd">            Midpoint of curve, :math:`m` in equation above. Note</span>
 <span class="sd">            that the midpoint may **not** be the same as the :meth:`ic50`</span>
 <span class="sd">            if :math:`t \ne 1` or :math:`b \ne 0`.</span>
+<span class="sd">        `midpoint_bound` (float)</span>
+<span class="sd">            Midpoint if it falls within fitted concentrations, otherwise</span>
+<span class="sd">            the lowest concentration if below that or upper of above it.</span>
+<span class="sd">        `midpoint_bound_type` (str)</span>
+<span class="sd">            Is midpoint &#39;interpolated&#39;, or an &#39;upper&#39; or &#39;lower&#39; bound.</span>
 <span class="sd">        `slope` (float)</span>
 <span class="sd">            Hill slope of curve, :math:`s` in equation above.</span>
 <span class="sd">        `r2` (float)</span>
@@ -180,6 +185,10 @@
 <span class="sd">        &gt;&gt;&gt; neut = HillCurve(cs, fs, fixbottom=False)</span>
 <span class="sd">        &gt;&gt;&gt; numpy.allclose(neut.midpoint, m)</span>
 <span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; neut.midpoint_bound == neut.midpoint</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; neut.midpoint_bound_type</span>
+<span class="sd">        &#39;interpolated&#39;</span>
 <span class="sd">        &gt;&gt;&gt; numpy.allclose(neut.slope, s, atol=1e-4)</span>
 <span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; numpy.allclose(neut.top, t)</span>
@@ -233,7 +242,7 @@
 
 <span class="sd">    .. nbplot::</span>
 
-<span class="sd">        &gt;&gt;&gt; cs3 = [1e-5 * 2**x for x in range(7)]</span>
+<span class="sd">        &gt;&gt;&gt; cs3 = [1e-4 * 2**x for x in range(7)]</span>
 <span class="sd">        &gt;&gt;&gt; (cs3[-1] &lt; m)</span>
 <span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; fs3 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs3]</span>
@@ -242,6 +251,10 @@
 <span class="sd">        True</span>
 <span class="sd">        &gt;&gt;&gt; numpy.allclose(neut3.ic50(method=&#39;bound&#39;), cs3[-1])</span>
 <span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; neut3.midpoint_bound == cs3[-1]</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; neut3.midpoint_bound_type</span>
+<span class="sd">        &#39;lower&#39;</span>
 
 <span class="sd">    Note that we can determine if the IC50 is interpolated or an upper</span>
 <span class="sd">    or lower bound using :meth:`ic50_bound`, and get a nice string</span>
@@ -256,7 +269,7 @@
 <span class="sd">        &gt;&gt;&gt; neut.ic50_str()</span>
 <span class="sd">        &#39;0.0337&#39;</span>
 <span class="sd">        &gt;&gt;&gt; neut3.ic50_str()</span>
-<span class="sd">        &#39;&gt;0.00064&#39;</span>
+<span class="sd">        &#39;&gt;0.0064&#39;</span>
 
 <span class="sd">    We can use the :meth:`dataframe` method to get the measured</span>
 <span class="sd">    data and fit data at selected points. First, we do this</span>
@@ -486,6 +499,17 @@
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;midpoint&quot;</span><span class="p">,</span> <span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">]):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">fit_tup</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">midpoint</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">midpoint</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound_type</span> <span class="o">=</span> <span class="s2">&quot;interpolated&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">midpoint</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound_type</span> <span class="o">=</span> <span class="s2">&quot;upper&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">midpoint</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">midpoint_bound_type</span> <span class="o">=</span> <span class="s2">&quot;lower&quot;</span>
 
         <span class="c1"># compute coefficient of determination</span>
         <span class="c1"># https://en.wikipedia.org/wiki/Coefficient_of_determination</span>

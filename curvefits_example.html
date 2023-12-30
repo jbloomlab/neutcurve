@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Fitting curves to real data &#8212; neutcurve 1.0.0 documentation</title>
+    <title>Fitting curves to real data &#8212; neutcurve 1.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=44845c09" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="_static/documentation_options.js?v=8d563738"></script>
+    <script src="_static/documentation_options.js?v=fc837d61"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -433,6 +433,8 @@ The IC50 is 0.017
       <th>ic50_bound</th>
       <th>ic50_str</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -450,6 +452,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.017</td>
       <td>0.017</td>
+      <td>0.017</td>
+      <td>interpolated</td>
       <td>2.28</td>
       <td>1</td>
       <td>0</td>
@@ -465,6 +469,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0283</td>
       <td>0.0283</td>
+      <td>0.0283</td>
+      <td>interpolated</td>
       <td>2.4</td>
       <td>1</td>
       <td>0</td>
@@ -480,6 +486,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0123</td>
       <td>0.0123</td>
+      <td>0.0123</td>
+      <td>interpolated</td>
       <td>2.05</td>
       <td>1</td>
       <td>0</td>
@@ -495,6 +503,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0229</td>
       <td>0.0229</td>
+      <td>0.0229</td>
+      <td>interpolated</td>
       <td>1.83</td>
       <td>1</td>
       <td>0</td>
@@ -510,6 +520,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0106</td>
       <td>0.0106</td>
+      <td>0.0106</td>
+      <td>interpolated</td>
       <td>1.86</td>
       <td>1</td>
       <td>0</td>
@@ -525,6 +537,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0428</td>
       <td>0.0428</td>
+      <td>0.0428</td>
+      <td>interpolated</td>
       <td>2</td>
       <td>1</td>
       <td>0</td>
@@ -540,6 +554,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0348</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>1.82</td>
       <td>1</td>
       <td>0</td>
@@ -555,6 +571,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0845</td>
       <td>0.0845</td>
+      <td>0.0845</td>
+      <td>interpolated</td>
       <td>1.8</td>
       <td>1</td>
       <td>0</td>
@@ -570,6 +588,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0198</td>
       <td>0.0198</td>
+      <td>0.0198</td>
+      <td>interpolated</td>
       <td>2.06</td>
       <td>1</td>
       <td>0</td>
@@ -585,6 +605,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.0348</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>2.6</td>
       <td>1</td>
       <td>0</td>
@@ -600,6 +622,8 @@ The IC50 is 0.017
       <td>interpolated</td>
       <td>0.106</td>
       <td>0.106</td>
+      <td>0.106</td>
+      <td>interpolated</td>
       <td>4.04</td>
       <td>1</td>
       <td>0</td>
@@ -615,6 +639,8 @@ The IC50 is 0.017
       <td>lower</td>
       <td>&gt;11.4</td>
       <td>16.9</td>
+      <td>11.4</td>
+      <td>lower</td>
       <td>2.36</td>
       <td>1</td>
       <td>0</td>
@@ -667,6 +693,8 @@ range as this is unreliable.</p>
       <th>ic50_bound</th>
       <th>ic50_str</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -684,6 +712,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0167</td>
       <td>0.0167</td>
+      <td>0.0167</td>
+      <td>interpolated</td>
       <td>2.5</td>
       <td>1</td>
       <td>0</td>
@@ -699,6 +729,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.019</td>
       <td>0.019</td>
+      <td>0.019</td>
+      <td>interpolated</td>
       <td>2.51</td>
       <td>1</td>
       <td>0</td>
@@ -714,6 +746,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0152</td>
       <td>0.0152</td>
+      <td>0.0152</td>
+      <td>interpolated</td>
       <td>1.88</td>
       <td>1</td>
       <td>0</td>
@@ -729,6 +763,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.017</td>
       <td>0.017</td>
+      <td>0.017</td>
+      <td>interpolated</td>
       <td>2.28</td>
       <td>1</td>
       <td>0</td>
@@ -744,6 +780,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0308</td>
       <td>0.0308</td>
+      <td>0.0308</td>
+      <td>interpolated</td>
       <td>2.62</td>
       <td>1</td>
       <td>0</td>
@@ -794,6 +832,8 @@ range as this is unreliable.</p>
       <th>ic50_bound</th>
       <th>ic50_str</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -811,6 +851,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0167</td>
       <td>0.0167</td>
+      <td>0.0167</td>
+      <td>interpolated</td>
       <td>2.5</td>
       <td>1</td>
       <td>0</td>
@@ -826,6 +868,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.019</td>
       <td>0.019</td>
+      <td>0.019</td>
+      <td>interpolated</td>
       <td>2.51</td>
       <td>1</td>
       <td>0</td>
@@ -841,6 +885,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0152</td>
       <td>0.0152</td>
+      <td>0.0152</td>
+      <td>interpolated</td>
       <td>1.88</td>
       <td>1</td>
       <td>0</td>
@@ -856,6 +902,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0308</td>
       <td>0.0308</td>
+      <td>0.0308</td>
+      <td>interpolated</td>
       <td>2.62</td>
       <td>1</td>
       <td>0</td>
@@ -871,6 +919,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0284</td>
       <td>0.0284</td>
+      <td>0.0284</td>
+      <td>interpolated</td>
       <td>2.55</td>
       <td>1</td>
       <td>0</td>
@@ -923,6 +973,8 @@ range as this is unreliable.</p>
       <th>ic95_bound</th>
       <th>ic95_str</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -943,6 +995,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.062</td>
       <td>0.017</td>
+      <td>0.017</td>
+      <td>interpolated</td>
       <td>2.28</td>
       <td>1</td>
       <td>0</td>
@@ -961,6 +1015,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0967</td>
       <td>0.0283</td>
+      <td>0.0283</td>
+      <td>interpolated</td>
       <td>2.4</td>
       <td>1</td>
       <td>0</td>
@@ -979,6 +1035,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0516</td>
       <td>0.0123</td>
+      <td>0.0123</td>
+      <td>interpolated</td>
       <td>2.05</td>
       <td>1</td>
       <td>0</td>
@@ -997,6 +1055,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.114</td>
       <td>0.0229</td>
+      <td>0.0229</td>
+      <td>interpolated</td>
       <td>1.83</td>
       <td>1</td>
       <td>0</td>
@@ -1015,6 +1075,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.0516</td>
       <td>0.0106</td>
+      <td>0.0106</td>
+      <td>interpolated</td>
       <td>1.86</td>
       <td>1</td>
       <td>0</td>
@@ -1033,6 +1095,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.186</td>
       <td>0.0428</td>
+      <td>0.0428</td>
+      <td>interpolated</td>
       <td>2</td>
       <td>1</td>
       <td>0</td>
@@ -1051,6 +1115,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.176</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>1.82</td>
       <td>1</td>
       <td>0</td>
@@ -1069,6 +1135,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.433</td>
       <td>0.0845</td>
+      <td>0.0845</td>
+      <td>interpolated</td>
       <td>1.8</td>
       <td>1</td>
       <td>0</td>
@@ -1087,6 +1155,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.083</td>
       <td>0.0198</td>
+      <td>0.0198</td>
+      <td>interpolated</td>
       <td>2.06</td>
       <td>1</td>
       <td>0</td>
@@ -1105,6 +1175,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.108</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>2.6</td>
       <td>1</td>
       <td>0</td>
@@ -1123,6 +1195,8 @@ range as this is unreliable.</p>
       <td>interpolated</td>
       <td>0.221</td>
       <td>0.106</td>
+      <td>0.106</td>
+      <td>interpolated</td>
       <td>4.04</td>
       <td>1</td>
       <td>0</td>
@@ -1141,6 +1215,8 @@ range as this is unreliable.</p>
       <td>lower</td>
       <td>&gt;11.4</td>
       <td>16.9</td>
+      <td>11.4</td>
+      <td>lower</td>
       <td>2.36</td>
       <td>1</td>
       <td>0</td>
@@ -1191,6 +1267,8 @@ range as this is unreliable.</p>
       <th>ic50_str</th>
       <th>ic50_error</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -1209,6 +1287,8 @@ range as this is unreliable.</p>
       <td>0.017</td>
       <td>0.0254</td>
       <td>0.017</td>
+      <td>0.017</td>
+      <td>interpolated</td>
       <td>2.28</td>
       <td>1</td>
       <td>0</td>
@@ -1225,6 +1305,8 @@ range as this is unreliable.</p>
       <td>0.0283</td>
       <td>0.0411</td>
       <td>0.0283</td>
+      <td>0.0283</td>
+      <td>interpolated</td>
       <td>2.4</td>
       <td>1</td>
       <td>0</td>
@@ -1241,6 +1323,8 @@ range as this is unreliable.</p>
       <td>0.0123</td>
       <td>0.0193</td>
       <td>0.0123</td>
+      <td>0.0123</td>
+      <td>interpolated</td>
       <td>2.05</td>
       <td>1</td>
       <td>0</td>
@@ -1257,6 +1341,8 @@ range as this is unreliable.</p>
       <td>0.0229</td>
       <td>0.0382</td>
       <td>0.0229</td>
+      <td>0.0229</td>
+      <td>interpolated</td>
       <td>1.83</td>
       <td>1</td>
       <td>0</td>
@@ -1273,6 +1359,8 @@ range as this is unreliable.</p>
       <td>0.0106</td>
       <td>0.0176</td>
       <td>0.0106</td>
+      <td>0.0106</td>
+      <td>interpolated</td>
       <td>1.86</td>
       <td>1</td>
       <td>0</td>
@@ -1289,6 +1377,8 @@ range as this is unreliable.</p>
       <td>0.0428</td>
       <td>0.0683</td>
       <td>0.0428</td>
+      <td>0.0428</td>
+      <td>interpolated</td>
       <td>2</td>
       <td>1</td>
       <td>0</td>
@@ -1305,6 +1395,8 @@ range as this is unreliable.</p>
       <td>0.0348</td>
       <td>0.0582</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>1.82</td>
       <td>1</td>
       <td>0</td>
@@ -1321,6 +1413,8 @@ range as this is unreliable.</p>
       <td>0.0845</td>
       <td>0.142</td>
       <td>0.0845</td>
+      <td>0.0845</td>
+      <td>interpolated</td>
       <td>1.8</td>
       <td>1</td>
       <td>0</td>
@@ -1337,6 +1431,8 @@ range as this is unreliable.</p>
       <td>0.0198</td>
       <td>0.0313</td>
       <td>0.0198</td>
+      <td>0.0198</td>
+      <td>interpolated</td>
       <td>2.06</td>
       <td>1</td>
       <td>0</td>
@@ -1353,6 +1449,8 @@ range as this is unreliable.</p>
       <td>0.0348</td>
       <td>0.0477</td>
       <td>0.0348</td>
+      <td>0.0348</td>
+      <td>interpolated</td>
       <td>2.6</td>
       <td>1</td>
       <td>0</td>
@@ -1369,6 +1467,8 @@ range as this is unreliable.</p>
       <td>0.106</td>
       <td>0.144</td>
       <td>0.106</td>
+      <td>0.106</td>
+      <td>interpolated</td>
       <td>4.04</td>
       <td>1</td>
       <td>0</td>
@@ -1385,6 +1485,8 @@ range as this is unreliable.</p>
       <td>&gt;11.4</td>
       <td>NaN</td>
       <td>16.9</td>
+      <td>11.4</td>
+      <td>lower</td>
       <td>2.36</td>
       <td>1</td>
       <td>0</td>
@@ -2185,6 +2287,8 @@ range as this is unreliable.</p>
       <th>ic50_bound</th>
       <th>ic50_str</th>
       <th>midpoint</th>
+      <th>midpoint_bound</th>
+      <th>midpoint_bound_type</th>
       <th>slope</th>
       <th>top</th>
       <th>bottom</th>
@@ -2202,6 +2306,8 @@ range as this is unreliable.</p>
       <td>lower</td>
       <td>&gt;5</td>
       <td>543</td>
+      <td>5</td>
+      <td>lower</td>
       <td>13</td>
       <td>1</td>
       <td>0</td>

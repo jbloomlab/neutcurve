@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.curvefits &#8212; neutcurve 1.0.0 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 1.1.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=44845c09" />
-    <script src="../../_static/documentation_options.js?v=8d563738"></script>
+    <script src="../../_static/documentation_options.js?v=fc837d61"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -566,6 +566,9 @@
 <span class="sd">                if it is an upper or lower bound.</span>
 <span class="sd">              - &#39;midpoint&#39;: midpoint of curve, same as IC50 only if bottom</span>
 <span class="sd">                and top are 0 and 1.</span>
+<span class="sd">              - &#39;midpoint_bound&#39;: midpoint bounded by range of fit concentrations</span>
+<span class="sd">              - &#39;midpoint_bound_type&#39;: string indicating if midpoint is interpolated</span>
+<span class="sd">                from data or is an upper or lower bound.</span>
 <span class="sd">              - &#39;slope&#39;: Hill slope of curve.</span>
 <span class="sd">              - &#39;top&#39;: top of curve.</span>
 <span class="sd">              - &#39;bottom&#39;: bottom of curve.</span>
@@ -591,7 +594,15 @@
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitparams</span><span class="p">:</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;midpoint&quot;</span><span class="p">,</span> <span class="s2">&quot;slope&quot;</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="s2">&quot;r2&quot;</span><span class="p">]</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s2">&quot;midpoint&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;midpoint_bound&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;midpoint_bound_type&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;slope&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;top&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;bottom&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;r2&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
             <span class="k">for</span> <span class="n">serum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sera</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">viruses</span><span class="p">[</span><span class="n">serum</span><span class="p">]:</span>
                     <span class="n">replicates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]</span>
