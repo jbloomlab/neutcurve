@@ -97,6 +97,11 @@ class HillCurve:
             Midpoint of curve, :math:`m` in equation above. Note
             that the midpoint may **not** be the same as the :meth:`ic50`
             if :math:`t \ne 1` or :math:`b \ne 0`.
+        `midpoint_bound` (float)
+            Midpoint if it falls within fitted concentrations, otherwise
+            the lowest concentration if below that or upper of above it.
+        `midpoint_bound_type` (str)
+            Is midpoint 'interpolated', or an 'upper' or 'lower' bound.
         `slope` (float)
             Hill slope of curve, :math:`s` in equation above.
         `r2` (float)
@@ -143,6 +148,10 @@ class HillCurve:
         >>> neut = HillCurve(cs, fs, fixbottom=False)
         >>> numpy.allclose(neut.midpoint, m)
         True
+        >>> neut.midpoint_bound == neut.midpoint
+        True
+        >>> neut.midpoint_bound_type
+        'interpolated'
         >>> numpy.allclose(neut.slope, s, atol=1e-4)
         True
         >>> numpy.allclose(neut.top, t)
@@ -196,7 +205,7 @@ class HillCurve:
 
     .. nbplot::
 
-        >>> cs3 = [1e-5 * 2**x for x in range(7)]
+        >>> cs3 = [1e-4 * 2**x for x in range(7)]
         >>> (cs3[-1] < m)
         True
         >>> fs3 = [HillCurve.evaluate(c, m, s, b2, t2) for c in cs3]
@@ -205,6 +214,10 @@ class HillCurve:
         True
         >>> numpy.allclose(neut3.ic50(method='bound'), cs3[-1])
         True
+        >>> neut3.midpoint_bound == cs3[-1]
+        True
+        >>> neut3.midpoint_bound_type
+        'lower'
 
     Note that we can determine if the IC50 is interpolated or an upper
     or lower bound using :meth:`ic50_bound`, and get a nice string
@@ -219,7 +232,7 @@ class HillCurve:
         >>> neut.ic50_str()
         '0.0337'
         >>> neut3.ic50_str()
-        '>0.00064'
+        '>0.0064'
 
     We can use the :meth:`dataframe` method to get the measured
     data and fit data at selected points. First, we do this
@@ -449,6 +462,17 @@ class HillCurve:
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
+
+        if self.cs[0] <= self.midpoint <= self.cs[-1]:
+            self.midpoint_bound = self.midpoint
+            self.midpoint_bound_type = "interpolated"
+        elif self.midpoint < self.cs[0]:
+            self.midpoint_bound = self.cs[0]
+            self.midpoint_bound_type = "upper"
+        else:
+            assert self.midpoint > self.cs[-1]
+            self.midpoint_bound = self.cs[-1]
+            self.midpoint_bound_type = "lower"
 
         # compute coefficient of determination
         # https://en.wikipedia.org/wiki/Coefficient_of_determination

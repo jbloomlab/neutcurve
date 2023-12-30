@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+1.1.0
+-----
+
+Added
++++++
+- Report whether curve midpoint is in bounds of data (interpolated) or extrapolated, similar to as was already done for icXX:
+  - Added ``HillCurve.midpoint_bound`` and ``HillCurve.midpoint_bound_type`` attributes
+  - Report 'midpoint_bound' and 'midpoint_bound_type' in ``CurveFits.fitParams``
+
 1.0.0
 -----
 
