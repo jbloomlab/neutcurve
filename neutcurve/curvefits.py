@@ -524,6 +524,9 @@ class CurveFits:
                 if it is an upper or lower bound.
               - 'midpoint': midpoint of curve, same as IC50 only if bottom
                 and top are 0 and 1.
+              - 'midpoint_bound': midpoint bounded by range of fit concentrations
+              - 'midpoint_bound_type': string indicating if midpoint is interpolated
+                from data or is an upper or lower bound.
               - 'slope': Hill slope of curve.
               - 'top': top of curve.
               - 'bottom': bottom of curve.
@@ -549,7 +552,15 @@ class CurveFits:
 
         if key not in self._fitparams:
             d = collections.defaultdict(list)
-            params = ["midpoint", "slope", "top", "bottom", "r2"]
+            params = [
+                "midpoint",
+                "midpoint_bound",
+                "midpoint_bound_type",
+                "slope",
+                "top",
+                "bottom",
+                "r2",
+            ]
             for serum in self.sera:
                 for virus in self.viruses[serum]:
                     replicates = self.replicates[(serum, virus)]
