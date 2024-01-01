@@ -4,10 +4,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>neutcurve.curvefits &#8212; neutcurve 1.1.0 documentation</title>
+    <title>neutcurve.curvefits &#8212; neutcurve 1.1.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=44845c09" />
-    <script src="../../_static/documentation_options.js?v=fc837d61"></script>
+    <script src="../../_static/documentation_options.js?v=6f037312"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -1148,10 +1148,8 @@
         <span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sera_viruses_lists</span><span class="p">(</span><span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span><span class="p">)</span>
 
         <span class="c1"># get replicates and make sure there aren&#39;t too many</span>
-        <span class="n">nplottable</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">markers</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">average_only</span><span class="p">:</span>
             <span class="n">replicates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;average&quot;</span><span class="p">]</span>
-            <span class="n">nreplicates</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">elif</span> <span class="n">attempt_shared_legend</span><span class="p">:</span>
             <span class="n">replicates</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">show_average</span><span class="p">:</span>
@@ -1162,7 +1160,6 @@
                         <span class="k">if</span> <span class="n">replicate</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
                             <span class="n">replicates</span><span class="p">[</span><span class="n">replicate</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">replicates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="n">nreplicates</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">replicates</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">replicates_by_serum_virus</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">serum</span><span class="p">,</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">sera</span><span class="p">,</span> <span class="n">viruses</span><span class="p">):</span>
@@ -1174,13 +1171,6 @@
                     <span class="k">for</span> <span class="n">replicate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">replicates</span><span class="p">[(</span><span class="n">serum</span><span class="p">,</span> <span class="n">virus</span><span class="p">)]:</span>
                         <span class="k">if</span> <span class="n">replicate</span> <span class="o">!=</span> <span class="s2">&quot;average&quot;</span><span class="p">:</span>
                             <span class="n">replicates_by_serum_virus</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replicate</span><span class="p">)</span>
-            <span class="n">nreplicates</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reps</span><span class="p">)</span> <span class="k">for</span> <span class="n">reps</span> <span class="ow">in</span> <span class="n">replicates_by_serum_virus</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">nreplicates</span> <span class="o">&gt;</span> <span class="n">nplottable</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Too many unique replicates. There are </span><span class="si">{</span><span class="n">nreplicates</span><span class="si">}</span><span class="s2"> on a single plot &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but only </span><span class="si">{</span><span class="n">nplottable</span><span class="si">}</span><span class="s2"> `colors` or `markers`. Either specify more &quot;</span>
-                <span class="s2">&quot;colors/markers, or try setting `attempt_shared_legend=False`&quot;</span>
-            <span class="p">)</span>
 
         <span class="c1"># build list of plots appropriate for `plotGrid`</span>
         <span class="n">plotlist</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1201,8 +1191,8 @@
                                 <span class="s2">&quot;virus&quot;</span><span class="p">:</span> <span class="n">virus</span><span class="p">,</span>
                                 <span class="s2">&quot;replicate&quot;</span><span class="p">:</span> <span class="n">replicate</span><span class="p">,</span>
                                 <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="p">{</span><span class="kc">False</span><span class="p">:</span> <span class="n">replicate</span><span class="p">,</span> <span class="kc">True</span><span class="p">:</span> <span class="kc">None</span><span class="p">}[</span><span class="n">average_only</span><span class="p">],</span>
-                                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                                <span class="s2">&quot;marker&quot;</span><span class="p">:</span> <span class="n">markers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                                <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)],</span>
+                                <span class="s2">&quot;marker&quot;</span><span class="p">:</span> <span class="n">markers</span><span class="p">[</span><span class="n">i</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">markers</span><span class="p">)],</span>
                             <span class="p">}</span>
                         <span class="p">)</span>
                 <span class="k">if</span> <span class="n">curvelist</span><span class="p">:</span>
