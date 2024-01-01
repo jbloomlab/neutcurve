@@ -32,10 +32,9 @@ CBBPALETTE = (
     "#CC79A7",
 )
 
-#: list of matplotlib markers same length as `CBPALETTE`, from
+#: list of matplotlib markers, from
 #: https://matplotlib.org/api/markers_api.html
-CBMARKERS = ("o", "^", "s", "D", "v", "<", ">", "p")
-assert len(CBPALETTE) == len(CBBPALETTE) == len(CBMARKERS)
+CBMARKERS = ("o", "^", "s", "D", "v", "<", ">", "p", "x")
 
 if __name__ == "__main__":
     import doctest
