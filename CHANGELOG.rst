@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+1.1.2
+-----
+
+Fixed
++++++
+- ``CurveFits.plotReplicates`` no longer fails if too many replicates, but instead recycles colors and markers. To make these combinations unique by default, also added another marker to ``CBMARKERS``.
+
 1.1.1
 -----
 

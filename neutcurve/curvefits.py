@@ -1094,10 +1094,8 @@ class CurveFits:
         sera, viruses = self._sera_viruses_lists(sera, viruses)
 
         # get replicates and make sure there aren't too many
-        nplottable = max(len(colors), len(markers))
         if average_only:
             replicates = ["average"]
-            nreplicates = 1
         elif attempt_shared_legend:
             replicates = collections.OrderedDict()
             if show_average:
@@ -1108,7 +1106,6 @@ class CurveFits:
                         if replicate != "average":
                             replicates[replicate] = True
             replicates = list(collections.OrderedDict(replicates).keys())
-            nreplicates = len(replicates)
         else:
             replicates_by_serum_virus = collections.defaultdict(list)
             for serum, virus in itertools.product(sera, viruses):
@@ -1120,13 +1117,6 @@ class CurveFits:
                     for replicate in self.replicates[(serum, virus)]:
                         if replicate != "average":
                             replicates_by_serum_virus[key].append(replicate)
-            nreplicates = max(len(reps) for reps in replicates_by_serum_virus.values())
-        if nreplicates > nplottable:
-            raise ValueError(
-                f"Too many unique replicates. There are {nreplicates} on a single plot "
-                f"but only {nplottable} `colors` or `markers`. Either specify more "
-                "colors/markers, or try setting `attempt_shared_legend=False`"
-            )
 
         # build list of plots appropriate for `plotGrid`
         plotlist = []
@@ -1147,8 +1137,8 @@ class CurveFits:
                                 "virus": virus,
                                 "replicate": replicate,
                                 "label": {False: replicate, True: None}[average_only],
-                                "color": colors[i],
-                                "marker": markers[i],
+                                "color": colors[i % len(colors)],
+                                "marker": markers[i % len(markers)],
                             }
                         )
                 if curvelist:
