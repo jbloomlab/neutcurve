@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.0.0
+-----
+- The curve fitting parameters (top, bottom, slope) can now be constrained to a range in addition to being completely free or fixed. This means ``fixtop`` and ``fixbottom`` can be 2-tuples of bounds.
+
 1.1.2
 -----
 
