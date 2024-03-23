@@ -10,6 +10,8 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 -----
 - The curve fitting parameters (top, bottom, slope) can now be constrained to a range in addition to being completely free or fixed. This means ``fixtop`` and ``fixbottom`` can be 2-tuples of bounds.
 
+- Add ``no_curve_fit_first`` argument to ``HillCurve`` to aid debugging/development.
+
 1.1.2
 -----
 
