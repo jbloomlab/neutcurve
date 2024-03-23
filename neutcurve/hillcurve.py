@@ -311,6 +311,33 @@ class HillCurve:
     >>> round(neut.r2, 3)
     1.0
 
+    Now fit with bounds on the parameters. First, we make bounds cover the true values:
+
+    >>> neut_bounds_cover = HillCurve(cs, fs, fixbottom=(0, 0.2), fixtop=(0.9, 1))
+    >>> numpy.allclose(neut_bounds_cover.midpoint, m)
+    True
+    >>> numpy.allclose(neut_bounds_cover.slope, s, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_bounds_cover.top, t)
+    True
+    >>> numpy.allclose(neut_bounds_cover.bottom, b)
+    True
+    >>> round(neut_bounds_cover.r2, 3)
+    1.0
+
+    Next fit with bounds that do not cover the true parameters:
+    >>> neut_bounds_nocover = HillCurve(cs, fs, fixbottom=(0, 0.05), fixtop=(0.9, 0.95))
+    >>> round(neut_bounds_nocover.midpoint, 2)
+    0.04
+    >>> round(neut_bounds_nocover.slope, 2)
+    1.86
+    >>> round(neut_bounds_nocover.top, 2)
+    0.95
+    >>> round(neut_bounds_nocover.bottom, 2)
+    0.05
+    >>> round(neut_bounds_nocover.r2, 2)
+    0.99
+
     Now fit with `infectivity_or_neutralized='neutralized'`, which is useful
     when the signal **increases** rather than decreases with increasing
     concentration (as would be the case if measuring fraction bound rather
@@ -718,7 +745,9 @@ class HillCurve:
     ):
         """Return `(midpoint, slope, bottom, top)` if succeeds or `False` if fails."""
 
-        if all((hasattr(tup, "__len__") and len(tup) == 2) for tup in [fixtop, fixbottom]):
+        if all(
+            (hasattr(tup, "__len__") and len(tup) == 2) for tup in [fixtop, fixbottom]
+        ):
             raise NotImplementedError("not yet implemented to handle bounds")
 
         midpoint, slope, bottom, top = init_tup
