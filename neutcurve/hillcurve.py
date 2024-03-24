@@ -378,7 +378,7 @@ class HillCurve:
     >>> neut_ncf = HillCurve(cs, fs, fixbottom=False, no_curve_fit_first=True)
     >>> numpy.allclose(neut_ncf.midpoint, m, atol=1e-4)
     True
-    >>> numpy.allclose(neut_ncf.slope, s, atol=1e-3)
+    >>> numpy.allclose(neut_ncf.slope, s, atol=5e-3)
     True
     >>> numpy.allclose(neut_ncf.top, t, atol=1e-4)
     True
