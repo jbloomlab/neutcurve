@@ -324,7 +324,9 @@ class HillCurve:
 
     Now fit with bounds on the parameters. First, we make bounds cover the true values:
 
-    >>> neut_bounds_cover = HillCurve(cs, fs, fixbottom=(0, 0.2), fixtop=(0.9, 1))
+    >>> neut_bounds_cover = HillCurve(
+    ...     cs, fs, fixbottom=(0, 0.2), fixtop=(0.9, 1), fixslope=(1, 2),
+    ... )
     >>> numpy.allclose(neut_bounds_cover.midpoint, m, atol=1e-4)
     True
     >>> numpy.allclose(neut_bounds_cover.slope, s, atol=1e-3)
@@ -337,11 +339,13 @@ class HillCurve:
     1.0
 
     Next fit with bounds that do not cover the true parameters:
-    >>> neut_bounds_nocover = HillCurve(cs, fs, fixbottom=(0, 0.05), fixtop=(0.9, 0.95))
+    >>> neut_bounds_nocover = HillCurve(
+    ...     cs, fs, fixbottom=(0, 0.05), fixtop=(0.9, 0.95), fixslope=(1, 1.5),
+    ... )
     >>> round(neut_bounds_nocover.midpoint, 2)
     0.04
     >>> round(neut_bounds_nocover.slope, 2)
-    1.86
+    1.5
     >>> round(neut_bounds_nocover.top, 2)
     0.95
     >>> round(neut_bounds_nocover.bottom, 2)
@@ -382,7 +386,12 @@ class HillCurve:
     True
 
     >>> neut_bounds_cover_ncf = HillCurve(
-    ...     cs, fs, fixbottom=(0, 0.2), fixtop=(0.9, 1), no_curve_fit_first=True,
+    ...     cs,
+    ...     fs,
+    ...     fixbottom=(0, 0.2),
+    ...     fixtop=(0.9, 1),
+    ...     fixslope=(1, 2),
+    ...     no_curve_fit_first=True,
     ... )
     >>> numpy.allclose(neut_bounds_cover_ncf.midpoint, m, atol=1e-4)
     True
@@ -396,12 +405,17 @@ class HillCurve:
     1.0
 
     >>> neut_bounds_nocover_ncf = HillCurve(
-    ...     cs, fs, fixbottom=(0, 0.05), fixtop=(0.9, 0.95), no_curve_fit_first=True,
+    ...     cs,
+    ...     fs,
+    ...     fixbottom=(0, 0.05),
+    ...     fixtop=(0.9, 0.95),
+    ...     fixslope=(1, 1.5),
+    ...     no_curve_fit_first=True,
     ... )
     >>> round(neut_bounds_nocover_ncf.midpoint, 2)
     0.04
     >>> round(neut_bounds_nocover_ncf.slope, 2)
-    1.86
+    1.5
     >>> round(neut_bounds_nocover_ncf.top, 2)
     0.95
     >>> round(neut_bounds_nocover_ncf.bottom, 2)
@@ -518,7 +532,7 @@ class HillCurve:
             slope = fixslope
         elif hasattr(fixslope, "__len__") and len(fixslope) == 2:
             fixslope = (fixslope[0], fixslope[1])
-            if fixslope[0] <= fixslope[1]:
+            if fixslope[1] <= fixslope[0]:
                 raise ValueError(f"invalid {fixslope=}: first element must be < second")
             slope = max(fixslope[0], min(init_slope, fixslope[1]))
             assert fixslope[0] <= slope <= fixslope[1]
