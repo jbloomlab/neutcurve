@@ -1,4 +1,4 @@
-select = [
+lint.select = [
   "E",   # pycodestyle
   "F",   # pyflakes
   "UP",  # pyupgrade
@@ -10,7 +10,8 @@ extend-exclude = [
     "docs/_build",
     ".*",
 ]
-ignore = [
+extend-include = ["*.ipynb"]
+lint.ignore = [
     "D203",
     "D205",
     "D212",

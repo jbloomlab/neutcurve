@@ -28,9 +28,6 @@ jobs:
       - name: lint code with ruff
         run: ruff check .
 
-      - name: lint Jupyter notebooks with ruff
-        run: nbqa ruff .
-
       - name: check code format with black
         run: black --check .
 
