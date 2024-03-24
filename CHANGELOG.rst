@@ -15,6 +15,10 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
 - Add ``no_curve_fit_first`` argument to ``HillCurve`` to aid debugging/development.
 
+- Improvements to metrics for assessing curve fit (see [here](https://github.com/jbloomlab/neutcurve/issues/55#issuecomment-2016975219)):
+  - The coefficient of determination (``r2``) now is one if all points are fit by a straight line, rather than engative infinity.
+  - A root-mean-square-deviation (square root of mean residual) is now calculated as the ``rmsd`` attribute of ``HillCurve`` objects and reported in fit parameter summaries from ``CurveFits``.
+
 1.1.2
 -----
 
