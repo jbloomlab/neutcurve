@@ -827,7 +827,7 @@ class HillCurve:
         use_stderr_for_fit,
         method,
         init_tup,
-        fix_slope,
+        fixslope,
     ):
         """Return `(midpoint, slope, bottom, top)` if succeeds or `False` if fails."""
 
@@ -846,8 +846,9 @@ class HillCurve:
 
         top_bounds = (None, None) if (fixtop is False) else fixtop
         bottom_bounds = (None, None) if (fixbottom is False) else fixbottom
+        slope_bounds = (None, None) if (fixslope is False) else fixslope
 
-        if fix_slope:
+        if isinstance(fixslope, float):
             if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, bottom, top]
                 bounds = bounds + [bottom_bounds, top_bounds]
@@ -900,7 +901,8 @@ class HillCurve:
                     )
 
         else:
-            bounds.append((0, None))
+            assert isinstance(fixslope, tuple) or (fixslope is False)
+            bounds.append(slope_bounds)
 
             if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, slope, bottom, top]
@@ -959,7 +961,7 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = res.x[0]
-        if fix_slope:
+        if isinstance(fixslope, float):
             if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = res.x[1]
                 top = res.x[2]
@@ -968,6 +970,7 @@ class HillCurve:
             elif not isinstance(fixtop, float):
                 top = res.x[1]
         else:
+            assert (fixslope is False) or isinstance(fixslope, tuple)
             slope = res.x[1]
             if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = res.x[2]
