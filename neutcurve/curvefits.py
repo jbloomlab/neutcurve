@@ -36,9 +36,11 @@ class CurveFits:
         `replicate_col` (str`)
             Column in data with name of replicate of this measurement. Replicates can
             **not** be named 'average' as we compute the average from the replicates.
-        `fixbottom` (`False` or float)
+        `fixbottom` (`False` or float or 2-tuple)
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
-        `fixtop` (`False` or float)
+        `fixtop` (`False` or float or 2-tuple)
+            Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
+        `fixslope` (`False` or float or 2-tuple)
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
         `infectivity_or_neutralized` ({'infectivity', 'neutralized'})
             Same meaning as for :class:`neutcurve.hillcurve.HillCurve`.
@@ -121,6 +123,7 @@ class CurveFits:
         attrs_can_differ = [  # attributes that can differ among objects
             "fixbottom",
             "fixtop",
+            "fixslope",
             "df",
             "sera",
             "allviruses",
@@ -142,8 +145,8 @@ class CurveFits:
         for attr in attrs_can_differ:
             delattr(combined_fits, attr)
 
-        # fixtop and fixbottom are kept at shared value or None
-        for attr in ["fixtop", "fixbottom"]:
+        # fixtop, fixbottom, fixslope are kept at shared value or None
+        for attr in ["fixtop", "fixbottom", "fixslope"]:
             if any(
                 getattr(curvefits_list[0], attr) != getattr(c, attr)
                 for c in curvefits_list
@@ -293,6 +296,7 @@ class CurveFits:
         init_slope=1.5,
         fixbottom=0,
         fixtop=1,
+        fixslope=False,
         allow_reps_unequal_conc=False,
     ):
         """See main class docstring."""
@@ -304,6 +308,7 @@ class CurveFits:
         self.replicate_col = replicate_col
         self.fixbottom = fixbottom
         self.fixtop = fixtop
+        self.fixslope = fixslope
         self._infectivity_or_neutralized = infectivity_or_neutralized
         self._fix_slope_first = fix_slope_first
         self._init_slope = init_slope
@@ -462,6 +467,7 @@ class CurveFits:
                     fs_stderr=fs_stderr,
                     fixbottom=self.fixbottom,
                     fixtop=self.fixtop,
+                    fixslope=self.fixslope,
                     infectivity_or_neutralized=self._infectivity_or_neutralized,
                     fix_slope_first=self._fix_slope_first,
                     init_slope=self._init_slope,
