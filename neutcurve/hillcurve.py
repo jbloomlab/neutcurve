@@ -70,6 +70,9 @@ class HillCurve:
         `fixtop` (`False`, float, or tuple/list of length 2)
             If `False`, fit top of curves as free parameter. If float, fix top of
             curve to that value. If length-2 array, constrain top to be in that range.
+        `fixslope` (`False`, float, or tuple/list of length 2)
+            If `False`, fit slope of curves as free parameter. If float, fix slope to
+            that value. If length-2 array, constrain slope to be in that range.
         `fitlogc` (bool)
             Do we do the actual fitting on the concentrations or log
             concentrations? Gives equivalent results in principle, but
@@ -82,7 +85,9 @@ class HillCurve:
             points much more than others in a way that may not be
             justified.
         `init_slope` (float)
-            Initial value of slope used in fitting.
+            Initial value of slope used in fitting. If `fixslope` is set to a single
+            value, it overrides this parameter. If `fixslope` is set to a range,
+            `init_slope` is adjusted up/down to be in that range.
         `no_curve_fit_first` (bool)
             Normally the method first tries to do the optimization with `curve_fit` from
             `scipy`, and if that fails then tries `scipy.optimize.minimize`. If you set
@@ -416,6 +421,7 @@ class HillCurve:
         fs_stderr=None,
         fixbottom=0,
         fixtop=1,
+        fixslope=False,
         fitlogc=False,
         use_stderr_for_fit=False,
         init_slope=1.5,
@@ -504,7 +510,20 @@ class HillCurve:
             i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
-        init_tup = (midpoint, init_slope, bottom, top)
+        # adjust initial slope if inconsistent with `fixslope`
+        if fixslope is False:
+            slope = float(init_slope)
+        elif isinstance(fixslope, (int, float)):
+            fixslope = float(fixslope)
+            slope = fixslope
+        elif hasattr(fixslope, "__len__") and len(fixslope) == 2:
+            fixslope = (fixslope[0], fixslope[1])
+            if fixslope[0] <= fixslope[1]:
+                raise ValueError(f"invalid {fixslope=}: first element must be < second")
+            slope = max(fixslope[0], min(init_slope, fixslope[1]))
+            assert fixslope[0] <= slope <= fixslope[1]
+
+        init_tup = (midpoint, slope, bottom, top)
 
         # first try to fit using curve_fit
         try:
@@ -517,7 +536,7 @@ class HillCurve:
                     fitlogc=fitlogc,
                     use_stderr_for_fit=use_stderr_for_fit,
                     init_tup=init_tup,
-                    fix_slope=True,
+                    fixslope=slope,
                 )
             else:
                 fix_first_init_tup = init_tup
@@ -527,7 +546,7 @@ class HillCurve:
                 fitlogc=fitlogc,
                 use_stderr_for_fit=use_stderr_for_fit,
                 init_tup=fix_first_init_tup,
-                fix_slope=False,
+                fixslope=fixslope,
             )
         # A RuntimeError is raised by scipy if curve_fit fails:
         # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
@@ -542,7 +561,7 @@ class HillCurve:
                         use_stderr_for_fit=use_stderr_for_fit,
                         method=method,
                         init_tup=init_tup,
-                        fix_slope=True,
+                        fixslope=slope,
                     )
                     if fix_first_init_tup is False:
                         continue
@@ -555,7 +574,7 @@ class HillCurve:
                     use_stderr_for_fit=use_stderr_for_fit,
                     method=method,
                     init_tup=fix_first_init_tup,
-                    fix_slope=False,
+                    fixslope=fixslope,
                 )
                 self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
@@ -565,6 +584,18 @@ class HillCurve:
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
+        # debugging check
+        for name, fixval, val in [
+            ("slope", fixslope, self.slope),
+            ("top", fixtop, self.top),
+            ("bottom", fixbottom, self.bottom),
+        ]:
+            if not (
+                (fixval is False)
+                or (isinstance(fixval, float) and numpy.allclose(fixval, val))
+                or (isinstance(fixval, tuple) and (fixval[0] <= val <= fixval[1]))
+            ):
+                raise ValueError(f"fix{name}={fixval}, but final {name}={val}")
 
         if self.cs[0] <= self.midpoint <= self.cs[-1]:
             self.midpoint_bound = self.midpoint
@@ -594,7 +625,7 @@ class HillCurve:
         fitlogc,
         use_stderr_for_fit,
         init_tup,
-        fix_slope,
+        fixslope,
     ):
         """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
 
@@ -611,8 +642,10 @@ class HillCurve:
 
         top_bounds = (-numpy.inf, numpy.inf) if (fixtop is False) else fixtop
         bottom_bounds = (-numpy.inf, numpy.inf) if (fixbottom is False) else fixbottom
+        slope_bounds = (-numpy.inf, numpy.inf) if (fixslope is False) else fixslope
 
-        if fix_slope:
+        if isinstance(fixslope, float):
+            assert fixslope == slope
             if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, bottom, top]
                 # https://stackoverflow.com/a/8081580
@@ -669,13 +702,16 @@ class HillCurve:
                     )
 
         else:
+            assert (fixslope is False) or (
+                isinstance(fixslope, tuple) and len(fixslope) == 2
+            )
             if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, slope, bottom, top]
                 bounds = tuple(
                     zip(
                         *[
                             (-numpy.inf, numpy.inf),
-                            (-numpy.inf, numpy.inf),
+                            slope_bounds,
                             bottom_bounds,
                             top_bounds,
                         ]
@@ -689,7 +725,7 @@ class HillCurve:
                 assert isinstance(fixbottom, float)
                 initguess = [midpoint, slope, top]
                 bounds = tuple(
-                    zip(*[(-numpy.inf, numpy.inf), (-numpy.inf, numpy.inf), top_bounds])
+                    zip(*[(-numpy.inf, numpy.inf), slope_bounds, top_bounds])
                 )
 
                 def func(c, m, s, t):
@@ -704,7 +740,7 @@ class HillCurve:
                     zip(
                         *[
                             (-numpy.inf, numpy.inf),
-                            (-numpy.inf, numpy.inf),
+                            slope_bounds,
                             bottom_bounds,
                         ]
                     )
@@ -716,7 +752,7 @@ class HillCurve:
             else:
                 assert isinstance(fixtop, float) and isinstance(fixbottom, float)
                 initguess = [midpoint, slope]
-                bounds = ([-numpy.inf, -numpy.inf], [numpy.inf, numpy.inf])
+                bounds = tuple(zip(*[(-numpy.inf, numpy.inf), slope_bounds]))
 
                 def func(c, m, s):
                     return evalfunc(
@@ -729,6 +765,7 @@ class HillCurve:
                     )
 
         assert len(initguess) == len(bounds[0]) == len(bounds[1])
+        assert all(lb < ub for (lb, ub) in zip(bounds[0], bounds[1])), bounds
         (popt, pcov) = scipy.optimize.curve_fit(
             f=func,
             xdata=xdata,
@@ -746,7 +783,7 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
-        if fix_slope:
+        if isinstance(fixslope, float):
             params_stderr = {"midpoint": perr[0], "slope": 0, "top": 0, "bottom": 0}
             if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = popt[1]
