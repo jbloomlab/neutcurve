@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.0.0
+-----
+- The curve fitting parameters (top, bottom, slope) can now be constrained to a range in addition to being completely free or fixed. This can help with fitting some curves more sensibly (see [this issue](https://github.com/jbloomlab/neutcurve/issues/53)). Specifically:
+  - ``fixtop`` and ``fixbottom`` parameters to ``HillCurve`` can be 2-tuples of bounds
+  - added ``fixslope`` parameter to ``HillCurve`` and ``CurveFits``
+  - New ``constrain_params_range`` notebook tests and documents this functionality.
+
+- Add ``no_curve_fit_first`` argument to ``HillCurve`` to aid debugging/development.
+
 1.1.2
 -----
 

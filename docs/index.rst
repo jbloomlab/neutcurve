@@ -20,6 +20,7 @@ Contents
    installation
    hillcurve_example
    curvefits_example
+   constrain_params_range
    combine_curvefits
    test_curves
    neutcurve

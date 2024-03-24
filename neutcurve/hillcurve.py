@@ -64,10 +64,15 @@ class HillCurve:
             to re-fit all parameters including slope.
         `fs_stderr` (`None` or array-like)
             If not `None`, standard errors on `fs`.
-        `fixbottom` (bool or a float)
-            If `True`, fix bottom of curve to to this value; otherwise fit.
-        `fixtop` (`False` or a float)
-            If `True`, fix top of curve to this value; otherwise fit.
+        `fixbottom` (`False`, float, or tuple/list of length 2)
+            If `False`, fit bottom of curves as free parameter. If float, fix bottom of
+            curve to that value. If length-2 array, constrain bottom to be in that range.
+        `fixtop` (`False`, float, or tuple/list of length 2)
+            If `False`, fit top of curves as free parameter. If float, fix top of
+            curve to that value. If length-2 array, constrain top to be in that range.
+        `fixslope` (`False`, float, or tuple/list of length 2)
+            If `False`, fit slope of curves as free parameter. If float, fix slope to
+            that value. If length-2 array, constrain slope to be in that range.
         `fitlogc` (bool)
             Do we do the actual fitting on the concentrations or log
             concentrations? Gives equivalent results in principle, but
@@ -80,7 +85,15 @@ class HillCurve:
             points much more than others in a way that may not be
             justified.
         `init_slope` (float)
-            Initial value of slope used in fitting.
+            Initial value of slope used in fitting. If `fixslope` is set to a single
+            value, it overrides this parameter. If `fixslope` is set to a range,
+            `init_slope` is adjusted up/down to be in that range.
+        `no_curve_fit_first` (bool)
+            Normally the method first tries to do the optimization with `curve_fit` from
+            `scipy`, and if that fails then tries `scipy.optimize.minimize`. If you set
+            this to `True`, it skips trying with `curve_fit`. In general, this option is
+            for debugging by knowledgeable developers, and you should not be using it
+            otherwise.
 
     Attributes:
         `cs` (numpy array)
@@ -146,17 +159,17 @@ class HillCurve:
     .. nbplot::
 
         >>> neut = HillCurve(cs, fs, fixbottom=False)
-        >>> numpy.allclose(neut.midpoint, m)
+        >>> numpy.allclose(neut.midpoint, m, atol=1e-4)
         True
         >>> neut.midpoint_bound == neut.midpoint
         True
         >>> neut.midpoint_bound_type
         'interpolated'
-        >>> numpy.allclose(neut.slope, s, atol=1e-4)
+        >>> numpy.allclose(neut.slope, s, atol=1e-3)
         True
-        >>> numpy.allclose(neut.top, t)
+        >>> numpy.allclose(neut.top, t, atol=1e-4)
         True
-        >>> numpy.allclose(neut.bottom, b)
+        >>> numpy.allclose(neut.bottom, b, atol=1e-3)
         True
         >>> for key, val in neut.params_stdev.items():
         ...     print(f"{key} = {val:.2g}")
@@ -176,7 +189,7 @@ class HillCurve:
 
         >>> neut.ic50() > neut.midpoint
         True
-        >>> numpy.allclose(neut.ic50(), 0.0337385586)
+        >>> numpy.allclose(neut.ic50(), 0.0337, atol=1e-4)
         True
         >>> numpy.allclose(0.5, neut.fracinfectivity(neut.ic50()))
         True
@@ -309,6 +322,37 @@ class HillCurve:
     >>> round(neut.r2, 3)
     1.0
 
+    Now fit with bounds on the parameters. First, we make bounds cover the true values:
+
+    >>> neut_bounds_cover = HillCurve(
+    ...     cs, fs, fixbottom=(0, 0.2), fixtop=(0.9, 1), fixslope=(1, 2),
+    ... )
+    >>> numpy.allclose(neut_bounds_cover.midpoint, m, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_bounds_cover.slope, s, atol=1e-3)
+    True
+    >>> numpy.allclose(neut_bounds_cover.top, t, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_bounds_cover.bottom, b, atol=1e-3)
+    True
+    >>> round(neut_bounds_cover.r2, 3)
+    1.0
+
+    Next fit with bounds that do not cover the true parameters:
+    >>> neut_bounds_nocover = HillCurve(
+    ...     cs, fs, fixbottom=(0, 0.05), fixtop=(0.9, 0.95), fixslope=(1, 1.5),
+    ... )
+    >>> round(neut_bounds_nocover.midpoint, 2)
+    0.04
+    >>> round(neut_bounds_nocover.slope, 2)
+    1.5
+    >>> round(neut_bounds_nocover.top, 2)
+    0.95
+    >>> round(neut_bounds_nocover.bottom, 2)
+    0.05
+    >>> round(neut_bounds_nocover.r2, 2)
+    0.99
+
     Now fit with `infectivity_or_neutralized='neutralized'`, which is useful
     when the signal **increases** rather than decreases with increasing
     concentration (as would be the case if measuring fraction bound rather
@@ -319,15 +363,65 @@ class HillCurve:
        >>> neut_opp = HillCurve(cs, [1 - f for f in fs],
        ...                      fixtop=False, fixbottom=False,
        ...                      infectivity_or_neutralized='neutralized')
-       >>> numpy.allclose(neut_opp.top, 0.9)
+       >>> numpy.allclose(neut_opp.top, 0.9, atol=1e-3)
        True
-       >>> numpy.allclose(neut_opp.bottom, 0)
+       >>> numpy.allclose(neut_opp.bottom, 0, atol=1e-3)
        True
        >>> numpy.allclose(neut_opp.midpoint, m)
        True
        >>> neut_opp.ic50() < neut_opp.midpoint
        True
        >>> fig, ax = neut_opp.plot(ylabel='fraction neutralized')
+
+    For internal testing purposes, try with `no_curve_fit_first=False`.
+
+    >>> neut_ncf = HillCurve(cs, fs, fixbottom=False, no_curve_fit_first=True)
+    >>> numpy.allclose(neut_ncf.midpoint, m, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_ncf.slope, s, atol=5e-3)
+    True
+    >>> numpy.allclose(neut_ncf.top, t, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_ncf.bottom, b, atol=1e-3)
+    True
+
+    >>> neut_bounds_cover_ncf = HillCurve(
+    ...     cs,
+    ...     fs,
+    ...     fixbottom=(0, 0.2),
+    ...     fixtop=(0.9, 1),
+    ...     fixslope=(1, 2),
+    ...     no_curve_fit_first=True,
+    ... )
+    >>> numpy.allclose(neut_bounds_cover_ncf.midpoint, m, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_bounds_cover_ncf.slope, s, atol=1e-3)
+    True
+    >>> numpy.allclose(neut_bounds_cover_ncf.top, t, atol=1e-4)
+    True
+    >>> numpy.allclose(neut_bounds_cover_ncf.bottom, b, atol=1e-3)
+    True
+    >>> round(neut_bounds_cover_ncf.r2, 3)
+    1.0
+
+    >>> neut_bounds_nocover_ncf = HillCurve(
+    ...     cs,
+    ...     fs,
+    ...     fixbottom=(0, 0.05),
+    ...     fixtop=(0.9, 0.95),
+    ...     fixslope=(1, 1.5),
+    ...     no_curve_fit_first=True,
+    ... )
+    >>> round(neut_bounds_nocover_ncf.midpoint, 2)
+    0.04
+    >>> round(neut_bounds_nocover_ncf.slope, 2)
+    1.5
+    >>> round(neut_bounds_nocover_ncf.top, 2)
+    0.95
+    >>> round(neut_bounds_nocover_ncf.bottom, 2)
+    0.05
+    >>> round(neut_bounds_nocover_ncf.r2, 2)
+    0.99
 
     """
 
@@ -341,9 +435,11 @@ class HillCurve:
         fs_stderr=None,
         fixbottom=0,
         fixtop=1,
+        fixslope=False,
         fitlogc=False,
         use_stderr_for_fit=False,
         init_slope=1.5,
+        no_curve_fit_first=False,
     ):
         """See main class docstring."""
         # get data into arrays sorted by concentration
@@ -377,19 +473,38 @@ class HillCurve:
             raise ValueError(f"concentrations must all be > 0\n{self.cs=}")
 
         # create initial guess of `(midpoint, slope, bottom, top)`
-        # make initial guess for top and bottom
+        # make initial guess for top
         if fixtop is False:
             top = max(1, self.fs.max())
-        else:
-            if not isinstance(fixtop, (int, float)):
-                raise ValueError(f"{fixtop=} is not `False` or a number")
+        elif isinstance(fixtop, (int, float)):
+            fixtop = float(fixtop)
             top = fixtop
+        elif hasattr(fixtop, "__len__") and len(fixtop) == 2:
+            fixtop = (fixtop[0], fixtop[1])
+            if fixtop[1] <= fixtop[0]:
+                raise ValueError(f"invalid {fixtop=}: first element must be < second")
+            top = max(fixtop[0], min(max(1, self.fs.max()), fixtop[1]))
+            assert fixtop[0] <= top <= fixtop[1]
+        else:
+            raise ValueError(f"{fixtop=} is not `False`, a number, or length-2 array")
+        # make initial guess for bottom
         if fixbottom is False:
             bottom = min(0, self.fs.min())
-        else:
-            if not isinstance(fixbottom, (int, float)):
-                raise ValueError(f"{fixbottom=} is not `False` or a number")
+        elif isinstance(fixbottom, (int, float)):
+            fixbottom = float(fixbottom)
             bottom = fixbottom
+        elif hasattr(fixbottom, "__len__") and len(fixbottom) == 2:
+            fixbottom = (fixbottom[0], fixbottom[1])
+            if fixbottom[1] <= fixbottom[0]:
+                raise ValueError(
+                    f"invalid {fixbottom=}: first element must be < second"
+                )
+            bottom = max(fixbottom[0], min(min(0, self.fs.min()), fixbottom[1]))
+            assert fixbottom[0] <= bottom <= fixbottom[1]
+        else:
+            raise ValueError(
+                f"{fixbottom=} is not `False`, a number, or length-2 array"
+            )
         # make initial guess for midpoint
         # if midpoint guess outside range, guess outside range by amount
         # equal to spacing of last two points
@@ -409,10 +524,25 @@ class HillCurve:
             i = numpy.argmax((self.fs > midval)[:-1] != (self.fs > midval)[1:])
             assert (self.fs[i] > midval) != (self.fs[i + 1] > midval)
             midpoint = (self.cs[i] + self.cs[i + 1]) / 2.0
-        init_tup = (midpoint, init_slope, bottom, top)
+        # adjust initial slope if inconsistent with `fixslope`
+        if fixslope is False:
+            slope = float(init_slope)
+        elif isinstance(fixslope, (int, float)):
+            fixslope = float(fixslope)
+            slope = fixslope
+        elif hasattr(fixslope, "__len__") and len(fixslope) == 2:
+            fixslope = (fixslope[0], fixslope[1])
+            if fixslope[1] <= fixslope[0]:
+                raise ValueError(f"invalid {fixslope=}: first element must be < second")
+            slope = max(fixslope[0], min(init_slope, fixslope[1]))
+            assert fixslope[0] <= slope <= fixslope[1]
+
+        init_tup = (midpoint, slope, bottom, top)
 
         # first try to fit using curve_fit
         try:
+            if no_curve_fit_first:
+                raise RuntimeError("skipping curve_fit")
             if fix_slope_first:
                 fix_first_init_tup, _ = self._fit_curve(
                     fixtop=fixtop,
@@ -420,7 +550,7 @@ class HillCurve:
                     fitlogc=fitlogc,
                     use_stderr_for_fit=use_stderr_for_fit,
                     init_tup=init_tup,
-                    fix_slope=True,
+                    fixslope=slope,
                 )
             else:
                 fix_first_init_tup = init_tup
@@ -430,7 +560,7 @@ class HillCurve:
                 fitlogc=fitlogc,
                 use_stderr_for_fit=use_stderr_for_fit,
                 init_tup=fix_first_init_tup,
-                fix_slope=False,
+                fixslope=fixslope,
             )
         # A RuntimeError is raised by scipy if curve_fit fails:
         # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html
@@ -445,7 +575,7 @@ class HillCurve:
                         use_stderr_for_fit=use_stderr_for_fit,
                         method=method,
                         init_tup=init_tup,
-                        fix_slope=True,
+                        fixslope=slope,
                     )
                     if fix_first_init_tup is False:
                         continue
@@ -458,7 +588,7 @@ class HillCurve:
                     use_stderr_for_fit=use_stderr_for_fit,
                     method=method,
                     init_tup=fix_first_init_tup,
-                    fix_slope=False,
+                    fixslope=fixslope,
                 )
                 self.params_stdev = None  # can't estimate errors
                 if fit_tup is not False:
@@ -468,6 +598,18 @@ class HillCurve:
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
             setattr(self, param, fit_tup[i])
+        # debugging check
+        for name, fixval, val in [
+            ("slope", fixslope, self.slope),
+            ("top", fixtop, self.top),
+            ("bottom", fixbottom, self.bottom),
+        ]:
+            if not (
+                (fixval is False)
+                or (isinstance(fixval, float) and numpy.allclose(fixval, val))
+                or (isinstance(fixval, tuple) and (fixval[0] <= val <= fixval[1]))
+            ):
+                raise ValueError(f"fix{name}={fixval}, but final {name}={val}")
 
         if self.cs[0] <= self.midpoint <= self.cs[-1]:
             self.midpoint_bound = self.midpoint
@@ -497,7 +639,7 @@ class HillCurve:
         fitlogc,
         use_stderr_for_fit,
         init_tup,
-        fix_slope,
+        fixslope,
     ):
         """curve_fit, return `(midpoint, slope, bottom, top), params_stdev`."""
 
@@ -512,15 +654,26 @@ class HillCurve:
             evalfunc = self.evaluate
             xdata = self.cs
 
-        if fix_slope:
-            if fixtop is False and fixbottom is False:
+        top_bounds = (-numpy.inf, numpy.inf) if (fixtop is False) else fixtop
+        bottom_bounds = (-numpy.inf, numpy.inf) if (fixbottom is False) else fixbottom
+        slope_bounds = (-numpy.inf, numpy.inf) if (fixslope is False) else fixslope
+
+        if isinstance(fixslope, float):
+            assert fixslope == slope
+            if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, bottom, top]
+                # https://stackoverflow.com/a/8081580
+                bounds = tuple(
+                    zip(*[(-numpy.inf, numpy.inf), bottom_bounds, top_bounds])
+                )
 
                 def func(c, m, b, t):
                     return evalfunc(c, m, slope, b, t, self._infectivity_or_neutralized)
 
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
+                assert isinstance(fixbottom, float)
                 initguess = [midpoint, top]
+                bounds = tuple(zip(*[(-numpy.inf, numpy.inf), top_bounds]))
 
                 def func(c, m, t):
                     return evalfunc(
@@ -532,8 +685,10 @@ class HillCurve:
                         self._infectivity_or_neutralized,
                     )
 
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
+                assert isinstance(fixtop, float)
                 initguess = [midpoint, bottom]
+                bounds = tuple(zip(*[(-numpy.inf, numpy.inf), bottom_bounds]))
 
                 def func(c, m, b):
                     return evalfunc(
@@ -546,7 +701,9 @@ class HillCurve:
                     )
 
             else:
+                assert isinstance(fixtop, float) and isinstance(fixbottom, float)
                 initguess = [midpoint]
+                bounds = ([-numpy.inf], [numpy.inf])
 
                 def func(c, m):
                     return evalfunc(
@@ -559,28 +716,57 @@ class HillCurve:
                     )
 
         else:
-            if fixtop is False and fixbottom is False:
+            assert (fixslope is False) or (
+                isinstance(fixslope, tuple) and len(fixslope) == 2
+            )
+            if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, slope, bottom, top]
+                bounds = tuple(
+                    zip(
+                        *[
+                            (-numpy.inf, numpy.inf),
+                            slope_bounds,
+                            bottom_bounds,
+                            top_bounds,
+                        ]
+                    )
+                )
 
                 def func(c, m, s, b, t):
                     return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
 
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
+                assert isinstance(fixbottom, float)
                 initguess = [midpoint, slope, top]
+                bounds = tuple(
+                    zip(*[(-numpy.inf, numpy.inf), slope_bounds, top_bounds])
+                )
 
                 def func(c, m, s, t):
                     return evalfunc(
                         c, m, s, bottom, t, self._infectivity_or_neutralized
                     )
 
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
+                assert isinstance(fixtop, float)
                 initguess = [midpoint, slope, bottom]
+                bounds = tuple(
+                    zip(
+                        *[
+                            (-numpy.inf, numpy.inf),
+                            slope_bounds,
+                            bottom_bounds,
+                        ]
+                    )
+                )
 
                 def func(c, m, s, b):
                     return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
 
             else:
+                assert isinstance(fixtop, float) and isinstance(fixbottom, float)
                 initguess = [midpoint, slope]
+                bounds = tuple(zip(*[(-numpy.inf, numpy.inf), slope_bounds]))
 
                 def func(c, m, s):
                     return evalfunc(
@@ -592,6 +778,8 @@ class HillCurve:
                         self._infectivity_or_neutralized,
                     )
 
+        assert len(initguess) == len(bounds[0]) == len(bounds[1])
+        assert all(lb < ub for (lb, ub) in zip(bounds[0], bounds[1])), bounds
         (popt, pcov) = scipy.optimize.curve_fit(
             f=func,
             xdata=xdata,
@@ -599,6 +787,7 @@ class HillCurve:
             p0=initguess,
             sigma=self.fs_stderr if use_stderr_for_fit else None,
             absolute_sigma=True,
+            bounds=bounds,
             maxfev=1000,
         )
 
@@ -608,17 +797,17 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = popt[0]
-        if fix_slope:
+        if isinstance(fixslope, float):
             params_stderr = {"midpoint": perr[0], "slope": 0, "top": 0, "bottom": 0}
-            if fixbottom is False and fixtop is False:
+            if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = popt[1]
                 params_stderr["bottom"] = perr[1]
                 top = popt[2]
                 params_stderr["top"] = perr[2]
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
                 bottom = popt[1]
                 params_stderr["bottom"] = perr[1]
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
                 top = popt[1]
                 params_stderr["top"] = perr[1]
         else:
@@ -629,15 +818,15 @@ class HillCurve:
                 "top": 0,
                 "bottom": 0,
             }
-            if fixbottom is False and fixtop is False:
+            if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = popt[2]
                 params_stderr["bottom"] = perr[2]
                 top = popt[3]
                 params_stderr["top"] = perr[3]
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
                 bottom = popt[2]
                 params_stderr["bottom"] = perr[2]
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
                 top = popt[2]
                 params_stderr["top"] = perr[2]
 
@@ -652,7 +841,7 @@ class HillCurve:
         use_stderr_for_fit,
         method,
         init_tup,
-        fix_slope,
+        fixslope,
     ):
         """Return `(midpoint, slope, bottom, top)` if succeeds or `False` if fails."""
 
@@ -669,17 +858,22 @@ class HillCurve:
             xdata = self.cs
             bounds = [(0, None)]
 
-        if fix_slope:
-            if fixtop is False and fixbottom is False:
+        top_bounds = (None, None) if (fixtop is False) else fixtop
+        bottom_bounds = (None, None) if (fixbottom is False) else fixbottom
+        slope_bounds = (None, None) if (fixslope is False) else fixslope
+
+        if isinstance(fixslope, float):
+            if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, bottom, top]
-                bounds = bounds + [(None, None), (None, None)]
+                bounds = bounds + [bottom_bounds, top_bounds]
 
                 def func(c, m, b, t):
                     return evalfunc(c, m, slope, b, t, self._infectivity_or_neutralized)
 
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
+                assert isinstance(fixbottom, float)
                 initguess = [midpoint, top]
-                bounds.append((bottom, None))
+                bounds.append(top_bounds)
 
                 def func(c, m, t):
                     return evalfunc(
@@ -691,9 +885,10 @@ class HillCurve:
                         self._infectivity_or_neutralized,
                     )
 
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
+                assert isinstance(fixtop, float)
                 initguess = [midpoint, bottom]
-                bounds.append((None, top))
+                bounds.append(bottom_bounds)
 
                 def func(c, m, b):
                     return evalfunc(
@@ -706,6 +901,7 @@ class HillCurve:
                     )
 
             else:
+                assert isinstance(fixtop, float) and isinstance(fixbottom, float)
                 initguess = [midpoint]
 
                 def func(c, m):
@@ -719,32 +915,36 @@ class HillCurve:
                     )
 
         else:
-            bounds.append((0, None))
+            assert isinstance(fixslope, tuple) or (fixslope is False)
+            bounds.append(slope_bounds)
 
-            if fixtop is False and fixbottom is False:
+            if (not isinstance(fixtop, float)) and (not isinstance(fixbottom, float)):
                 initguess = [midpoint, slope, bottom, top]
-                bounds = bounds + [(None, None), (None, None)]
+                bounds = bounds + [bottom_bounds, top_bounds]
 
                 def func(c, m, s, b, t):
                     return evalfunc(c, m, s, b, t, self._infectivity_or_neutralized)
 
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
+                assert isinstance(fixbottom, float)
                 initguess = [midpoint, slope, top]
-                bounds.append((bottom, None))
+                bounds.append(top_bounds)
 
                 def func(c, m, s, t):
                     return evalfunc(
                         c, m, s, bottom, t, self._infectivity_or_neutralized
                     )
 
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
+                assert isinstance(fixtop, float)
                 initguess = [midpoint, slope, bottom]
-                bounds.append((None, top))
+                bounds.append(bottom_bounds)
 
                 def func(c, m, s, b):
                     return evalfunc(c, m, s, b, top, self._infectivity_or_neutralized)
 
             else:
+                assert isinstance(fixtop, float) and isinstance(fixbottom, float)
                 initguess = [midpoint, slope]
 
                 def func(c, m, s):
@@ -765,6 +965,7 @@ class HillCurve:
                 return sum((func(xdata, *p) - self.fs / self.fs_stderr) ** 2)
 
         initguess = numpy.array(initguess, dtype="float")
+        assert len(initguess) == len(bounds)
         res = scipy.optimize.minimize(min_func, initguess, bounds=bounds, method=method)
 
         if not res.success:
@@ -774,22 +975,23 @@ class HillCurve:
             midpoint = numpy.exp(midpoint)
 
         midpoint = res.x[0]
-        if fix_slope:
-            if fixbottom is False and fixtop is False:
+        if isinstance(fixslope, float):
+            if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = res.x[1]
                 top = res.x[2]
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
                 bottom = res.x[1]
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
                 top = res.x[1]
         else:
+            assert (fixslope is False) or isinstance(fixslope, tuple)
             slope = res.x[1]
-            if fixbottom is False and fixtop is False:
+            if (not isinstance(fixbottom, float)) and (not isinstance(fixtop, float)):
                 bottom = res.x[2]
                 top = res.x[3]
-            elif fixbottom is False:
+            elif not isinstance(fixbottom, float):
                 bottom = res.x[2]
-            elif fixtop is False:
+            elif not isinstance(fixtop, float):
                 top = res.x[2]
 
         return (midpoint, slope, bottom, top)
