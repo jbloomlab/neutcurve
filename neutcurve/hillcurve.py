@@ -120,6 +120,9 @@ class HillCurve:
         `r2` (float)
             Coefficient of determination indicating how well the curve fits the
             data (https://en.wikipedia.org/wiki/Coefficient_of_determination).
+        `rmsd` (float)
+            Root mean square deviation of fitted to actual values (square root of mean
+            residual).
         `params_stdev` (dict or `None`)
             If standard deviations can be estimated on the fit
             parameters, keyed by 'bottom', 'top', 'midpoint',
@@ -322,6 +325,10 @@ class HillCurve:
     >>> round(neut.r2, 3)
     1.0
 
+    We can also quantify the goodness of fit with :attr:`HillCurve.rmsd`:
+    >>> round(neut.rmsd, 3)
+    0.0
+
     Now fit with bounds on the parameters. First, we make bounds cover the true values:
 
     >>> neut_bounds_cover = HillCurve(
@@ -337,6 +344,8 @@ class HillCurve:
     True
     >>> round(neut_bounds_cover.r2, 3)
     1.0
+    >>> round(neut_bounds_cover.rmsd, 3)
+    0.0
 
     Next fit with bounds that do not cover the true parameters:
     >>> neut_bounds_nocover = HillCurve(
@@ -352,6 +361,8 @@ class HillCurve:
     0.05
     >>> round(neut_bounds_nocover.r2, 2)
     0.99
+    >>> round(neut_bounds_nocover.rmsd, 3)
+    0.045
 
     Now fit with `infectivity_or_neutralized='neutralized'`, which is useful
     when the signal **increases** rather than decreases with increasing
@@ -629,7 +640,16 @@ class HillCurve:
         ssres = (
             (numpy.array([self.fracinfectivity(c) for c in self.cs]) - self.fs) ** 2
         ).sum()
-        self.r2 = 1 - ssres / sstot
+        if sstot == 0:
+            if ssres == 0:
+                self.r2 = 1.0
+            else:
+                self.r2 = 0.0
+        else:
+            self.r2 = 1.0 - ssres / sstot
+
+        # compute rmsd
+        self.rmsd = math.sqrt(ssres / len(self.cs))
 
     def _fit_curve(
         self,

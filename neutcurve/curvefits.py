@@ -537,6 +537,7 @@ class CurveFits:
               - 'top': top of curve.
               - 'bottom': bottom of curve.
               - 'r2': coefficient of determination of fit
+              - 'rmsd': root-mean square deviation of fits
 
         """
         if ic50_error not in {None, "fit_stdev"}:
@@ -566,6 +567,7 @@ class CurveFits:
                 "top",
                 "bottom",
                 "r2",
+                "rmsd",
             ]
             for serum in self.sera:
                 for virus in self.viruses[serum]:
