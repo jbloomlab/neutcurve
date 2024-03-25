@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Hill-curve neutralization &#8212; neutcurve 1.1.2 documentation</title>
+    <title>Hill-curve neutralization &#8212; neutcurve 2.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=c878986b" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="_static/documentation_options.js?v=6f037312"></script>
+    <script src="_static/documentation_options.js?v=51b770b3"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -351,7 +351,10 @@ The IC95 is 0.0541
 <img alt="_images/hillcurve_example_22_0.png" src="_images/hillcurve_example_22_0.png" />
 </div>
 </div>
-<p>We can quantify the goodness of fit by the <a class="reference external" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">coefficient of determination</a> (<span class="math notranslate nohighlight">\(R^2\)</span>) using <code class="docutils literal notranslate"><span class="pre">HillCurve.r2</span></code>, which will be one if the curve perfectly fits the data and less than one otherwise. A value of &lt;0 means the fit is worse than just drawing a straight line through the data:</p>
+</section>
+<section id="Quantifying-goodness-of-fit">
+<h2>Quantifying goodness of fit<a class="headerlink" href="#Quantifying-goodness-of-fit" title="Link to this heading">¶</a></h2>
+<p>We can quantify the goodness of fit by the <a class="reference external" href="https://en.wikipedia.org/wiki/Coefficient_of_determination">coefficient of determination</a> (<span class="math notranslate nohighlight">\(R^2\)</span>) using <code class="docutils literal notranslate"><span class="pre">HillCurve.r2</span></code>, which will be one if the curve perfectly fits the data and less than one otherwise. Essentially, this corresponds to the fraction of the variation in the data explained by the curve. A value of &lt;0 means the fit is worse than just drawing a straight line through the data:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
@@ -368,6 +371,34 @@ The IC95 is 0.0541
 <div class="highlight"><pre>
 0.996
 </pre></div></div>
+</div>
+<p>We can also quantify how well each data point is fit on average with the root mean square deviation (the square root of the mean residual) A value of zero means the curve perfectly fits the data. This is returned by <code class="docutils literal notranslate"><span class="pre">HillCurve.rmsd</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">round</span><span class="p">(</span><span class="n">curve</span><span class="o">.</span><span class="n">rmsd</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.028
+</pre></div></div>
+</div>
+<p>In general, you might consider a curve fit to be “good” if <strong>either</strong> the <code class="docutils literal notranslate"><span class="pre">r2</span></code> is close to one, or the <code class="docutils literal notranslate"><span class="pre">rmsd</span></code> is close to zero. Usually they will be correlated, but if the data essentially fall on a flat line (no or complete neutralization at all tested concentrations), then you could have a poor <code class="docutils literal notranslate"><span class="pre">r2</span></code> close to zero but still a small <code class="docutils literal notranslate"><span class="pre">rmsd</span></code> because in this case the curve would fit the data well (small <code class="docutils literal notranslate"><span class="pre">rmsd</span></code>) but would not be much better than a line (so poor <code class="docutils literal notranslate"><span class="pre">r2</span></code>) simply because the
+data are basically linear.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
 </div>
 </section>
 </section>
@@ -413,9 +444,11 @@ The IC95 is 0.0541
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Hill-curve neutralization</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Mathematical-form-of-curves">Mathematical form of curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Fitting-using-the-HillCurve-class">Fitting using the HillCurve class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Quantifying-goodness-of-fit">Quantifying goodness of fit</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constrain_params_range.html">Constrain fit parameters to a range of reasonable values</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_curves.html">Test curve fitting on some real data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutcurve.html">neutcurve package</a></li>

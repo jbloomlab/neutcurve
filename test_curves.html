@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Test curve fitting on some real data &#8212; neutcurve 1.1.2 documentation</title>
+    <title>Test curve fitting on some real data &#8212; neutcurve 2.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=c878986b" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="_static/documentation_options.js?v=6f037312"></script>
+    <script src="_static/documentation_options.js?v=51b770b3"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -114,6 +114,7 @@
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -131,6 +132,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>1</th>
@@ -146,6 +148,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.91</td>
+      <td>0.12</td>
     </tr>
     <tr>
       <th>2</th>
@@ -161,6 +164,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.78</td>
+      <td>0.19</td>
     </tr>
     <tr>
       <th>3</th>
@@ -176,6 +180,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>4</th>
@@ -191,6 +196,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.78</td>
+      <td>0.18</td>
     </tr>
     <tr>
       <th>5</th>
@@ -206,6 +212,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.037</td>
     </tr>
     <tr>
       <th>6</th>
@@ -221,6 +228,7 @@
       <td>1</td>
       <td>0</td>
       <td>1</td>
+      <td>0.0073</td>
     </tr>
     <tr>
       <th>7</th>
@@ -236,6 +244,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.95</td>
+      <td>0.099</td>
     </tr>
     <tr>
       <th>8</th>
@@ -251,6 +260,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.98</td>
+      <td>0.064</td>
     </tr>
     <tr>
       <th>9</th>
@@ -266,6 +276,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.74</td>
+      <td>0.2</td>
     </tr>
     <tr>
       <th>10</th>
@@ -281,6 +292,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>11</th>
@@ -296,6 +308,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.91</td>
+      <td>0.12</td>
     </tr>
   </tbody>
 </table>
@@ -380,6 +393,7 @@
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -397,6 +411,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>1</th>
@@ -412,6 +427,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.91</td>
+      <td>0.12</td>
     </tr>
     <tr>
       <th>2</th>
@@ -427,6 +443,7 @@
       <td>1</td>
       <td>0</td>
       <td>-0.7</td>
+      <td>0.54</td>
     </tr>
     <tr>
       <th>3</th>
@@ -442,6 +459,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>4</th>
@@ -457,6 +475,7 @@
       <td>1</td>
       <td>0</td>
       <td>-1.2</td>
+      <td>0.56</td>
     </tr>
     <tr>
       <th>5</th>
@@ -472,6 +491,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.037</td>
     </tr>
     <tr>
       <th>6</th>
@@ -487,6 +507,7 @@
       <td>1</td>
       <td>0</td>
       <td>1</td>
+      <td>0.0073</td>
     </tr>
     <tr>
       <th>7</th>
@@ -502,6 +523,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.95</td>
+      <td>0.099</td>
     </tr>
     <tr>
       <th>8</th>
@@ -517,6 +539,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.98</td>
+      <td>0.064</td>
     </tr>
     <tr>
       <th>9</th>
@@ -532,6 +555,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.74</td>
+      <td>0.2</td>
     </tr>
     <tr>
       <th>10</th>
@@ -547,6 +571,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.86</td>
+      <td>0.15</td>
     </tr>
     <tr>
       <th>11</th>
@@ -562,6 +587,7 @@
       <td>1</td>
       <td>0</td>
       <td>0.91</td>
+      <td>0.12</td>
     </tr>
   </tbody>
 </table>
@@ -804,6 +830,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constrain_params_range.html">Constrain fit parameters to a range of reasonable values</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Test curve fitting on some real data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutcurve.html">neutcurve package</a></li>

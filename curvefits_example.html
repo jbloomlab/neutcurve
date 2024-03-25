@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Fitting curves to real data &#8212; neutcurve 1.1.2 documentation</title>
+    <title>Fitting curves to real data &#8212; neutcurve 2.0.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=c878986b" />
     <link rel="stylesheet" type="text/css" href="_static/nbsphinx-code-cells.css?v=2aa19091" />
-    <script src="_static/documentation_options.js?v=6f037312"></script>
+    <script src="_static/documentation_options.js?v=51b770b3"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -17,7 +17,7 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Combining CurveFits objects" href="combine_curvefits.html" />
+    <link rel="next" title="Constrain fit parameters to a range of reasonable values" href="constrain_params_range.html" />
     <link rel="prev" title="Hill-curve neutralization" href="hillcurve_example.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -440,6 +440,7 @@ The IC50 is 0.017
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -459,6 +460,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.992</td>
+      <td>0.0389</td>
     </tr>
     <tr>
       <th>1</th>
@@ -476,6 +478,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0592</td>
     </tr>
     <tr>
       <th>2</th>
@@ -493,6 +496,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0467</td>
     </tr>
     <tr>
       <th>3</th>
@@ -510,6 +514,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.995</td>
+      <td>0.0328</td>
     </tr>
     <tr>
       <th>4</th>
@@ -527,6 +532,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.981</td>
+      <td>0.0655</td>
     </tr>
     <tr>
       <th>5</th>
@@ -544,6 +550,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0376</td>
     </tr>
     <tr>
       <th>6</th>
@@ -561,6 +568,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0375</td>
     </tr>
     <tr>
       <th>7</th>
@@ -578,6 +586,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.997</td>
+      <td>0.0228</td>
     </tr>
     <tr>
       <th>8</th>
@@ -595,6 +604,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.989</td>
+      <td>0.0483</td>
     </tr>
     <tr>
       <th>9</th>
@@ -612,6 +622,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.982</td>
+      <td>0.0674</td>
     </tr>
     <tr>
       <th>10</th>
@@ -629,6 +640,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0518</td>
     </tr>
     <tr>
       <th>11</th>
@@ -646,6 +658,7 @@ The IC50 is 0.017
       <td>1</td>
       <td>0</td>
       <td>0.708</td>
+      <td>0.052</td>
     </tr>
   </tbody>
 </table>
@@ -700,6 +713,7 @@ range as this is unreliable.</p>
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -719,6 +733,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.996</td>
+      <td>0.0284</td>
     </tr>
     <tr>
       <th>1</th>
@@ -736,6 +751,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0527</td>
     </tr>
     <tr>
       <th>2</th>
@@ -753,6 +769,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.982</td>
+      <td>0.0597</td>
     </tr>
     <tr>
       <th>3</th>
@@ -770,6 +787,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.992</td>
+      <td>0.0389</td>
     </tr>
     <tr>
       <th>4</th>
@@ -787,6 +805,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.977</td>
+      <td>0.077</td>
     </tr>
   </tbody>
 </table>
@@ -839,6 +858,7 @@ range as this is unreliable.</p>
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -858,6 +878,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.996</td>
+      <td>0.0284</td>
     </tr>
     <tr>
       <th>1</th>
@@ -875,6 +896,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0527</td>
     </tr>
     <tr>
       <th>2</th>
@@ -892,6 +914,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.982</td>
+      <td>0.0597</td>
     </tr>
     <tr>
       <th>3</th>
@@ -909,6 +932,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.977</td>
+      <td>0.077</td>
     </tr>
     <tr>
       <th>4</th>
@@ -926,6 +950,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0601</td>
     </tr>
   </tbody>
 </table>
@@ -980,6 +1005,7 @@ range as this is unreliable.</p>
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -1002,6 +1028,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.992</td>
+      <td>0.0389</td>
     </tr>
     <tr>
       <th>1</th>
@@ -1022,6 +1049,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0592</td>
     </tr>
     <tr>
       <th>2</th>
@@ -1042,6 +1070,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0467</td>
     </tr>
     <tr>
       <th>3</th>
@@ -1062,6 +1091,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.995</td>
+      <td>0.0328</td>
     </tr>
     <tr>
       <th>4</th>
@@ -1082,6 +1112,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.981</td>
+      <td>0.0655</td>
     </tr>
     <tr>
       <th>5</th>
@@ -1102,6 +1133,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0376</td>
     </tr>
     <tr>
       <th>6</th>
@@ -1122,6 +1154,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0375</td>
     </tr>
     <tr>
       <th>7</th>
@@ -1142,6 +1175,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.997</td>
+      <td>0.0228</td>
     </tr>
     <tr>
       <th>8</th>
@@ -1162,6 +1196,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.989</td>
+      <td>0.0483</td>
     </tr>
     <tr>
       <th>9</th>
@@ -1182,6 +1217,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.982</td>
+      <td>0.0674</td>
     </tr>
     <tr>
       <th>10</th>
@@ -1202,6 +1238,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0518</td>
     </tr>
     <tr>
       <th>11</th>
@@ -1222,6 +1259,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.708</td>
+      <td>0.052</td>
     </tr>
   </tbody>
 </table>
@@ -1274,6 +1312,7 @@ range as this is unreliable.</p>
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -1294,6 +1333,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.992</td>
+      <td>0.0389</td>
     </tr>
     <tr>
       <th>1</th>
@@ -1312,6 +1352,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.986</td>
+      <td>0.0592</td>
     </tr>
     <tr>
       <th>2</th>
@@ -1330,6 +1371,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0467</td>
     </tr>
     <tr>
       <th>3</th>
@@ -1348,6 +1390,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.995</td>
+      <td>0.0328</td>
     </tr>
     <tr>
       <th>4</th>
@@ -1366,6 +1409,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.981</td>
+      <td>0.0655</td>
     </tr>
     <tr>
       <th>5</th>
@@ -1384,6 +1428,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0376</td>
     </tr>
     <tr>
       <th>6</th>
@@ -1402,6 +1447,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.993</td>
+      <td>0.0375</td>
     </tr>
     <tr>
       <th>7</th>
@@ -1420,6 +1466,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.997</td>
+      <td>0.0228</td>
     </tr>
     <tr>
       <th>8</th>
@@ -1438,6 +1485,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.989</td>
+      <td>0.0483</td>
     </tr>
     <tr>
       <th>9</th>
@@ -1456,6 +1504,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.982</td>
+      <td>0.0674</td>
     </tr>
     <tr>
       <th>10</th>
@@ -1474,6 +1523,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.99</td>
+      <td>0.0518</td>
     </tr>
     <tr>
       <th>11</th>
@@ -1492,6 +1542,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>0.708</td>
+      <td>0.052</td>
     </tr>
   </tbody>
 </table>
@@ -2294,6 +2345,7 @@ range as this is unreliable.</p>
       <th>top</th>
       <th>bottom</th>
       <th>r2</th>
+      <th>rmsd</th>
     </tr>
   </thead>
   <tbody>
@@ -2313,6 +2365,7 @@ range as this is unreliable.</p>
       <td>1</td>
       <td>0</td>
       <td>-0.932</td>
+      <td>0.101</td>
     </tr>
   </tbody>
 </table>
@@ -2377,14 +2430,6 @@ range as this is unreliable.</p>
 </div>
 </div>
 <p>This assumes the plotting was done using <code class="docutils literal notranslate"><span class="pre">sharex=True</span></code> and <code class="docutils literal notranslate"><span class="pre">sharey=True</span></code> (on by default), which makes all axes share the same x-ticks so they can be set for just the last plot. Otherwise you need to set the ticks for each axis separately.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-</div>
 </section>
 </section>
 </section>
@@ -2438,6 +2483,7 @@ range as this is unreliable.</p>
 <li class="toctree-l2"><a class="reference internal" href="#Plotting-the-curves">Plotting the curves</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="constrain_params_range.html">Constrain fit parameters to a range of reasonable values</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_curves.html">Test curve fitting on some real data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="neutcurve.html">neutcurve package</a></li>
@@ -2450,7 +2496,7 @@ range as this is unreliable.</p>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="hillcurve_example.html" title="previous chapter">Hill-curve neutralization</a></li>
-      <li>Next: <a href="combine_curvefits.html" title="next chapter">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
+      <li>Next: <a href="constrain_params_range.html" title="next chapter">Constrain fit parameters to a range of reasonable values</a></li>
   </ul></li>
 </ul>
 </div>
