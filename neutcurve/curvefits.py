@@ -604,9 +604,16 @@ class CurveFits:
                 ic_cols += [prefix, f"{prefix}_bound", f"{prefix}_str"]
             if ic50_error == "fit_stdev":
                 ic_cols.append("ic50_error")
-            self._fitparams[key] = pd.DataFrame(d)[
-                ["serum", "virus", "replicate", "nreplicates"] + ic_cols + params
-            ].assign(nreplicates=lambda x: (x["nreplicates"].astype("Int64")))
+            if len(d):
+                self._fitparams[key] = pd.DataFrame(d)[
+                    ["serum", "virus", "replicate", "nreplicates"] + ic_cols + params
+                ].assign(nreplicates=lambda x: (x["nreplicates"].astype("Int64")))
+            else:
+                self._fitparams[key] = pd.DataFrame(
+                    columns=["serum", "virus", "replicate", "nreplicates"]
+                    + ic_cols
+                    + params,
+                )
 
         return self._fitparams[key]
 
