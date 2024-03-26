@@ -6,8 +6,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.0.1
+-----
+
+Fixed
++++++
+- Don't throw an uninterprtable error if ``CurveFits.fitParams`` called with no curves, instead just return empty data frame.
+
 2.0.0
 -----
+
+Added
++++++
 - The curve fitting parameters (top, bottom, slope) can now be constrained to a range in addition to being completely free or fixed. This can help with fitting some curves more sensibly (see [this issue](https://github.com/jbloomlab/neutcurve/issues/53)). Specifically:
   - ``fixtop`` and ``fixbottom`` parameters to ``HillCurve`` can be 2-tuples of bounds
   - added ``fixslope`` parameter to ``HillCurve`` and ``CurveFits``
