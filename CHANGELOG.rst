@@ -6,12 +6,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.1.0
+-----
+
+Added
++++++
+- Added the ``draw_in_bounds`` option to the curve plotting so that curves never are plotted outside the data range. Addresses [this issue](https://github.com/jbloomlab/neutcurve/issues/59).
+
 2.0.1
 -----
 
 Fixed
 +++++
-- Don't throw an uninterprtable error if ``CurveFits.fitParams`` called with no curves, instead just return empty data frame.
+- Don't throw an uninterpretable error if ``CurveFits.fitParams`` called with no curves, instead just return empty data frame.
 
 2.0.0
 -----

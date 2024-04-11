@@ -1243,6 +1243,7 @@ class CurveFits:
         sharex=True,
         sharey=True,
         vlines=None,
+        draw_in_bounds=False,
     ):
         """Plot arbitrary grid of curves.
 
@@ -1318,6 +1319,8 @@ class CurveFits:
                 Values are lists of dicts with a key 'x' giving the x-location
                 of the vertical line, and optionally keys 'linewidth',
                 'color', and 'linestyle'.
+            `draw_in_bounds` (bool)
+                Same meaning as for meth:`neutcurve.hillcurve.HillCurve.plot`.
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -1468,6 +1471,7 @@ class CurveFits:
                     xlabel=ixlabel,
                     ylabel=iylabel,
                     yticklocs=yticklocs,
+                    draw_in_bounds=draw_in_bounds,
                     **kwargs,
                 )
                 label = curvedict["label"]
