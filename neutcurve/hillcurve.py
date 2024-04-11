@@ -1203,6 +1203,7 @@ class HillCurve:
         linewidth=1,
         linestyle="-",
         yticklocs=None,
+        draw_in_bounds=False,
     ):
         """Plot the neutralization curve.
 
@@ -1229,12 +1230,16 @@ class HillCurve:
                 Line style.
             `yticklocs` (`None` or list)
                 Exact locations to place yticks; `None` means auto-locate.
+            `draw_in_bounds` (bool)
+                By default, the plotted curve extends a bit outside the actual
+                data points on both sides. If this is set to `True`, then the
+                plotted curve stops at the bounds of the data points.
 
         Returns:
             The 2-tuple `(fig, ax)` giving the matplotlib figure and axis.
 
         """
-        data = self.dataframe(concentrations)
+        data = self.dataframe(concentrations, extend=0 if draw_in_bounds else 0.1)
 
         if ax is None:
             fig, ax = plt.subplots()
@@ -1282,7 +1287,7 @@ class HillCurve:
 
         return fig, ax
 
-    def dataframe(self, concentrations="auto"):
+    def dataframe(self, concentrations="auto", extend=0.1):
         """Get data frame with curve data for plotting.
 
         Useful if you want to get both the points and the fit
@@ -1294,6 +1299,9 @@ class HillCurve:
                 If 'auto' the automatically computed from data
                 range using :func:`concentrationRange`. If
                 'measured' then only include measured values.
+            `extend` (float)
+                The value passed to :func:`concentrationRange` if `concentrations`
+                is 'auto'.
 
         Returns:
             A pandas DataFrame with the following columns:
@@ -1306,7 +1314,7 @@ class HillCurve:
 
         """
         if concentrations == "auto":
-            concentrations = concentrationRange(self.cs[0], self.cs[-1])
+            concentrations = concentrationRange(self.cs[0], self.cs[-1], extend=extend)
         elif concentrations == "measured":
             concentrations = []
         concentrations = numpy.concatenate([self.cs, concentrations])
