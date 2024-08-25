@@ -1,7 +1,7 @@
 ``neutcurve`` documentation
 ======================================
 
-`neutcurve` is a Python package written by the `Bloom lab <https://research.fhcrc.org/bloom/en.html>`_ for fitting and plotting neutralization curves.
+`neutcurve` is a Python package written by the `Bloom lab <https://jbloomlab.org>`_ for fitting and plotting neutralization curves.
 
 See below for information and examples of how to use this package.
 

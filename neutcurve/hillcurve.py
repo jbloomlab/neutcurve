@@ -608,7 +608,7 @@ class HillCurve:
                 raise HillCurveFittingError(f"fit failed:\n{self.cs=}\n{self.fs=}")
 
         for i, param in enumerate(["midpoint", "slope", "bottom", "top"]):
-            setattr(self, param, fit_tup[i])
+            setattr(self, param, float(fit_tup[i]))
         # debugging check
         for name, fixval, val in [
             ("slope", fixslope, self.slope),
@@ -626,20 +626,22 @@ class HillCurve:
             self.midpoint_bound = self.midpoint
             self.midpoint_bound_type = "interpolated"
         elif self.midpoint < self.cs[0]:
-            self.midpoint_bound = self.cs[0]
+            self.midpoint_bound = float(self.cs[0])
             self.midpoint_bound_type = "upper"
         else:
             assert self.midpoint > self.cs[-1]
-            self.midpoint_bound = self.cs[-1]
+            self.midpoint_bound = float(self.cs[-1])
             self.midpoint_bound_type = "lower"
 
         # compute coefficient of determination
         # https://en.wikipedia.org/wiki/Coefficient_of_determination
         assert len(self.cs) == len(self.fs)
-        sstot = ((self.fs - numpy.average(self.fs)) ** 2).sum()
-        ssres = (
-            (numpy.array([self.fracinfectivity(c) for c in self.cs]) - self.fs) ** 2
-        ).sum()
+        sstot = float(((self.fs - numpy.average(self.fs)) ** 2).sum())
+        ssres = float(
+            (
+                (numpy.array([self.fracinfectivity(c) for c in self.cs]) - self.fs) ** 2
+            ).sum()
+        )
         if sstot == 0:
             if ssres == 0:
                 self.r2 = 1.0
