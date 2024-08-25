@@ -11,7 +11,7 @@ neutcurve
 .. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json
         :target: https://github.com/astral-sh/ruff
 
-``neutcurve`` is a Python package written by the `Bloom lab <https://research.fhcrc.org/bloom/en.html>`_ for plotting neutralization curves.
+``neutcurve`` is a Python package written by the `Bloom lab <https://jbloomlab.org>`_ for plotting neutralization curves.
 
 See the `neutcurve documentation <https://jbloomlab.github.io/neutcurve/>`_ for details on how to install and use ``neutcurve``.
 
