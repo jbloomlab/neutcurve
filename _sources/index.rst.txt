@@ -5,7 +5,7 @@
 
 See below for information and examples of how to use this package.
 
-Please cite `Loes et al (2024) <https://doi.org/10.1101/2024.03.08.584176>`_ if you use `neutcurve` in your scientific study.
+Please cite `Loes et al (2024) <https://doi.org/10.1128/jvi.00689-24>`_ if you use `neutcurve` in your scientific study.
 
 Contents
 ----------
