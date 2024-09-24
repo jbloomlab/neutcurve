@@ -15,4 +15,4 @@ neutcurve
 
 See the `neutcurve documentation <https://jbloomlab.github.io/neutcurve/>`_ for details on how to install and use ``neutcurve``.
 
-Please cite `Loes et al (2024) <https://doi.org/10.1101/2024.03.08.584176>`_ if you use ``neutcurve`` in your scientific study.
+Please cite `Loes et al (2024) <https://doi.org/10.1128/jvi.00689-24>`_ if you use ``neutcurve`` in your scientific study.
