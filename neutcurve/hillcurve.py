@@ -1267,15 +1267,16 @@ class HillCurve:
         ax.errorbar(
             x="concentration",
             y="measurement",
-            yerr="stderr",
-            data=data,
+            yerr=None if (self.fs_stderr is None) else "stderr",
+            data=data[data["measurement"].notnull()],
             fmt=marker,
             color=color,
             markersize=markersize,
             capsize=markersize / 1.5,
         )
 
-        ax.set_xscale("log")
+        if ax.get_xscale() != "log":
+            ax.set_xscale("log")
         ax.set_xlabel(xlabel, fontsize=15)
         ax.set_ylabel(ylabel, fontsize=15)
         ax.tick_params("both", labelsize=12, length=5, width=1)
@@ -1349,7 +1350,7 @@ class HillCurve:
         )
 
 
-def concentrationRange(bottom, top, npoints=200, extend=0.1):
+def concentrationRange(bottom, top, npoints=120, extend=0.1):
     """Logarithmically spaced concentrations for plotting.
 
     Useful if you want to plot a curve by fitting values to densely

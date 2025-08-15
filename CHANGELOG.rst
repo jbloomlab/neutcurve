@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.2.0
+-----
+
+Added
++++++
+- Fixes to speed up plotting of large grids of neutralization curves. Remove internal inefficiencies in code that were repeatedly re-setting shared axes. Also add the ``no_tight_layout`` option to ``CurveFits.plotGrid`` and reduced default ``npoints`` from 200 to 120 in ``HillCurve.concentrationRange``.
+
 2.1.0
 -----
 
