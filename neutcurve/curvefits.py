@@ -1244,6 +1244,7 @@ class CurveFits:
         sharey=True,
         vlines=None,
         draw_in_bounds=False,
+        no_tight_layout=False,
     ):
         """Plot arbitrary grid of curves.
 
@@ -1321,6 +1322,8 @@ class CurveFits:
                 'color', and 'linestyle'.
             `draw_in_bounds` (bool)
                 Same meaning as for meth:`neutcurve.hillcurve.HillCurve.plot`.
+            `no_tight_layout` (bool)
+                Do not apply tight layout to plot (can make it faster).
 
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
@@ -1438,9 +1441,20 @@ class CurveFits:
             axes[irow, icol].set_xlim(
                 lims[irow, icol]["xmin"], lims[irow, icol]["xmax"]
             )
+            if sharex:
+                # if doing sharex, should be only one value, set on one and it propagates
+                assert len(set(d["xmin"] for d in lims.values())) == 1
+                assert len(set(d["xmax"] for d in lims.values())) == 1
+                break
+        for irow, icol in plots.keys():
             axes[irow, icol].set_ylim(
                 lims[irow, icol]["ymin"], lims[irow, icol]["ymax"]
             )
+            if sharey:
+                # if doing sharey, should be only one value, set on one and it propagates
+                assert len(set(d["ymin"] for d in lims.values())) == 1
+                assert len(set(d["ymax"] for d in lims.values())) == 1
+                break  # if doing sharey, only need to set on one and it propagates
 
         # make plots
         shared_legend = attempt_shared_legend
@@ -1610,7 +1624,7 @@ class CurveFits:
                 left=align_to_dmslogo_facet["left"],
                 right=align_to_dmslogo_facet["right"],
             )
-        else:
+        elif not no_tight_layout:
             fig.tight_layout()
 
         return fig, axes
