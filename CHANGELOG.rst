@@ -12,6 +12,10 @@ Added
 +++++
 - Start testing on Python 3.13, and up minimum version to 3.9.
 
+Removed
++++++++
+- Removed obsolete ``parse_excel`` module.
+
 2.2.0
 -----
 
