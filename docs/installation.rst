@@ -1,7 +1,7 @@
 Installation
 --------------
 
-`neutcurve` requires Python 3.8 or newer.
+`neutcurve` requires Python 3.9 or newer.
 
 The easiest way to install `neutcurve` is from `PyPI <https://pypi.org/>`_ using `pip <https://pip.pypa.io>`_ with::
 

@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.3.0
+-----
+Added
++++++
+- Start testing on Python 3.13, and up minimum version to 3.9.
+
 2.2.0
 -----
 
