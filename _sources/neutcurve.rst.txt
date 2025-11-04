@@ -15,4 +15,4 @@ Submodules
    neutcurve.colorschemes
    neutcurve.curvefits
    neutcurve.hillcurve
-   neutcurve.parse_excel
+   neutcurve.marimo_utils

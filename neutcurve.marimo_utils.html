@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation &#8212; neutcurve 2.3.0 documentation</title>
+    <title>marimo_utils &#8212; neutcurve 2.3.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=877b1dcb" />
@@ -15,8 +15,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Hill-curve neutralization" href="hillcurve_example.html" />
-    <link rel="prev" title="neutcurve documentation" href="index.html" />
+    <link rel="next" title="package index" href="package_index.html" />
+    <link rel="prev" title="hillcurve" href="neutcurve.hillcurve.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -34,15 +34,39 @@
 
           <div class="body" role="main">
             
-  <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
-<p><cite>neutcurve</cite> requires Python 3.9 or newer.</p>
-<p>The easiest way to install <cite>neutcurve</cite> is from <a class="reference external" href="https://pypi.org/">PyPI</a> using <a class="reference external" href="https://pip.pypa.io">pip</a> with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">neutcurve</span>
-</pre></div>
-</div>
-<p>The source code for <cite>neutcurve</cite> is available on GitHub at <a class="reference external" href="https://github.com/jbloomlab/neutcurve">https://github.com/jbloomlab/neutcurve</a>.</p>
+  <section id="marimo-utils">
+<span id="module-neutcurve.marimo_utils"></span><h1>marimo_utils<a class="headerlink" href="#marimo-utils" title="Link to this heading">¶</a></h1>
+<p>Utilities for working with <a class="reference external" href="https://marimo.io/">marimo</a> notebooks.</p>
 </section>
+<dl class="py function">
+<dt class="sig sig-object py" id="neutcurve.marimo_utils.display_fig_marimo">
+<span class="sig-prename descclassname"><span class="pre">neutcurve.marimo_utils.</span></span><span class="sig-name descname"><span class="pre">display_fig_marimo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/marimo_utils.html#display_fig_marimo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.marimo_utils.display_fig_marimo" title="Link to this definition">¶</a></dt>
+<dd><p>Display large matplotlib figure via marimo.</p>
+<p>This function is designed when you have a very large matplotlib figure (eg, as
+produced by the plotting functions of <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a>)
+and you want to display it in marimo notebook.</p>
+<p>Running this function requires you to have separately installed
+<a class="reference external" href="https://marimo.io/">marimo</a> and (if you are using <a class="reference external" href="https://python-pillow.github.io/">display_method=”png8”)
+`pillow</a></p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>fig</cite> (matplotlib..figure.Figure)</dt><dd><p>The figure we want to display.</p>
+</dd>
+<dt><cite>display_method</cite> {“inline”, “svg”, “pdf”, “png8”}</dt><dd><p>Display the figure just inline, as a SVG, as a PDF, or as a PNG8.
+In general, displaying as a PNG8 will be the smallest size although
+also the lowest resolution.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>output_obj</dt><dd><p>The returned object can be display in marimo, via
+<code class="docutils literal notranslate"><span class="pre">marimo.output.append(output_obj)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 
 
           </div>
@@ -81,13 +105,17 @@
 <li class="toctree-l1"><a class="reference internal" href="index.html">neutcurve documentation</a></li>
 </ul>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="constrain_params_range.html">Constrain fit parameters to a range of reasonable values</a></li>
 <li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="test_curves.html">Test curve fitting on some real data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="neutcurve.html">neutcurve package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="neutcurve.html">neutcurve package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neutcurve.html#neutcurve">neutcurve</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="neutcurve.html#submodules">Submodules</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="package_index.html">package index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgements</a></li>
 </ul>
@@ -96,8 +124,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">neutcurve</span></code> documentation</a></li>
-      <li>Next: <a href="hillcurve_example.html" title="next chapter">Hill-curve neutralization</a></li>
+  <li><a href="neutcurve.html">neutcurve package</a><ul>
+      <li>Previous: <a href="neutcurve.hillcurve.html" title="previous chapter">hillcurve</a></li>
+      <li>Next: <a href="package_index.html" title="next chapter">package index</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -131,7 +161,7 @@
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
-      <a href="_sources/installation.rst.txt"
+      <a href="_sources/neutcurve.marimo_utils.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
