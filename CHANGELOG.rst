@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.3.0
+-----
+Added
++++++
+- Start testing on Python 3.13, and up minimum version to 3.9.
+- Added ``marimo_utils.display_fig_marimo`` to enable easy display of large curves via `marimo`
+
+Removed
++++++++
+- Removed obsolete ``parse_excel`` module.
+
 2.2.0
 -----
 
