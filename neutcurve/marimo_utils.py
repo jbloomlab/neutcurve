@@ -61,8 +61,7 @@ def display_fig_marimo(fig, display_method):
         ):
             fig.savefig(buf, format="svg", metadata={})
         svg_text = buf.getvalue().decode("utf-8")
-        return mo.Html(
-            f"""
+        return mo.Html(f"""
 <style>
 #svgwrap svg {{
   width: 100% !important;
@@ -74,8 +73,7 @@ def display_fig_marimo(fig, display_method):
 <div id="svgwrap" style="width:100%;height:80vh;overflow:auto">
   {svg_text}
 </div>
-"""
-        )
+""")
 
     elif display_method == "pdf":
         buf = io.BytesIO()

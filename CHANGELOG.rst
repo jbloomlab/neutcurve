@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.3.1
+-----
+Fixed
++++++
+- Fixed a bug where panels in plots from ``CurveFits.plotGrid`` (and the ``plotReplicates`` / ``plotSera`` / ``plotAverages`` methods that call it) could be collapsed to a narrow width with the curves scrunched horizontally. This happened when per-panel legends (used when ``attempt_shared_legend=False``) had labels wider than a panel, causing ``tight_layout`` to shrink the axes. The in-axes legends are now excluded from the layout via ``set_in_layout(False)``. Addresses `this issue <https://github.com/jbloomlab/neutcurve/issues/65>`_.
+
 2.3.0
 -----
 Added

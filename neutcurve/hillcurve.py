@@ -802,7 +802,7 @@ class HillCurve:
 
         assert len(initguess) == len(bounds[0]) == len(bounds[1])
         assert all(lb < ub for (lb, ub) in zip(bounds[0], bounds[1])), bounds
-        (popt, pcov) = scipy.optimize.curve_fit(
+        popt, pcov = scipy.optimize.curve_fit(
             f=func,
             xdata=xdata,
             ydata=self.fs,

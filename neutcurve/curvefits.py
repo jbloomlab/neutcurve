@@ -1584,12 +1584,17 @@ class CurveFits:
             for (irow, icol), handles in legend_handles.items():
                 ax = axes[irow, icol]
                 handles = _ordered_legend(handles)
-                ax.legend(
+                leg = ax.legend(
                     handles=handles,
                     labels=[h.get_label() for h in handles],
                     loc="lower left",
                     **legend_kwargs,
                 )
+                # Exclude the in-axes legend from `tight_layout` so that long
+                # legend labels (e.g. long replicate names) do not cause the
+                # panels to be shrunk / collapsed. See:
+                # https://github.com/jbloomlab/neutcurve/issues/65
+                leg.set_in_layout(False)
 
         # hide unused axes
         for irow, icol in itertools.product(range(nrows), range(ncols)):
