@@ -16,10 +16,6 @@ Fixed
 +++++
 - Rendering a figure as a SVG or a PDF now gives the same output every time. Both previously embedded the time at which they were rendered, so a report containing one differed on every run even when nothing about the figure had changed.
 
-Changed
-+++++++
-- ``marimo_utils.display_fig_marimo`` is unchanged for callers, including still accepting ``display_method="inline"``. It draws the other three display methods via ``fig_utils.fig_html``, which accepts only those three, as an inline figure has no HTML form.
-
 2.3.1
 -----
 Fixed
