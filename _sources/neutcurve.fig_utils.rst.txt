@@ -1,4 +1,4 @@
-.. automodule:: neutcurve.marimo_utils
+.. automodule:: neutcurve.fig_utils
    :members:
    :show-inheritance:
    :undoc-members:

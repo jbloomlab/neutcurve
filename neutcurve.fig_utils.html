@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>fig_utils &#8212; neutcurve 2.4.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=877b1dcb" />
+    <script src="_static/documentation_options.js?v=4d935f96"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hillcurve" href="neutcurve.hillcurve.html" />
+    <link rel="prev" title="curvefits" href="neutcurve.curvefits.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="fig-utils">
+<span id="module-neutcurve.fig_utils"></span><h1>fig_utils<a class="headerlink" href="#fig-utils" title="Link to this heading">¶</a></h1>
+<p>Utilities for rendering <a class="reference external" href="https://matplotlib.org/">matplotlib</a> figures as HTML.</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="neutcurve.fig_utils.fig_html">
+<span class="sig-prename descclassname"><span class="pre">neutcurve.fig_utils.</span></span><span class="sig-name descname"><span class="pre">fig_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/neutcurve/fig_utils.html#fig_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#neutcurve.fig_utils.fig_html" title="Link to this definition">¶</a></dt>
+<dd><p>Render a large matplotlib figure as a self-contained HTML string.</p>
+<p>This function is designed for when you have a very large matplotlib figure (eg, as
+produced by the plotting functions of <a class="reference internal" href="neutcurve.curvefits.html#neutcurve.curvefits.CurveFits" title="neutcurve.curvefits.CurveFits"><code class="xref py py-class docutils literal notranslate"><span class="pre">neutcurve.curvefits.CurveFits</span></code></a>) and you
+want to put it in an HTML page. For <code class="docutils literal notranslate"><span class="pre">display_method=&quot;svg&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;pdf&quot;</span></code> the figure
+is placed in a fixed-height scrollable box, so that a figure with many panels does
+not force the rest of the page arbitrarily far down.</p>
+<p>The same figure always gives the same HTML, so a report built from this can be
+tracked in version control without every run showing a difference.</p>
+<p>Requires <a class="reference external" href="https://python-pillow.github.io/">pillow</a> if you are using
+<code class="docutils literal notranslate"><span class="pre">display_method=&quot;png8&quot;</span></code>; it is installed with <cite>matplotlib</cite> in any case.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt><cite>fig</cite> (matplotlib.figure.Figure)</dt><dd><p>The figure we want to render.</p>
+</dd>
+<dt><cite>display_method</cite> {“svg”, “pdf”, “png8”}</dt><dd><p>Render the figure as a SVG, as a PDF, or as a PNG8. In general, rendering
+as a PNG8 will be the smallest size although also the lowest resolution.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt><cite>str</cite></dt><dd><p>HTML that can be embedded in a page, or passed to <code class="docutils literal notranslate"><span class="pre">marimo.Html</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.figure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The SVG is wrapped in the scrollable box, and is a real SVG rather than an image:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">html</span> <span class="o">=</span> <span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;svg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;&lt;div id=&quot;svgwrap&quot; style=&quot;width:100%;height:80vh;overflow:auto&quot;&gt;&#39;</span> <span class="ow">in</span> <span class="n">html</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s2">&quot;&lt;svg&quot;</span> <span class="ow">in</span> <span class="n">html</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The other methods embed the figure as a data URI:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;iframe src=&#39;data:application/pdf;base64,&quot;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;png8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&lt;img src=&quot;data:image/png;base64,&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Rendering the same figure twice gives the same HTML:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="o">==</span> <span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="s2">&quot;pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;png8&quot;</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Anything else is an error. Note in particular that there is no <code class="docutils literal notranslate"><span class="pre">&quot;inline&quot;</span></code> method
+here, as a bare figure has no HTML form; see
+<a class="reference internal" href="neutcurve.marimo_utils.html#neutcurve.marimo_utils.display_fig_marimo" title="neutcurve.marimo_utils.display_fig_marimo"><code class="xref py py-func docutils literal notranslate"><span class="pre">neutcurve.marimo_utils.display_fig_marimo()</span></code></a> for that:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig_html</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="s2">&quot;inline&quot;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Invalid display_method=&#39;inline&#39;, valid methods are &#39;svg&#39;, &#39;pdf&#39;, &#39;png8&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/BloomLogo.jpg" alt="Logo" />
+    
+    <h1 class="logo logo-name">neutcurve</h1>
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Fit and plot neutralization curves</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=jbloomlab&repo=neutcurve&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">neutcurve documentation</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hillcurve_example.html">Hill-curve neutralization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="curvefits_example.html">Fitting curves to real data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="constrain_params_range.html">Constrain fit parameters to a range of reasonable values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="combine_curvefits.html">Combining <code class="docutils literal notranslate"><span class="pre">CurveFits</span></code> objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_curves.html">Test curve fitting on some real data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="neutcurve.html">neutcurve package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="neutcurve.html#neutcurve">neutcurve</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="neutcurve.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_index.html">package index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acknowledgments.html">Acknowledgements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="neutcurve.html">neutcurve package</a><ul>
+      <li>Previous: <a href="neutcurve.curvefits.html" title="previous chapter">curvefits</a></li>
+      <li>Next: <a href="neutcurve.hillcurve.html" title="next chapter">hillcurve</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2019--2026, Bloom lab.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/neutcurve.fig_utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/jbloomlab/neutcurve" class="github">
+        <img src="_static/github-banner.svg" alt="Fork me on GitHub" class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

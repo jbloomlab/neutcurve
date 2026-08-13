@@ -3,8 +3,8 @@ neutcurve package
 
 .. automodule:: neutcurve
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Submodules
 ----------
@@ -14,5 +14,6 @@ Submodules
 
    neutcurve.colorschemes
    neutcurve.curvefits
+   neutcurve.fig_utils
    neutcurve.hillcurve
    neutcurve.marimo_utils
