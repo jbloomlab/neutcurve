@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.4.0
+-----
+Added
++++++
+- Added ``fig_utils.fig_html`` to render a large matplotlib figure as HTML, as a scrollable SVG, an embedded PDF, or a PNG8. This is what ``marimo_utils.display_fig_marimo`` has always drawn, but returned as a string and without requiring `marimo`, so you can also use it to build an HTML report from an ordinary script.
+
+Fixed
++++++
+- Rendering a figure as a SVG or a PDF now gives the same output every time. Both previously embedded the time at which they were rendered, so a report containing one differed on every run even when nothing about the figure had changed.
+
 2.3.1
 -----
 Fixed
