@@ -23,6 +23,9 @@ def fig_html(fig, display_method):
     is placed in a fixed-height scrollable box, so that a figure with many panels does
     not force the rest of the page arbitrarily far down.
 
+    The same figure always gives the same HTML, so a report built from this can be
+    tracked in version control without every run showing a difference.
+
     Requires `pillow <https://python-pillow.github.io/>`_ if you are using
     ``display_method="png8"``; it is installed with `matplotlib` in any case.
 
@@ -58,6 +61,11 @@ def fig_html(fig, display_method):
     >>> fig_html(fig, "png8").startswith('<img src="data:image/png;base64,')
     True
 
+    Rendering the same figure twice gives the same HTML:
+
+    >>> all(fig_html(fig, m) == fig_html(fig, m) for m in ["svg", "pdf", "png8"])
+    True
+
     Anything else is an error. Note in particular that there is no ``"inline"`` method
     here, as a bare figure has no HTML form; see
     :func:`neutcurve.marimo_utils.display_fig_marimo` for that:
@@ -84,7 +92,9 @@ def fig_html(fig, display_method):
                 "path.simplify_threshold": 0.2,
             }
         ):
-            fig.savefig(buf, format="svg", metadata={})
+            # `Date` is omitted so that the same figure always gives the same SVG;
+            # matplotlib otherwise stamps the current time into it
+            fig.savefig(buf, format="svg", metadata={"Date": None})
         svg_text = buf.getvalue().decode("utf-8")
         return f"""
 <style>
@@ -110,7 +120,8 @@ def fig_html(fig, display_method):
                 "path.simplify_threshold": 0.2,
             }
         ):
-            fig.savefig(buf, format="pdf", metadata={})
+            # `CreationDate` is omitted for the same reason as `Date` above
+            fig.savefig(buf, format="pdf", metadata={"CreationDate": None})
         data = base64.b64encode(buf.getvalue()).decode("ascii")
         return (
             f"<iframe src='data:application/pdf;base64,{data}' "

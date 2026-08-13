@@ -10,12 +10,15 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 -----
 Added
 +++++
-- Added ``fig_utils.fig_html``, which renders a large matplotlib figure as an HTML string (a scrollable SVG, an embedded PDF, or a PNG8 data URI). This is the rendering that ``marimo_utils.display_fig_marimo`` already did, but separated from `marimo` so that it can be used to build an HTML report from a plain script. The module does not import `marimo`.
+- Added ``fig_utils.fig_html`` to render a large matplotlib figure as HTML, as a scrollable SVG, an embedded PDF, or a PNG8. This is what ``marimo_utils.display_fig_marimo`` has always drawn, but returned as a string and without requiring `marimo`, so you can also use it to build an HTML report from an ordinary script.
+
+Fixed
++++++
+- Rendering a figure as a SVG or a PDF now gives the same output every time. Both previously embedded the time at which they were rendered, so a report containing one differed on every run even when nothing about the figure had changed.
 
 Changed
 +++++++
-- ``marimo_utils.display_fig_marimo`` delegates to ``fig_utils.fig_html`` and is unchanged for callers: it still accepts ``display_method="inline"`` (which has no HTML form and so is not accepted by ``fig_html``) and still returns an object to pass to ``marimo.output.append``. Its output is byte-identical to that of 2.3.1 for all four display methods, apart from the creation timestamp that matplotlib embeds in SVG and PDF output, which already differed between runs.
-- ``fig_utils`` imports ``PIL.Image`` and ``PIL.PngImagePlugin`` explicitly for ``display_method="png8"``, rather than relying on `matplotlib` having imported them, and uses the ``PIL.Image.Dither.NONE`` enum in place of the older ``PIL.Image.NONE`` alias (same value).
+- ``marimo_utils.display_fig_marimo`` is unchanged for callers, including still accepting ``display_method="inline"``. It draws the other three display methods via ``fig_utils.fig_html``, which accepts only those three, as an inline figure has no HTML form.
 
 2.3.1
 -----
