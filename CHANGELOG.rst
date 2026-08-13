@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
+2.4.0
+-----
+Added
++++++
+- Added ``fig_utils.fig_html``, which renders a large matplotlib figure as an HTML string (a scrollable SVG, an embedded PDF, or a PNG8 data URI). This is the rendering that ``marimo_utils.display_fig_marimo`` already did, but separated from `marimo` so that it can be used to build an HTML report from a plain script. The module does not import `marimo`.
+
+Changed
++++++++
+- ``marimo_utils.display_fig_marimo`` delegates to ``fig_utils.fig_html`` and is unchanged for callers: it still accepts ``display_method="inline"`` (which has no HTML form and so is not accepted by ``fig_html``) and still returns an object to pass to ``marimo.output.append``. Its output is byte-identical to that of 2.3.1 for all four display methods, apart from the creation timestamp that matplotlib embeds in SVG and PDF output, which already differed between runs.
+- ``fig_utils`` imports ``PIL.Image`` and ``PIL.PngImagePlugin`` explicitly for ``display_method="png8"``, rather than relying on `matplotlib` having imported them, and uses the ``PIL.Image.Dither.NONE`` enum in place of the older ``PIL.Image.NONE`` alias (same value).
+
 2.3.1
 -----
 Fixed
