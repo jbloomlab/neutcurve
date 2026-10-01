@@ -1328,6 +1328,40 @@ class CurveFits:
         Returns:
             The 2-tuple `(fig, axes)` of matplotlib figure and 2D axes array.
 
+        Example:
+
+        Shared axes have the same limits, without linking the panels in matplotlib.
+        Tick labels are hidden only on panels with another panel below / left:
+
+        >>> import numpy as np
+        >>> conc = 0.1 / 3 ** np.arange(8)
+        >>> data = pd.concat(
+        ...     pd.DataFrame(
+        ...         {
+        ...             "serum": "serum",
+        ...             "virus": virus,
+        ...             "replicate": 1,
+        ...             "concentration": conc,
+        ...             "fraction infectivity": 1 / (1 + (conc / ic50) ** 1.5),
+        ...         }
+        ...     )
+        ...     for virus, ic50 in [("A", 1e-3), ("B", 1e-4), ("C", 3e-3)]
+        ... )
+        >>> fig, axes = CurveFits(data).plotReplicates(ncol=2)
+        >>> panels = [axes[0, 0], axes[0, 1], axes[1, 0]]
+        >>> len({(ax.get_xlim(), ax.get_ylim()) for ax in panels})
+        1
+        >>> fig.canvas.draw()
+        >>> def labeled(ticklabels):
+        ...     return any(t.get_visible() and t.get_text() for t in ticklabels)
+        >>> [labeled(ax.get_xticklabels(which="both")) for ax in panels]
+        [False, True, True]
+        >>> [labeled(ax.get_yticklabels(which="both")) for ax in panels]
+        [True, False, True]
+        >>> len(list(axes[0, 0].get_shared_x_axes().get_siblings(axes[0, 0])))
+        1
+        >>> plt.close(fig)
+
         """
         vline_defaults = {
             "linewidth": 1.5,
@@ -1427,34 +1461,30 @@ class CurveFits:
             height = (1 + 2.25 * nrows) * heightscale
 
         width = (1 + 3 * ncols) * widthscale
+        # don't link shared axes in matplotlib (slow for many panels); instead set
+        # limits and hide inner tick labels on each panel
         fig, axes = plt.subplots(
             nrows=nrows,
             ncols=ncols,
-            sharex=sharex,
-            sharey=sharey,
             squeeze=False,
             figsize=(width, height),
         )
-
-        # set limits for share axes
+        # only hide tick labels if another panel below / left shows them
+        bottom_row, left_col = {}, {}
         for irow, icol in plots.keys():
+            bottom_row[icol] = max(irow, bottom_row.get(icol, irow))
+            left_col[irow] = min(icol, left_col.get(irow, icol))
+        for irow, icol in plots.keys():
+            if sharex and irow != bottom_row[icol]:
+                axes[irow, icol].tick_params(axis="x", which="both", labelbottom=False)
+            if sharey and icol != left_col[irow]:
+                axes[irow, icol].tick_params(axis="y", which="both", labelleft=False)
             axes[irow, icol].set_xlim(
                 lims[irow, icol]["xmin"], lims[irow, icol]["xmax"]
             )
-            if sharex:
-                # if doing sharex, should be only one value, set on one and it propagates
-                assert len(set(d["xmin"] for d in lims.values())) == 1
-                assert len(set(d["xmax"] for d in lims.values())) == 1
-                break
-        for irow, icol in plots.keys():
             axes[irow, icol].set_ylim(
                 lims[irow, icol]["ymin"], lims[irow, icol]["ymax"]
             )
-            if sharey:
-                # if doing sharey, should be only one value, set on one and it propagates
-                assert len(set(d["ymin"] for d in lims.values())) == 1
-                assert len(set(d["ymax"] for d in lims.values())) == 1
-                break  # if doing sharey, only need to set on one and it propagates
 
         # make plots
         shared_legend = attempt_shared_legend
