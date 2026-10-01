@@ -6,11 +6,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 
-2.4.1
+2.5.0
 -----
 Changed
 +++++++
 - Further speed up plotting of large grids of neutralization curves. ``CurveFits.plotGrid`` no longer links shared axes in matplotlib, which scaled quadratically with the number of panels, and instead sets the same limits and tick labels on each panel.
+- The axes returned by ``CurveFits.plotGrid`` (and so ``plotSera``, ``plotViruses``, ``plotReplicates``, and ``plotAverages``) are no longer linked when ``sharex`` or ``sharey`` is set. Changing the limits or ticks of one panel no longer changes the others, so set them on each panel, and zooming or panning one panel in an interactive backend no longer moves the others.
 
 2.4.0
 -----
