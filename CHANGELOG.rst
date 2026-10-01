@@ -10,7 +10,7 @@ The format is based on `Keep a Changelog <https://keepachangelog.com>`_.
 -----
 Changed
 +++++++
-- ``CurveFits.plotGrid`` (and the ``plotReplicates`` / ``plotSera`` / ``plotAverages`` methods that call it) is much faster for large grids with ``sharex`` or ``sharey``: an 800-panel grid now takes about a fifth of the time. It no longer links the panels into a matplotlib shared-axis group, which made drawing time grow with the square of the number of panels. Instead it sets the same limits on every panel and hides the inner tick labels itself, so the figure is unchanged. The one difference is interactive: zooming or panning one panel no longer moves the others.
+- Further speed up plotting of large grids of neutralization curves. ``CurveFits.plotGrid`` no longer links shared axes in matplotlib, which scaled quadratically with the number of panels, and instead sets the same limits and tick labels on each panel.
 
 2.4.0
 -----

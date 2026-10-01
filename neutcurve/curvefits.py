@@ -1311,11 +1311,9 @@ class CurveFits:
             `yticklocs` (`None` or list)
                 Same meaning as for :meth:`neutcurve.hillcurve.HillCurve.plot`.
             `sharex` (bool)
-                Use the same x-axis limits on all plots, and only label x-axis
-                ticks on the bottom row.
+                Share x-axis scale among plots.
             `sharey` (bool)
-                Use the same y-axis limits on all plots, and only label y-axis
-                ticks on the left column.
+                Share y-axis scale among plots.
             `vlines` (dict or `None`)
                 Vertical lines to draw. Keyed by 2-tuples `(irow, icol)`, which
                 give row and column of plot in grid (0, 1, ... numbering).
@@ -1332,7 +1330,8 @@ class CurveFits:
 
         Example:
 
-        Plot three viruses on a 2 x 2 grid, leaving the last cell empty:
+        Shared axes have the same limits and outer tick labels, without linking
+        the panels in matplotlib:
 
         >>> import numpy as np
         >>> conc = 0.1 / 3 ** np.arange(8)
@@ -1348,17 +1347,10 @@ class CurveFits:
         ...     )
         ...     for virus, ic50 in [("A", 1e-3), ("B", 1e-4), ("C", 3e-3)]
         ... )
-        >>> fits = CurveFits(data)
-        >>> fig, axes = fits.plotReplicates(ncol=2)
+        >>> fig, axes = CurveFits(data).plotReplicates(ncol=2)
         >>> panels = [axes[0, 0], axes[0, 1], axes[1, 0]]
-
-        With the default `sharex` and `sharey`, every panel has the same limits:
-
         >>> len({(ax.get_xlim(), ax.get_ylim()) for ax in panels})
         1
-
-        Only the bottom row labels its x ticks, and the left column its y ticks:
-
         >>> fig.canvas.draw()
         >>> def labeled(ticklabels):
         ...     return any(t.get_visible() and t.get_text() for t in ticklabels)
@@ -1366,10 +1358,6 @@ class CurveFits:
         [False, False, True]
         >>> [labeled(ax.get_yticklabels(which="both")) for ax in panels]
         [True, False, True]
-
-        The panels are not linked into a matplotlib shared-axis group, whose cost
-        grows with the square of the number of panels:
-
         >>> len(list(axes[0, 0].get_shared_x_axes().get_siblings(axes[0, 0])))
         1
         >>> plt.close(fig)
@@ -1473,10 +1461,8 @@ class CurveFits:
             height = (1 + 2.25 * nrows) * heightscale
 
         width = (1 + 3 * ncols) * widthscale
-        # Shared axes are not linked with matplotlib's `sharex` / `sharey`, as its
-        # shared-axis group makes drawing time grow with the square of the number of
-        # panels. The limits were unified above, so setting them on every panel and
-        # hiding inner tick labels as matplotlib would gives the same figure.
+        # don't link shared axes in matplotlib (slow for many panels); instead set
+        # limits and hide inner tick labels on each panel
         fig, axes = plt.subplots(
             nrows=nrows,
             ncols=ncols,
