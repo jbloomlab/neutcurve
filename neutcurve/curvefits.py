@@ -1330,8 +1330,8 @@ class CurveFits:
 
         Example:
 
-        Shared axes have the same limits and outer tick labels, without linking
-        the panels in matplotlib:
+        Shared axes have the same limits, without linking the panels in matplotlib.
+        Tick labels are hidden only on panels with another panel below / left:
 
         >>> import numpy as np
         >>> conc = 0.1 / 3 ** np.arange(8)
@@ -1355,7 +1355,7 @@ class CurveFits:
         >>> def labeled(ticklabels):
         ...     return any(t.get_visible() and t.get_text() for t in ticklabels)
         >>> [labeled(ax.get_xticklabels(which="both")) for ax in panels]
-        [False, False, True]
+        [False, True, True]
         >>> [labeled(ax.get_yticklabels(which="both")) for ax in panels]
         [True, False, True]
         >>> len(list(axes[0, 0].get_shared_x_axes().get_siblings(axes[0, 0])))
@@ -1469,12 +1469,16 @@ class CurveFits:
             squeeze=False,
             figsize=(width, height),
         )
-        for irow, icol in itertools.product(range(nrows), range(ncols)):
-            if sharex and irow != nrows - 1:
-                axes[irow, icol].tick_params(axis="x", which="both", labelbottom=False)
-            if sharey and icol != 0:
-                axes[irow, icol].tick_params(axis="y", which="both", labelleft=False)
+        # only hide tick labels if another panel below / left shows them
+        bottom_row, left_col = {}, {}
         for irow, icol in plots.keys():
+            bottom_row[icol] = max(irow, bottom_row.get(icol, irow))
+            left_col[irow] = min(icol, left_col.get(irow, icol))
+        for irow, icol in plots.keys():
+            if sharex and irow != bottom_row[icol]:
+                axes[irow, icol].tick_params(axis="x", which="both", labelbottom=False)
+            if sharey and icol != left_col[irow]:
+                axes[irow, icol].tick_params(axis="y", which="both", labelleft=False)
             axes[irow, icol].set_xlim(
                 lims[irow, icol]["xmin"], lims[irow, icol]["xmax"]
             )
